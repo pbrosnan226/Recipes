@@ -8,6 +8,7 @@ created: 2026-09-24
 course: Breakfast
 cuisine: American
 servings: 12
+servings_wanted: 12
 prep_time: 20 minutes
 cook_time: 45 minutes
 total_time: 1 hour 30 minutes
@@ -22,36 +23,40 @@ An adaptable breakfast casserole — sausage, mushrooms, bell peppers, spinach a
 
 ![Breakfast casserole](https://sallysbakingaddiction.com/wp-content/uploads/2015/09/breakfast-casserole-2.jpg)
 
-## Ingredients
+Servings: `INPUT[inlineSelect(option(6), option(12), option(18), option(24), option(36)):servings_wanted]` (the source makes 12)
 
-| Ingredient                                  | Half batch | As written (12 servings)        | Double batch |
-| ------------------------------------------- | ---------- | ------------------------------- | ------------ |
-| Cubes of crusty bread                       | 2 cups     | 4 cups (175g or 6 oz)           | 8 cups       |
-| Olive oil                                   | ½ tsp      | 1 tsp                           | 2 tsp        |
-| Ground pork sausage, casings removed        | ½ lb       | 1 lb                            | 2 lb         |
-| Dried rosemary or Italian seasoning, optional | ½ tsp    | 1 tsp                           | 2 tsp        |
-| Chopped yellow onion                        | ⅜ cup      | ¾ cup (100g; ½ of a large onion) | 1½ cups      |
-| Garlic cloves, minced                       | 1          | 2                               | 4            |
-| Chopped bell peppers                        | 1 cup      | 2 cups (275g or 9–10 oz)        | 4 cups       |
-| Sliced mushrooms                            | ½ cup      | 1 cup (100g or 3 oz)            | 2 cups       |
-| Roughly chopped fresh spinach               | ½ cup      | 1 cup                           | 2 cups       |
-| Large eggs                                  | 6          | 12                              | 24           |
-| Salt                                        | ⅛ tsp      | ¼ tsp                           | ½ tsp        |
-| Freshly ground black pepper                 | 1/16 tsp   | ⅛ tsp                           | ¼ tsp        |
-| Milk or half-and-half                       | ⅓ cup      | ⅔ cup (160ml)                   | 1⅓ cups      |
-| Shredded cheddar cheese                     | ½ cup      | 1 cup (100g or 3.5 oz)          | 2 cups       |
-| Green onion and/or chopped parsley, optional garnish | to taste | to taste               | to taste     |
-
-## Instructions
-
-1. Grease a 9×13-inch dish, or any 3–4 quart oven-safe dish. Spread the bread cubes over the bottom in an even layer.
-2. Heat the olive oil in a large skillet over medium heat. Add the sausage, along with the rosemary or Italian seasoning if you're using it, breaking the sausage into bite-size pieces as it starts to cook. Add the onion, garlic, peppers, mushrooms and spinach, and cook until everything has softened slightly and the sausage is mostly cooked through, 5–6 minutes.
-3. Take the sausage and vegetable mixture off the heat and spread it in an even layer over the bread.
-4. Whisk the eggs, salt, pepper, milk and cheese together, then pour evenly over the sausage and vegetables. Add another sprinkle of salt and pepper on top.
-5. Cover with plastic wrap or foil and refrigerate for at least 30 minutes and up to 24 hours. When you're ready to bake, let it sit at room temperature for 10–15 minutes while the oven heats.
-6. Heat the oven to 375°F (191°C). Bake uncovered until the top is golden, the edges are crisp, and a toothpick in the center comes out clean, about 40–45 minutes.
-7. Cool for 10 minutes, then slice and serve.
-8. Leftovers keep in the refrigerator for up to 5 days. Reheat in the microwave.
+```dataviewjs
+await dv.view("scripts/scale", {
+  base: 12,
+  ingredients: [
+    { id: "bread", name: "Cubes of crusty bread", text: "4 cups (175g or 6 oz)", q: 4, u: ["cup", "cups"] },
+    { id: "oil", name: "Olive oil", text: "1 tsp", q: 1, u: "tsp" },
+    { id: "sausage", name: "Ground pork sausage, casings removed", text: "1 lb", q: 1, u: "lb" },
+    { id: "rosemary", name: "Dried rosemary or Italian seasoning, optional", text: "1 tsp", q: 1, u: "tsp" },
+    { id: "onion", name: "Chopped yellow onion", text: "¾ cup (100g; ½ of a large onion)", q: 0.75, u: ["cup", "cups"] },
+    { id: "garlic", name: "Garlic cloves, minced", text: "2", q: 2 },
+    { id: "peppers", name: "Chopped bell peppers", text: "2 cups (275g or 9–10 oz)", q: 2, u: ["cup", "cups"] },
+    { id: "mushrooms", name: "Sliced mushrooms", text: "1 cup (100g or 3 oz)", q: 1, u: ["cup", "cups"] },
+    { id: "spinach", name: "Roughly chopped fresh spinach", text: "1 cup", q: 1, u: ["cup", "cups"] },
+    { id: "eggs", name: "Large eggs", text: "12", q: 12 },
+    { id: "salt", name: "Salt", text: "¼ tsp", q: 0.25, u: "tsp" },
+    { id: "pepper", name: "Freshly ground black pepper", text: "⅛ tsp", q: 0.125, u: "tsp" },
+    { id: "milk", name: "Milk or half-and-half", text: "⅔ cup (160ml)", q: 2 / 3, u: ["cup", "cups"] },
+    { id: "cheese", name: "Shredded cheddar cheese", text: "1 cup (100g or 3.5 oz)", q: 1, u: ["cup", "cups"] },
+    { id: "garnish", name: "Green onion and/or chopped parsley, optional garnish", text: "to taste", s: "to taste" },
+  ],
+  steps: [
+    "Grease a 9×13-inch dish, or any 3–4 quart oven-safe dish. Spread the bread cubes ({bread}) over the bottom in an even layer.",
+    "Heat the olive oil ({oil}) in a large skillet over medium heat. Add the sausage ({sausage}), along with the rosemary or Italian seasoning ({rosemary}) if you're using it, breaking the sausage into bite-size pieces as it starts to cook. Add the onion ({onion}), garlic ({garlic}), peppers ({peppers}), mushrooms ({mushrooms}) and spinach ({spinach}), and cook until everything has softened slightly and the sausage is mostly cooked through, 5–6 minutes.",
+    "Take the sausage and vegetable mixture off the heat and spread it in an even layer over the bread.",
+    "Whisk the eggs ({eggs}), salt ({salt}), pepper ({pepper}), milk ({milk}) and cheese ({cheese}) together, then pour evenly over the sausage and vegetables. Add another sprinkle of salt and pepper on top.",
+    "Cover with plastic wrap or foil and refrigerate for at least 30 minutes and up to 24 hours. When you're ready to bake, let it sit at room temperature for 10–15 minutes while the oven heats.",
+    "Heat the oven to 375°F (191°C). Bake uncovered until the top is golden, the edges are crisp, and a toothpick in the center comes out clean, about 40–45 minutes.",
+    "Cool for 10 minutes, then slice and serve.",
+    "Leftovers keep in the refrigerator for up to 5 days. Reheat in the microwave.",
+  ],
+});
+```
 
 ## Notes
 

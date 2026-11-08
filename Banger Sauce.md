@@ -5,6 +5,7 @@ aliases:
   - Tequila Shrimp Banger Sauce
 created: 2026-09-24
 servings: 50
+servings_wanted: 50
 prep_time: 10 minutes
 total_time: 10 minutes
 tags:
@@ -14,23 +15,27 @@ tags:
 
 A mayonnaise-based dipping sauce with Thai sweet chili, tequila, Sriracha and sesame oil, stirred together in one bowl. The published batch is restaurant-sized.
 
-## Ingredients
+Servings: `INPUT[inlineSelect(option(25), option(50), option(75), option(100), option(150)):servings_wanted]` (the source makes 50)
 
-| Ingredient                      | Half batch | As written (50 servings) | Double batch |
-| ------------------------------- | ---------- | ------------------------ | ------------ |
-| Mayonnaise                      | ½ gallon   | 1 gallon                 | 2 gallons    |
-| Thai sweet chili sauce          | 2 cups     | 4 cups                   | 8 cups       |
-| Tequila                         | 1 cup      | 2 cups                   | 4 cups       |
-| Sriracha                        | ¾ cup      | 1½ cups                  | 3 cups       |
-| Sesame oil                      | ¼ cup      | ½ cup                    | 1 cup        |
-| Adobo seasoning                 | ⅛ cup      | ¼ cup                    | ½ cup        |
-| Granulated garlic               | ⅛ cup      | ¼ cup                    | ½ cup        |
-| Cayenne pepper                  | ½ tbsp     | 1 tablespoon             | 2 tbsp       |
-| Water (listed in the method)    | 1 cup      | 2 cups                   | 4 cups       |
-
-## Instructions
-
-1. Put the mayonnaise, chili sauce, tequila, Sriracha, sesame oil, adobo, granulated garlic, cayenne and 2 cups of water in a large mixing bowl, and mix to combine.
+```dataviewjs
+await dv.view("scripts/scale", {
+  base: 50,
+  ingredients: [
+    { id: "mayo", name: "Mayonnaise", text: "1 gallon", q: 1, u: ["gallon", "gallons"] },
+    { id: "chili", name: "Thai sweet chili sauce", text: "4 cups", q: 4, u: ["cup", "cups"] },
+    { id: "tequila", name: "Tequila", text: "2 cups", q: 2, u: ["cup", "cups"] },
+    { id: "sriracha", name: "Sriracha", text: "1½ cups", q: 1.5, u: ["cup", "cups"] },
+    { id: "sesame", name: "Sesame oil", text: "½ cup", q: 0.5, u: ["cup", "cups"] },
+    { id: "adobo", name: "Adobo seasoning", text: "¼ cup", q: 0.25, u: ["cup", "cups"] },
+    { id: "garlic", name: "Granulated garlic", text: "¼ cup", q: 0.25, u: ["cup", "cups"] },
+    { id: "cayenne", name: "Cayenne pepper", text: "1 tablespoon", q: 1, u: ["tablespoon", "tablespoons"] },
+    { id: "water", name: "Water (listed in the method)", text: "2 cups", q: 2, u: ["cup", "cups"] },
+  ],
+  steps: [
+    "Put the mayonnaise ({mayo}), chili sauce ({chili}), tequila ({tequila}), Sriracha ({sriracha}), sesame oil ({sesame}), adobo ({adobo}), granulated garlic ({garlic}), cayenne ({cayenne}) and water ({water}) in a large mixing bowl, and mix to combine.",
+  ],
+});
+```
 
 ## Notes
 

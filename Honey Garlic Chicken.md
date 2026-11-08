@@ -8,6 +8,7 @@ created: 2026-09-24
 course: Mains
 cuisine: Western
 servings: 4
+servings_wanted: 4
 prep_time: 4 minutes
 cook_time: 8 minutes
 total_time: 12 minutes
@@ -21,30 +22,35 @@ Chicken breast cut into steaks, dusted with flour, seared, then finished in a ho
 
 ![Honey garlic chicken breast](https://www.recipetineats.com/tachyon/2020/02/Honey-Garlic-Chicken-Breast_5-SQ.jpg)
 
-## Ingredients
+Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 
-| Ingredient                                  | Half batch | As written (4 servings)                  | Double batch    |
-| ------------------------------------------- | ---------- | ---------------------------------------- | --------------- |
-| Chicken breast, boneless and skinless       | 250g / ½ lb | 500g / 1 lb (2 pieces)                  | 1kg / 2 lb      |
-| Salt and pepper                             | to taste   | to taste                                 | to taste        |
-| Flour (see notes)                           | ⅛ cup      | ¼ cup                                    | ½ cup           |
-| Unsalted butter                             | 1¾ tbsp    | 3½ tbsp (50g), or 2½ tbsp olive oil      | 7 tbsp          |
-| Garlic cloves, minced                       | 1          | 2                                        | 4               |
-| Apple cider vinegar (or another clear vinegar) | ¾ tbsp  | 1½ tbsp                                  | 3 tbsp          |
-| Soy sauce, light or all purpose (see notes) | ½ tbsp     | 1 tbsp                                   | 2 tbsp          |
-| Honey (or maple syrup)                      | ⅙ cup      | ⅓ cup                                    | ⅔ cup           |
-
-## Instructions
-
-1. Cut the breasts in half horizontally to make 4 steaks in total. Sprinkle each side with salt and pepper.
-2. Put the flour in a shallow dish. Coat the chicken in flour and shake off the excess.
-3. Melt most of the butter in a large skillet over high heat, holding back about 1 tsp for later.
-4. Put the chicken in the skillet and cook 2 to 3 minutes until golden. Turn and cook the other side for 1 minute.
-5. Turn the heat down slightly, to medium-high.
-6. Make a bit of room in the pan, add the garlic, and top it with the remaining dab of butter. Stir the garlic briefly once the butter melts.
-7. Add the vinegar, soy sauce and honey. Stir or shake the pan to combine. Bring the sauce to a simmer, then simmer for 1 minute, or until slightly thickened.
-8. Turn the chicken to coat it in the sauce. If the sauce gets too thick, add a touch of water and stir.
-9. Take it off the stove immediately. Plate the chicken and drizzle the remaining sauce over the top.
+```dataviewjs
+await dv.view("scripts/scale", {
+  base: 4,
+  ingredients: [
+    { id: "chicken", name: "Chicken breast, boneless and skinless", text: "500g / 1 lb (2 pieces)", pre: 500, q: 1, u: "lb" },
+    { id: "steaks", hidden: true, q: 4, u: ["steak", "steaks"] },
+    { id: "saltpepper", name: "Salt and pepper", text: "to taste", s: "to taste" },
+    { id: "flour", name: "Flour (see notes)", text: "¼ cup", q: 0.25, u: ["cup", "cups"] },
+    { id: "butter", name: "Unsalted butter", text: "3½ tbsp (50g), or 2½ tbsp olive oil", q: 3.5, u: "tbsp" },
+    { id: "garlic", name: "Garlic cloves, minced", text: "2", q: 2 },
+    { id: "vinegar", name: "Apple cider vinegar (or another clear vinegar)", text: "1½ tbsp", q: 1.5, u: "tbsp" },
+    { id: "soy", name: "Soy sauce, light or all purpose (see notes)", text: "1 tbsp", q: 1, u: "tbsp" },
+    { id: "honey", name: "Honey (or maple syrup)", text: "⅓ cup", q: 1 / 3, u: ["cup", "cups"] },
+  ],
+  steps: [
+    "Cut the breasts ({chicken}) in half horizontally to make {steaks} in total. Sprinkle each side with salt and pepper.",
+    "Put the flour ({flour}) in a shallow dish. Coat the chicken in flour and shake off the excess.",
+    "Melt most of the butter ({butter}) in a large skillet over high heat, holding back about 1 tsp for later.",
+    "Put the chicken in the skillet and cook 2 to 3 minutes until golden. Turn and cook the other side for 1 minute.",
+    "Turn the heat down slightly, to medium-high.",
+    "Make a bit of room in the pan, add the garlic ({garlic}), and top it with the remaining dab of butter. Stir the garlic briefly once the butter melts.",
+    "Add the vinegar ({vinegar}), soy sauce ({soy}) and honey ({honey}). Stir or shake the pan to combine. Bring the sauce to a simmer, then simmer for 1 minute, or until slightly thickened.",
+    "Turn the chicken to coat it in the sauce. If the sauce gets too thick, add a touch of water and stir.",
+    "Take it off the stove immediately. Plate the chicken and drizzle the remaining sauce over the top.",
+  ],
+});
+```
 
 ## Notes
 

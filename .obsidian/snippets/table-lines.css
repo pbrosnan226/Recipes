@@ -1,0 +1,6 @@
+.markdown-rendered table,
+.markdown-rendered table th,
+.markdown-rendered table td {
+  border: 1px solid var(--background-modifier-border);
+  border-collapse: collapse;
+}

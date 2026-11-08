@@ -15,6 +15,8 @@ that matter most:
   chat rather than writing it into the note.
 - **Write measurements exactly as the source writes them.** No metric conversions, no "US can size
   is 15 oz" helpfulness.
-- **Keep servings adjustable.** Ingredients go in a table with half / base / double columns.
+- **Keep servings adjustable.** Each note has a servings dropdown that rescales the ingredients and
+  the amounts quoted in the steps (Dataview + Meta Bind plugins, renderer in `scripts/scale/view.js`).
+  The `recipe-extract` skill has the format.
 - **Capture** the author's recipe-card notes, the nutrition table, and a link to the source photo.
   **Skip** reader comments, blog headnotes, and the author's book promos.

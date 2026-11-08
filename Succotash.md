@@ -7,6 +7,7 @@ created: 2026-09-24
 course: Side Dish
 cuisine: American
 servings: 8
+servings_wanted: 8
 prep_time: 5 minutes
 cook_time: 30 minutes
 total_time: 40 minutes
@@ -21,30 +22,34 @@ Corn, summer squash, bell pepper and beans cooked down in bacon fat and butter w
 
 ![Succotash](https://www.seriouseats.com/thmb/_Nbd67XrWXdaIIce8i4C-x8NjQo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__2018__07__20180706-succotash-vicky-wasik-20-6c553736289d4312938efd57bdb1af99.jpg)
 
-## Ingredients
+Servings: `INPUT[inlineSelect(option(4), option(8), option(12), option(16), option(24)):servings_wanted]` (the source makes 8)
 
-| Ingredient                                                     | Half batch | As written (8 servings)                             | Double batch |
-| -------------------------------------------------------------- | ---------- | --------------------------------------------------- | ------------ |
-| Poblano peppers                                                | 3 oz       | 6 ounces (170g; about 3 small or 2 medium)          | 12 oz        |
-| Thinly sliced bacon                                            | ½ oz       | 1 ounce (30g)                                       | 2 oz         |
-| Unsalted butter                                                | 3 tbsp     | 6 tablespoons (90g)                                 | 12 tbsp      |
-| Medium onion, finely diced                                     | ½          | 1 (about 6 ounces; 170g)                            | 2            |
-| Medium cloves garlic, minced                                   | 1          | 2                                                   | 4            |
-| Fresh corn in the husk, shucked, kernels cut and cobs scraped of any corn milk | 2½ lbs | 5 pounds (about 6 to 7 ears)                | 10 lbs       |
-| Red (or orange or yellow) bell pepper, stemmed, seeded, finely diced | 3 oz | One 6-ounce (170g)                                  | 12 oz        |
-| Summer squash, finely diced                                    | 6 oz       | 12 ounces (340g; about 4 small yellow squash and/or zucchini) | 24 oz |
-| Frozen and/or cooked fresh or dried beans, such as red kidney, cranberry or lima (see notes) | 1 cup | 2 cups (about 12 ounces; 340g) | 4 cups |
-| Reserved bean-cooking water (plain water if using canned beans) | ¼ cup      | ½ cup (120ml)                                       | 1 cup        |
-| Kosher salt and freshly ground black pepper                    | to taste   | to taste                                            | to taste     |
-| Fresh basil leaves, torn                                       | ½ handful  | Small handful                                       | 2 handfuls   |
-
-## Instructions
-
-1. Using a broiler with the rack in the highest position, or working directly over a gas flame, char the poblano peppers, rotating them frequently, until the skin is blistered and black all over. Transfer to a heatproof bowl, cover with plastic, and let stand for 5 minutes. Rub the charred skin off with paper towels. Stem and seed the peppers, finely dice the flesh, and set aside.
-2. In a large Dutch oven, cook the bacon over medium heat, stirring, until the fat has rendered and the bacon is beginning to brown, about 5 minutes. Add the butter and stir until melted. Add the onion and garlic and cook, stirring, until they start to soften, about 3 minutes.
-3. Add the corn kernels and any corn milk you were able to express, along with the bell pepper and summer squash. Cook, stirring, until the vegetables have become tender, about 10 minutes.
-4. Stir in the beans and the reserved bean liquid (or water), along with the reserved poblano. Season with salt and pepper. Keep cooking, stirring, until the succotash is heated through and a buttery glaze coats the vegetables, about 5 minutes.
-5. Add the basil leaves, take it off the heat and serve. It can be refrigerated for up to 5 days, then rewarmed if you like, or served at room temperature.
+```dataviewjs
+await dv.view("scripts/scale", {
+  base: 8,
+  ingredients: [
+    { id: "poblano", name: "Poblano peppers", text: "6 ounces (170g; about 3 small or 2 medium)", q: 6, u: "ounces" },
+    { id: "bacon", name: "Thinly sliced bacon", text: "1 ounce (30g)", q: 1, u: ["ounce", "ounces"] },
+    { id: "butter", name: "Unsalted butter", text: "6 tablespoons (90g)", q: 6, u: ["tablespoon", "tablespoons"] },
+    { id: "onion", name: "Medium onion, finely diced", text: "1 (about 6 ounces; 170g)", q: 1 },
+    { id: "garlic", name: "Medium cloves garlic, minced", text: "2", q: 2 },
+    { id: "corn", name: "Fresh corn in the husk, shucked, kernels cut and cobs scraped of any corn milk", text: "5 pounds (about 6 to 7 ears)", q: 5, u: "pounds" },
+    { id: "bell", name: "Red (or orange or yellow) bell pepper, stemmed, seeded, finely diced", text: "One 6-ounce (170g)", q: 6, u: "ounces" },
+    { id: "squash", name: "Summer squash, finely diced", text: "12 ounces (340g; about 4 small yellow squash and/or zucchini)", q: 12, u: "ounces" },
+    { id: "beans", name: "Frozen and/or cooked fresh or dried beans, such as red kidney, cranberry or lima (see notes)", text: "2 cups (about 12 ounces; 340g)", q: 2, u: ["cup", "cups"] },
+    { id: "beanwater", name: "Reserved bean-cooking water (plain water if using canned beans)", text: "½ cup (120ml)", q: 0.5, u: ["cup", "cups"] },
+    { id: "saltpepper", name: "Kosher salt and freshly ground black pepper", text: "to taste", s: "to taste" },
+    { id: "basil", name: "Fresh basil leaves, torn", text: "Small handful", q: 1, u: ["small handful", "small handfuls"] },
+  ],
+  steps: [
+    "Using a broiler with the rack in the highest position, or working directly over a gas flame, char the poblano peppers ({poblano}), rotating them frequently, until the skin is blistered and black all over. Transfer to a heatproof bowl, cover with plastic, and let stand for 5 minutes. Rub the charred skin off with paper towels. Stem and seed the peppers, finely dice the flesh, and set aside.",
+    "In a large Dutch oven, cook the bacon ({bacon}) over medium heat, stirring, until the fat has rendered and the bacon is beginning to brown, about 5 minutes. Add the butter ({butter}) and stir until melted. Add the onion ({onion}) and garlic ({garlic}) and cook, stirring, until they start to soften, about 3 minutes.",
+    "Add the corn kernels ({corn}) and any corn milk you were able to express, along with the bell pepper ({bell}) and summer squash ({squash}). Cook, stirring, until the vegetables have become tender, about 10 minutes.",
+    "Stir in the beans ({beans}) and the reserved bean liquid (or water) ({beanwater}), along with the reserved poblano. Season with salt and pepper. Keep cooking, stirring, until the succotash is heated through and a buttery glaze coats the vegetables, about 5 minutes.",
+    "Add the basil leaves ({basil}), take it off the heat and serve. It can be refrigerated for up to 5 days, then rewarmed if you like, or served at room temperature.",
+  ],
+});
+```
 
 ## Notes
 

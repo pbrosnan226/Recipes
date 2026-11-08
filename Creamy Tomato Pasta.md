@@ -6,6 +6,7 @@ created: 2026-09-18
 course: Main Course
 cuisine: American
 servings: 4
+servings_wanted: 4
 prep_time: 5 minutes
 cook_time: 20 minutes
 total_time: 25 minutes
@@ -20,27 +21,31 @@ Quick pasta made with everyday ingredients and a silky tomato sauce.
 
 ![Creamy tomato pasta](https://www.saltandlavender.com/wp-content/uploads/2020/10/creamy-tomato-pasta-1.jpg)
 
-## Ingredients
+Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 
-| Ingredient                     | 2 servings            | 4 servings (base)     | 8 servings            |
-| ------------------------------ | --------------------- | --------------------- | --------------------- |
-| Uncooked pasta                 | 4 oz                  | 8 oz                  | 16 oz                 |
-| Butter                         | 1 tbsp                | 2 tbsp                | 4 tbsp                |
-| Garlic cloves, minced          | 1–1½                  | 2–3                   | 4–6                   |
-| Tomato paste                   | 1 tbsp                | 2 tbsp                | 4 tbsp                |
-| Tomato sauce                   | 7 oz (½ can)          | 1 (14 oz) can         | 2 (14 oz) cans        |
-| Heavy/whipping cream           | ⅜ cup                 | ¾ cup                 | 1½ cups               |
-| Italian seasoning              | ⅛ tsp                 | ¼ tsp                 | ½ tsp                 |
-| Salt and pepper                | to taste              | to taste              | to taste              |
-| Freshly grated parmesan cheese | to taste, for serving | to taste, for serving | to taste, for serving |
-
-## Instructions
-
-1. Bring a large pot of salted water to a boil and cook the pasta until al dente, following the package instructions.
-2. Meanwhile, once the pasta starts cooking, melt the butter in a skillet over medium-high heat. Add the garlic and sauté for about 1 minute, stirring constantly.
-3. Stir in the tomato paste, tomato sauce, cream, and Italian seasoning until smooth. Cook for about 5 minutes, or until thickened to your liking. It should bubble very gently, so turn the heat down if needed.
-4. Season with salt and pepper as needed (the author is generous with both). If the sauce is too acidic or tangy for your taste, add a pinch of sugar.
-5. Drain the pasta and toss it with the sauce, adding a splash of hot pasta water if the sauce gets too thick. Serve immediately with plenty of parmesan on top.
+```dataviewjs
+await dv.view("scripts/scale", {
+  base: 4,
+  ingredients: [
+    { id: "pasta", name: "Uncooked pasta", text: "8 oz", q: 8, u: "oz" },
+    { id: "butter", name: "Butter", text: "2 tbsp", q: 2, u: "tbsp" },
+    { id: "garlic", name: "Garlic cloves, minced", text: "2–3", q: [2, 3] },
+    { id: "paste", name: "Tomato paste", text: "2 tbsp", q: 2, u: "tbsp" },
+    { id: "sauce", name: "Tomato sauce", text: "1 (14 oz) can", q: 1, u: ["(14 oz) can", "(14 oz) cans"] },
+    { id: "cream", name: "Heavy/whipping cream", text: "¾ cup", q: 0.75, u: ["cup", "cups"] },
+    { id: "italian", name: "Italian seasoning", text: "¼ tsp", q: 0.25, u: "tsp" },
+    { id: "saltpepper", name: "Salt and pepper", text: "to taste", s: "to taste" },
+    { id: "parmesan", name: "Freshly grated parmesan cheese", text: "to taste, for serving", s: "to taste, for serving" },
+  ],
+  steps: [
+    "Bring a large pot of salted water to a boil and cook the pasta ({pasta}) until al dente, following the package instructions.",
+    "Meanwhile, once the pasta starts cooking, melt the butter ({butter}) in a skillet over medium-high heat. Add the garlic ({garlic}) and sauté for about 1 minute, stirring constantly.",
+    "Stir in the tomato paste ({paste}), tomato sauce ({sauce}), cream ({cream}), and Italian seasoning ({italian}) until smooth. Cook for about 5 minutes, or until thickened to your liking. It should bubble very gently, so turn the heat down if needed.",
+    "Season with salt and pepper as needed (the author is generous with both). If the sauce is too acidic or tangy for your taste, add a pinch of sugar.",
+    "Drain the pasta and toss it with the sauce, adding a splash of hot pasta water if the sauce gets too thick. Serve immediately with plenty of parmesan on top.",
+  ],
+});
+```
 
 ## Notes
 

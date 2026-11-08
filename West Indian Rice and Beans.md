@@ -9,6 +9,7 @@ created: 2026-09-24
 course: Rice
 cuisine: Caribbean
 servings: 4
+servings_wanted: 4
 tags:
   - recipe
   - rice
@@ -20,23 +21,27 @@ Rice simmered in vegetable broth and coconut milk with kidney beans, jalapeño, 
 
 ![West Indian rice and beans](http://web.archive.org/web/20210504081850im_/https://www.seriouseats.com/recipes/images/200903301westindianbeansandrice.jpg)
 
-## Ingredients
+Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 
-| Ingredient                              | Half batch       | As written (4 servings) | Double batch        |
-| --------------------------------------- | ---------------- | ----------------------- | ------------------- |
-| Vegetable broth                         | 1 cup            | 2 cups                  | 4 cups              |
-| Kidney beans, drained and rinsed        | ½ (15-ounce) can | 1 can (15-ounce)        | 2 (15-ounce) cans   |
-| Canned unsweetened coconut milk         | ½ cup            | 1 cup                   | 2 cups              |
-| Jalapeño, deseeded and minced           | ½                | 1                       | 2                   |
-| Dried thyme                             | ½ teaspoon       | 1 teaspoon              | 2 teaspoons         |
-| Ground allspice                         | ¼ teaspoon       | ½ teaspoon              | 1 teaspoon          |
-| Medium-grain white rice                 | ⅜ cup            | ¾ cup                   | 1½ cups             |
-| Thinly sliced green onions              | ½ cup            | 1 cup                   | 2 cups              |
-
-## Instructions
-
-1. In a medium or large saucepan, combine everything except the rice and green onion, and bring to a boil. Stir in the rice, reduce the heat to a gentle simmer, and cook until the rice is almost tender and most of the liquid is absorbed, about 20 minutes.
-2. Stir in most of the green onions, holding some back for garnish. Keep cooking until the rice is completely tender. Serve with the remaining green onions on top.
+```dataviewjs
+await dv.view("scripts/scale", {
+  base: 4,
+  ingredients: [
+    { id: "broth", name: "Vegetable broth", text: "2 cups", q: 2, u: ["cup", "cups"] },
+    { id: "beans", name: "Kidney beans, drained and rinsed", text: "1 can (15-ounce)", q: 1, u: ["can (15-ounce)", "cans (15-ounce)"] },
+    { id: "coconut", name: "Canned unsweetened coconut milk", text: "1 cup", q: 1, u: ["cup", "cups"] },
+    { id: "jalapeno", name: "Jalapeño, deseeded and minced", text: "1", q: 1 },
+    { id: "thyme", name: "Dried thyme", text: "1 teaspoon", q: 1, u: ["teaspoon", "teaspoons"] },
+    { id: "allspice", name: "Ground allspice", text: "½ teaspoon", q: 0.5, u: ["teaspoon", "teaspoons"] },
+    { id: "rice", name: "Medium-grain white rice", text: "¾ cup", q: 0.75, u: ["cup", "cups"] },
+    { id: "greenonions", name: "Thinly sliced green onions", text: "1 cup", q: 1, u: ["cup", "cups"] },
+  ],
+  steps: [
+    "In a medium or large saucepan, combine everything except the rice and green onion — the broth ({broth}), kidney beans ({beans}), coconut milk ({coconut}), jalapeño ({jalapeno}), thyme ({thyme}) and allspice ({allspice}) — and bring to a boil. Stir in the rice ({rice}), reduce the heat to a gentle simmer, and cook until the rice is almost tender and most of the liquid is absorbed, about 20 minutes.",
+    "Stir in most of the green onions ({greenonions} in total), holding some back for garnish. Keep cooking until the rice is completely tender. Serve with the remaining green onions on top.",
+  ],
+});
+```
 
 ## Notes
 
