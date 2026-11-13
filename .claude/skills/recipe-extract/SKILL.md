@@ -131,6 +131,7 @@ servings_wanted: <base servings>
 prep_time: <prepTime>
 cook_time: <cookTime>
 total_time: <totalTime>
+total_minutes: <total_time converted to whole minutes; omit when the source gives no total time>
 tags:
   - recipe
   - <from the site's own categories/keywords>
@@ -164,6 +165,7 @@ The photo is hot-linked, so check it before trusting it: prefer the full-size Wo
 
 ## 5. Close out
 
-Tell the user the file path and summarize the recipe in chat: servings, total time, and the shape of
-it, so they don't have to open the note to know what they saved. For a batch, report anything that
-failed and why — blocked, dead, or no URL given — instead of quietly dropping it.
+Give the file link and nothing about the recipe itself; the note holds it. Mention only what went
+wrong or was left out (no photo, no nutrition, a blocked page, a dead URL) and any judgment call the
+user might want to change. For a batch, report anything that failed and why instead of quietly
+dropping it.

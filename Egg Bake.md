@@ -12,6 +12,7 @@ servings_wanted: 12
 prep_time: 20 minutes
 cook_time: 45 minutes
 total_time: 1 hour 30 minutes
+total_minutes: 90
 tags:
   - recipe
   - breakfast

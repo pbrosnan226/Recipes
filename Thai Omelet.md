@@ -12,6 +12,7 @@ servings_wanted: 1
 prep_time: 5 minutes
 cook_time: 5 minutes
 total_time: 10 minutes
+total_minutes: 10
 tags:
   - recipe
   - eggs

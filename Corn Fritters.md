@@ -11,6 +11,7 @@ servings_wanted: 15
 prep_time: 15 minutes
 cook_time: 20 minutes
 total_time: 45 minutes
+total_minutes: 45
 tags:
   - recipe
   - corn

@@ -11,6 +11,7 @@ servings_wanted: 4
 prep_time: 5 minutes
 cook_time: 20 minutes
 total_time: 25 minutes
+total_minutes: 25
 tags:
   - recipe
   - shrimp

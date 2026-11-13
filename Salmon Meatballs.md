@@ -10,6 +10,7 @@ servings: 4
 servings_wanted: 4
 prep_time: 20 minutes
 total_time: 40 minutes
+total_minutes: 40
 tags:
   - recipe
   - salmon

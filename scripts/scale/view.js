@@ -10,6 +10,7 @@
 //                        "to taste" / "pinch" and set s to the text to show at every size
 //                  u     unit, or [singular, plural]
 //                  s     fixed text shown at every size
+//                  lead  text shown before the scaled amount ("up to")
 //                  pre   grams of a "250g / ½ lb" pair, scaled and shown before the amount
 //                  group a sub-heading the source itself names
 //                  hidden true for a portion of another ingredient ("1 teaspoon of the salt"):
@@ -39,7 +40,8 @@ const num = (n) => {
   return (approx ? "about " : "") + (out || "0");
 };
 const unit = (u, plural) => (!u ? "" : " " + (Array.isArray(u) ? (plural ? u[1] : u[0]) : u));
-const amount = (ing) => {
+const amount = (ing) => (ing.lead ? ing.lead + " " : "") + amountOf(ing);
+const amountOf = (ing) => {
   if (ing.s !== undefined) return ing.s;
   const q = ing.q;
   if (ing.pre) return Math.round(ing.pre * k) + "g / " + num(q * k) + unit(ing.u, q * k > 1);

@@ -10,6 +10,7 @@ servings_wanted: 12
 prep_time: 5 mins
 cook_time: 35 mins
 total_time: 40 mins
+total_minutes: 40
 tags:
   - recipe
 ---

@@ -12,6 +12,7 @@ servings_wanted: 4
 prep_time: 4 minutes
 cook_time: 8 minutes
 total_time: 12 minutes
+total_minutes: 12
 tags:
   - recipe
   - chicken

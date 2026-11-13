@@ -1,0 +1,41 @@
+filters:
+  and:
+    - file.hasTag("recipe")
+properties:
+  file.name:
+    displayName: Recipe
+  note.tags:
+    displayName: Tags
+  note.site:
+    displayName: Site
+  note.author:
+    displayName: Author
+  note.servings:
+    displayName: Servings
+  note.prep_time:
+    displayName: Prep
+  note.cook_time:
+    displayName: Cook
+  note.total_time:
+    displayName: Total
+  note.total_minutes:
+    displayName: Total (min)
+  note.created:
+    displayName: Added
+views:
+  - type: table
+    name: All recipes
+    order:
+      - file.name
+      - note.tags
+      - note.site
+      - note.author
+      - note.servings
+      - note.prep_time
+      - note.cook_time
+      - note.total_time
+      - note.total_minutes
+      - note.created
+    sort:
+      - property: file.name
+        direction: ASC

@@ -12,6 +12,7 @@ servings_wanted: 4
 prep_time: 5 minutes
 cook_time: 15 minutes
 total_time: 20 minutes
+total_minutes: 20
 tags:
   - recipe
   - chickpeas

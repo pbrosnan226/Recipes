@@ -11,6 +11,7 @@ servings_wanted: 4
 prep_time: 25 minutes
 cook_time: 15 minutes
 total_time: 40 minutes
+total_minutes: 40
 tags:
   - recipe
   - beef

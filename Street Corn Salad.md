@@ -10,6 +10,7 @@ servings: 4
 servings_wanted: 4
 cook_time: 20 minutes
 total_time: 20 minutes
+total_minutes: 20
 tags:
   - recipe
   - corn

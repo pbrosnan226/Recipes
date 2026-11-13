@@ -8,6 +8,7 @@ servings: 50
 servings_wanted: 50
 prep_time: 10 minutes
 total_time: 10 minutes
+total_minutes: 10
 tags:
   - recipe
   - sauce
