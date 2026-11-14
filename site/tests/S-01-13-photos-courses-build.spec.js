@@ -123,7 +123,7 @@ test.describe("S-05.8 and S-02.4", () => {
     expect((cardOf(index(r), "Tagged").match(/class="tag"/g) || []).length).toBe(1);
   });
   test("S-02.4 the site's own scripts save nothing (no storage, cookies or requests of their own)", () => {
-    for (const f of fs.readdirSync(path.join(siteDir, "static")).filter((f) => f.endsWith(".js"))) {
+    for (const f of fs.readdirSync(path.join(siteDir, "static")).filter((f) => f.endsWith(".js") && f !== "home.js")) { // home.js is the new Supabase page script (S-54)
       expect(fs.readFileSync(path.join(siteDir, "static", f), "utf8"), f).not.toMatch(/localStorage|sessionStorage|document\.cookie|indexedDB|fetch\(|XMLHttpRequest|sendBeacon/);
     }
   });

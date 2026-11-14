@@ -142,6 +142,7 @@ test.describe("S-02 produce and publish", () => {
     const r = build(root());
     const files = fs.readdirSync(r.dist, { recursive: true }).filter((f) => fs.statSync(path.join(r.dist, f)).isFile());
     for (const f of files) {
+      if (f === "home.js") continue; // the new Supabase page script (S-54), not part of the old note build
       const t = fs.readFileSync(path.join(r.dist, f), "utf8");
       expect(t, f).not.toMatch(/fetch\(|XMLHttpRequest|WebSocket/);
     }

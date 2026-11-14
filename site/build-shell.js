@@ -15,7 +15,7 @@ const first = (...names) => names.map((n) => [n, (process.env[n] || "").trim()])
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-function page(title, bodyMain) {
+function page(title, bodyMain, scripts = "") {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,6 +34,7 @@ ${bodyMain}
 </main>
 <script src="/config.js"></script>
 <script src="/scale.js"></script>
+${scripts}
 </body></html>
 `;
 }
@@ -53,14 +54,14 @@ function main() {
   fs.rmSync(dist, { recursive: true, force: true });
   fs.rmSync(tmp, { recursive: true, force: true });
   fs.mkdirSync(tmp, { recursive: true });
-  for (const f of ["style.css", "scale.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
+  for (const f of ["style.css", "scale.js", "home.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
   fs.cpSync(path.join(staticDir, "fonts"), path.join(tmp, "fonts"), { recursive: true });
   fs.writeFileSync(
     path.join(tmp, "config.js"),
     `window.RECIPES_CONFIG = ${JSON.stringify({ supabaseUrl: url[1].replace(/\/+$/, ""), supabaseKey: key[1] })};\n`
   );
   fs.writeFileSync(path.join(tmp, "robots.txt"), "User-agent: *\nDisallow: /\n");
-  fs.writeFileSync(path.join(tmp, "index.html"), page("Recipes", `<div class="top"><h1>Everything we cook.</h1></div>\n<div class="grid" id="grid"></div>`));
+  fs.writeFileSync(path.join(tmp, "index.html"), page("Recipes", `<div class="top"><h1>Everything we cook.</h1><div id="tools" style="display:contents"></div></div>\n<div id="home"></div>`, '<script src="/home.js"></script>'));
   fs.writeFileSync(path.join(tmp, "recipe.html"), page("Recipe", `<article id="recipe"></article>`));
   fs.renameSync(tmp, dist);
   console.log(`Published the page shell into ${dist} (settings read from ${url[0]} and ${key[0]}).`);
