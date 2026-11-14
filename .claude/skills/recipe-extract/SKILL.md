@@ -179,6 +179,31 @@ Sauce. When the source's own category is exactly one of those words (ignoring up
 write that course, in its canonical capitalisation (Breakfast, Main, Side, Soup, Dessert, Sauce) even though matching the source's category ignores case. When it isn't, or the source gives none, ask the Owner to choose one of the six
 and write their choice. Never write a `course` outside the list.
 
+## Check before saving
+
+After reading the page (step 1) and before anything is saved to the database or uploaded to
+Storage, build the recipe in the shape `supabase/import-notes.js` gives `recipes.save_recipe`
+(`source_url`, `created`, `base_amount`, `amount_noun`, `course`, `ingredients` with `key`,
+`quantity`, `fixed_text`, and `steps`) and run it through the checker:
+
+```bash
+node supabase/check-recipe.js <recipe.json>
+```
+
+First confirm the page gave you the recipe's data and its photo address (a missing photo is handled
+under Photo, not a failure here). The checker then confirms:
+
+- the recipe has a source;
+- it has a created date (a real YYYY-MM-DD date);
+- it says what the source makes: an amount and servings or batches;
+- its course is one of Breakfast, Main, Side, Soup, Dessert or Sauce (chosen as under Course);
+- every ingredient has a quantity or fixed text;
+- every `{key}` in a step is the key of an ingredient of this recipe.
+
+When every check passes (it prints `OK`), go on to save the recipe. When any check fails, save
+nothing and upload nothing, and tell the Owner in chat which check failed, using the checker's lines.
+Then ask the Owner for what is missing or fix the cause, and run the checks again.
+
 ## 5. Close out
 
 Give the file link and nothing about the recipe itself; the note holds it. Mention only what went
