@@ -8,6 +8,6 @@ module.exports = defineConfig({
   projects: [{ name: "iPhone 17", use: { ...devices["iPhone 17"] } }],
   webServer: [
     { command: "node tests/support/fixture-server.js", url: "http://localhost:8899/index.html", reuseExistingServer: true, timeout: 60000 },
-    { command: "npm run build && npm run preview", url: "http://localhost:8888/index.html", reuseExistingServer: true, timeout: 120000 },
+    { command: "npm run build:notes && npm run preview", url: "http://localhost:8888/index.html", reuseExistingServer: true, timeout: 120000 },
   ],
 });

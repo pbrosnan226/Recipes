@@ -21,3 +21,6 @@ npm run preview    # serves site/dist at http://localhost:8888 (PORT=... to chan
 - Fonts (Fraunces, Inter; SIL OFL 1.1) are in `static/fonts/`.
 - `build.js` writes into `dist.tmp` and renames to `dist` only on success; on any failure `dist` is removed (nothing to publish).
 - `../netlify.toml` (repo root): sets `base = "site"`, the build command and `publish = "dist"` (relative to the base), so Netlify needs no Base directory setting.
+
+## Netlify build (S-63)
+`npm run build` runs `build-shell.js`: it publishes the page shell (`index.html`, `recipe.html`, `style.css`, `scale.js`, fonts, `robots.txt`) and `config.js`, which holds the Supabase project address and public key read from the build environment (`SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`). It reads no note and makes no request. The build fails when either is missing. The old note-reading build is `npm run build:notes` (the Playwright config uses it for the old UI tests).

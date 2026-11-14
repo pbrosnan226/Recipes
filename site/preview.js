@@ -4,12 +4,13 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const dist = path.join(__dirname, "dist");
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".txt": "text/plain" };
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".txt": "text/plain", ".woff2": "font/woff2" };
 const port = Number(process.env.PORT) || 8888;
 http
   .createServer((req, res) => {
     let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
     if (p.endsWith("/")) p += "index.html";
+    else if (!path.extname(p)) p += ".html"; // like Netlify: /recipe -> recipe.html
     const file = path.join(dist, path.normalize(p));
     if (!file.startsWith(dist) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
       res.writeHead(404).end("Not found");

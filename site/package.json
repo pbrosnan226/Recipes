@@ -4,7 +4,8 @@
   "private": true,
   "description": "Static recipe website generated from the vault's recipe notes",
   "scripts": {
-    "build": "node build.js",
+    "build": "node build-shell.js",
+    "build:notes": "node build.js",
     "preview": "node preview.js"
   },
   "engines": {

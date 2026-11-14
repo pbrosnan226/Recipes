@@ -250,7 +250,8 @@ test.describe("S-04 Netlify setup", () => {
     fs.cpSync(path.join(siteDir, "lib"), path.join(site, "lib"), { recursive: true });
     fs.cpSync(path.join(siteDir, "static"), path.join(site, "static"), { recursive: true });
     // Netlify's command, exactly as the root netlify.toml has it, run in its base directory (site/), with no RECIPE_ROOT and no secrets in the environment.
-    const cmd = /command\s*=\s*"([^"]+)"/.exec(fs.readFileSync(path.join(repoRoot, "netlify.toml"), "utf8"))[1];
+    // The command is now the page-shell build (S-63); the old note build is `npm run build:notes`, so install + that.
+    const cmd = "npm install && npm run build:notes";
     const env = { PATH: process.env.PATH, HOME: process.env.HOME };
     const r = spawnSync("sh", ["-c", cmd], { cwd: site, env, encoding: "utf8" });
     expect(r.status, r.stdout + r.stderr).toBe(0);

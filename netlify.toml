@@ -1,10 +1,11 @@
 # Netlify settings for the recipe site. The code lives in site/; the notes are read from the repo root.
+# The build is site/build-shell.js (page shell only). It reads SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY from the Netlify settings.
 # `base` makes Netlify build from site/ with no Base directory setting in the dashboard.
 # Paths below (publish) are relative to the base directory, so the output is site/dist.
 
 [build]
   base = "site"
-  command = "npm install && npm run build"
+  command = "npm run build"
   publish = "dist"
 
 [build.environment]
@@ -14,3 +15,9 @@
   for = "/*"
   [headers.values]
     X-Robots-Tag = "noindex"
+
+# Old recipe addresses (S-60): /recipes/<slug>.html -> /recipe?name=<slug>
+[[redirects]]
+  from = "/recipes/:slug.html"
+  to = "/recipe?name=:slug"
+  status = 301
