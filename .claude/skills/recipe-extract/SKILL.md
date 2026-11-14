@@ -204,6 +204,29 @@ When every check passes (it prints `OK`), go on to save the recipe. When any che
 nothing and upload nothing, and tell the Owner in chat which check failed, using the checker's lines.
 Then ask the Owner for what is missing or fix the cause, and run the checks again.
 
+## Save to the database
+
+Once the checker prints `OK` (and the Owner has said OK if the name or slug already exists), save
+the recipe before downloading its photo. The recipe JSON is the one you checked; give the dish the
+name the Owner gives it (the slug is made from it: lowercase, spaces and punctuation as hyphens),
+keep times, nutrient amounts, the nutrition basis line, the servings label and ingredient text as
+the source writes them with no conversion, set `total_minutes` to the total time in whole minutes
+(`null` when the source gives no total time), `course` to one of the six existing courses (the save
+creates none), `tags` in the order the recipe lists them, and `notes` as `{level, text}` with level
+0, or 1 for a sub-note listed under the note before it (the first note is level 0).
+
+```bash
+SUPABASE_SERVICE_KEY=... node supabase/save-recipe.js <recipe.json>
+```
+
+Never read, ask for or print the key; it comes from the environment. The recipe, aliases, tags,
+serving options, ingredients, steps, notes and nutrients are saved in one transaction: all of them
+or none. This writes no note and saves no file in `images/`.
+
+- `SAVED <id>`: go on to the photo.
+- `SAVE FAILED: <why>`: nothing of the recipe is in the database. Tell the Owner in chat that the
+  save failed and give the reason, and download and upload no photo.
+
 ## 5. Close out
 
 Give the file link and nothing about the recipe itself; the note holds it. Mention only what went
