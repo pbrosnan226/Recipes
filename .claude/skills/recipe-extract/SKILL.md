@@ -122,7 +122,15 @@ converting or editing. Name the file after the recipe, with the extension of the
 downloaded (`French Toast.jpg` when a JPEG came down, `French Toast.webp` for a WebP). The upload uses
 the service key from the environment variable `SUPABASE_SERVICE_KEY`. Then set the recipe's photo path
 to the uploaded file's path in the bucket. The recipe keeps no address of the photo on the source
-site. Save no photo in `images/`.
+site. Save no photo in `images/`. One script does the download, the upload and the photo path
+(`<id>` is the number after `SAVED`):
+
+```bash
+SUPABASE_SERVICE_KEY=... node supabase/upload-photo.js "<recipe name>" "<photo address>" <id>
+```
+
+It prints `PHOTO UPLOADED <file name>` or `PHOTO FAILED: <why>`; on a failure see "When the photo is
+missing". The photo then shows on the recipe's card and page with no push and no rebuild.
 
 Never read the service key, and never print it in chat, in a command, in a file or in a log.
 

@@ -22,7 +22,9 @@ const section = (text, heading) => {
   const n = rest.slice(3).search(/\n## /);
   return n < 0 ? rest : rest.slice(0, n + 3);
 };
-const head = (file) => execFileSync('git', ['show', 'HEAD:' + file], { cwd: root, encoding: 'utf8' });
+// Compare against the commit before S-53 (52b9a48), not HEAD, so the test still means the same after S-53 is committed.
+const PRE_S53 = '52b9a48~1';
+const head = (file) => execFileSync('git', ['show', PRE_S53 + ':' + file], { cwd: root, encoding: 'utf8' });
 
 test('S-53.1 description and opening paragraph say save to the recipes schema in Supabase, not a vault note', () => {
   const desc = skill.match(/^description:(.*)$/m)[1];
@@ -125,7 +127,7 @@ test('S-53.11 content rules kept', () => {
   assert.ok(s.includes('**Omit what the source doesn\'t publish.**') && /Never fill a gap with a guess/.test(s));
 });
 
-test('S-53.12 extraction ladder (section 1) is identical to git HEAD', () => {
+test('S-53.12 extraction ladder (section 1) is identical to the pre-S-53 commit', () => {
   const now = section(skill, '## 1. Pull the source data');
   const old = section(head(SKILL_PATH), '## 1. Pull the source data');
   assert.strictEqual(now, old);
