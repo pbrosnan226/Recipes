@@ -204,9 +204,32 @@ When every check passes (it prints `OK`), go on to save the recipe. When any che
 nothing and upload nothing, and tell the Owner in chat which check failed, using the checker's lines.
 Then ask the Owner for what is missing or fix the cause, and run the checks again.
 
+## Ask before replacing a recipe
+
+After the checker prints `OK` and before anything is saved or uploaded, look for an existing recipe
+with the same name or the same slug (the slug is the name in lowercase, spaces and punctuation as
+hyphens). This only reads the database:
+
+```bash
+SUPABASE_SERVICE_KEY=... node supabase/find-clash.js <recipe.json>
+```
+
+- `NO CLASH`: save without asking.
+- `CLASH "<name>" ...`: tell the Owner in chat which existing recipe it clashes with and whether it
+  is the same name or a different name with the same slug, and ask for their OK to replace it. If the script printed several CLASH lines, list every one: the Owner's OK covers all of them, and the save replaces every one of them; if they don't want all of them replaced, save nothing.
+  Until they say OK, change nothing in the database and nothing in Storage: no save, no upload.
+  - Not OK: save nothing; the existing recipe stays as it is.
+  - OK: save as under "Save to the database". The save replaces the whole existing recipe (its data
+    and all its parts) with the new one, all or nothing. If it fails, the existing recipe is left as
+    it was; tell the Owner. With a photo, the upload overwrites the existing photo file. With no
+    photo (download or upload fails, or the source gives none), the old photo file stays in the
+    bucket unused and the recipe's photo path is empty: name the old file (the `photo file:` in the
+    clash line) in chat so the Owner can delete it.
+- `CLASH CHECK FAILED`: save nothing and tell the Owner.
+
 ## Save to the database
 
-Once the checker prints `OK` (and the Owner has said OK if the name or slug already exists), save
+Once the checker prints `OK` (and, if the name or slug already exists, the Owner has said OK under "Ask before replacing a recipe"), save
 the recipe before downloading its photo. The recipe JSON is the one you checked; give the dish the
 name the Owner gives it (the slug is made from it: lowercase, spaces and punctuation as hyphens),
 keep times, nutrient amounts, the nutrition basis line, the servings label and ingredient text as

@@ -1,12 +1,12 @@
 -- recipes.save_recipe: saves one recipe and all its parts together, or none of them (S-44.11).
--- If a recipe with the same name already exists it is replaced whole (S-44.12); the import script
+-- If a recipe with the same name or the same slug already exists it is replaced whole (S-44.12); the import script
 -- only asks for that when the name is on the list the Owner confirmed (S-43.9).
 -- Only the service key can run it. The public key (anon, authenticated) cannot.
 -- Touches only the `recipes` schema. Not applied until the Owner approves (S-38.9).
 
 begin;
 
-create function recipes.save_recipe(j jsonb)
+create or replace function recipes.save_recipe(j jsonb)
 returns uuid
 language plpgsql
 security invoker
@@ -15,7 +15,7 @@ as $$
 declare
   rid uuid;
 begin
-  delete from recipe where name = j->>'name';
+  delete from recipe where name = j->>'name' or slug = j->>'slug';
 
   insert into recipe (
     course_id, name, slug, source_url, archived_url, site, author, description, photo_path,
