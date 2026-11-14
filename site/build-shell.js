@@ -23,6 +23,7 @@ function page(title, bodyMain, scripts = "") {
 <meta name="color-scheme" content="light dark">
 <title>${esc(title)}</title>
 <link rel="stylesheet" href="/style.css">
+<noscript><style>main>:not(noscript){display:none!important}</style></noscript>
 </head>
 <body>
 <header class="hdr">
@@ -30,6 +31,7 @@ function page(title, bodyMain, scripts = "") {
 <nav class="main"><a class="on" href="/">Browse</a></nav>
 </header>
 <main>
+<noscript><p class="nojs empty">Turn on JavaScript to see recipes.</p></noscript>
 ${bodyMain}
 </main>
 <script src="/config.js"></script>
