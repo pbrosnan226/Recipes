@@ -19,6 +19,7 @@ The Owner pushes recipe changes to GitHub (the push, the GitHub connection and t
 - S-04.4 Verify that the build reads the recipe notes from the repo root even though its code is in `site/`.
 - S-04.5 (changed 2026-11-14) Verify that the build command doesn't need a server, a login or any secret to run; (unchanged by the redesign: sign-in and favorites are deferred, so it reads no Supabase settings).
 - S-04.6 Verify that nothing in the repo pushes to GitHub or deploys by itself.
+- S-04.7 (added 2026-11-14) Verify that the repo-root Netlify configuration sets the base directory to `site`, so the build works without any Base directory setting in Netlify.
 
 ## Post-conditions
 - A push to GitHub starts the build, which runs S-01 and S-02 (or S-03 on failure).

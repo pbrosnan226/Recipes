@@ -1,8 +1,9 @@
 # Netlify settings for the recipe site. The code lives in site/; the notes are read from the repo root.
-# In Netlify set "Base directory" to `site` so this file is picked up (or move/copy this file to the repo root
-# and change the paths to `cd site && npm install && npm run build` and `site/dist`).
+# `base` makes Netlify build from site/ with no Base directory setting in the dashboard.
+# Paths below (publish) are relative to the base directory, so the output is site/dist.
 
 [build]
+  base = "site"
   command = "npm install && npm run build"
   publish = "dist"
 

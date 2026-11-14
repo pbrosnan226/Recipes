@@ -160,13 +160,13 @@ test.describe("S-02 produce and publish", () => {
     const htmls = fs.readdirSync(r.dist, { recursive: true }).filter((f) => f.endsWith(".html"));
     expect(htmls.length).toBe(3);
     for (const f of htmls) expect(fs.readFileSync(path.join(r.dist, f), "utf8")).toContain('<meta name="robots" content="noindex">');
-    expect(fs.readFileSync(path.join(siteDir, "netlify.toml"), "utf8")).toContain("X-Robots-Tag");
+    expect(fs.readFileSync(path.join(repoRoot, "netlify.toml"), "utf8")).toContain("X-Robots-Tag");
   });
   test("S-02.7 robots.txt disallows all crawling", () => {
     expect(fs.readFileSync(path.join(build(root()).dist, "robots.txt"), "utf8")).toMatch(/User-agent: \*\s+Disallow: \/\s*$/);
   });
   test("S-02.8 nothing in the site code pushes or deploys", () => {
-    const files = ["build.js", "preview.js", "package.json", "netlify.toml", ...fs.readdirSync(path.join(siteDir, "lib")).map((f) => "lib/" + f)];
+    const files = ["build.js", "preview.js", "package.json", "../netlify.toml", ...fs.readdirSync(path.join(siteDir, "lib")).map((f) => "lib/" + f)];
     for (const f of files) expect(fs.readFileSync(path.join(siteDir, f), "utf8"), f).not.toMatch(/git push|netlify deploy|netlify-cli|child_process|gh pr|\bcurl\b/);
   });
   test("S-02.9 a rebuild shows new and changed recipes and drops removed ones", () => {
@@ -225,12 +225,18 @@ test.describe("S-03 keep the previous site on failure", () => {
 
 test.describe("S-04 Netlify setup", () => {
   test("S-04.1 the site's code lives in site/", () => {
-    for (const f of ["build.js", "package.json", "netlify.toml", "lib/read.js"]) expect(fs.existsSync(path.join(repoRoot, "site", f)), f).toBe(true);
+    for (const f of ["build.js", "package.json", "lib/read.js"]) expect(fs.existsSync(path.join(repoRoot, "site", f)), f).toBe(true);
   });
   test("S-04.2 netlify.toml names the build command and publish folder", () => {
-    const t = fs.readFileSync(path.join(siteDir, "netlify.toml"), "utf8");
+    const t = fs.readFileSync(path.join(repoRoot, "netlify.toml"), "utf8");
     expect(t).toMatch(/^\s*command\s*=\s*".*npm run build.*"/m);
     expect(t).toMatch(/^\s*publish\s*=\s*"dist"/m);
+    expect(fs.existsSync(path.join(siteDir, "netlify.toml")), "only one Netlify config").toBe(false);
+  });
+  test("S-04.7 the repo-root netlify.toml sets the base directory to site", () => {
+    const t = fs.readFileSync(path.join(repoRoot, "netlify.toml"), "utf8");
+    expect(/\[build\]([^[]*)/.exec(t)[1]).toMatch(/^\s*base\s*=\s*"site"\s*$/m);
+    expect(fs.existsSync(path.join(repoRoot, "site", "package.json"))).toBe(true);
   });
   test("S-04.3 and S-04.4 from a clean checkout: install + build, notes read from the repo root", () => {
     test.setTimeout(180000);
@@ -240,11 +246,11 @@ test.describe("S-04 Netlify setup", () => {
     fs.copyFileSync(path.join(repoRoot, "scripts", "scale", "view.js"), path.join(repo, "scripts", "scale", "view.js"));
     const site = path.join(repo, "site");
     fs.mkdirSync(site);
-    for (const f of ["build.js", "preview.js", "package.json", "package-lock.json", "netlify.toml"]) fs.copyFileSync(path.join(siteDir, f), path.join(site, f));
+    for (const f of ["build.js", "preview.js", "package.json", "package-lock.json"]) fs.copyFileSync(path.join(siteDir, f), path.join(site, f));
     fs.cpSync(path.join(siteDir, "lib"), path.join(site, "lib"), { recursive: true });
     fs.cpSync(path.join(siteDir, "static"), path.join(site, "static"), { recursive: true });
-    // Netlify's command, exactly as netlify.toml has it, with no RECIPE_ROOT and no secrets in the environment.
-    const cmd = /command\s*=\s*"([^"]+)"/.exec(fs.readFileSync(path.join(siteDir, "netlify.toml"), "utf8"))[1];
+    // Netlify's command, exactly as the root netlify.toml has it, run in its base directory (site/), with no RECIPE_ROOT and no secrets in the environment.
+    const cmd = /command\s*=\s*"([^"]+)"/.exec(fs.readFileSync(path.join(repoRoot, "netlify.toml"), "utf8"))[1];
     const env = { PATH: process.env.PATH, HOME: process.env.HOME };
     const r = spawnSync("sh", ["-c", cmd], { cwd: site, env, encoding: "utf8" });
     expect(r.status, r.stdout + r.stderr).toBe(0);

@@ -20,4 +20,4 @@ npm run preview    # serves site/dist at http://localhost:8888 (PORT=... to chan
 - Photos: a note's `![](images/<name>.<ext>)` line is copied from the repo's `images/` into `dist/images/`; a missing file, an http(s) address or an invalid `course` value gives a `NOTE` line in the build log and the recipe is still built.
 - Fonts (Fraunces, Inter; SIL OFL 1.1) are in `static/fonts/`.
 - `build.js` writes into `dist.tmp` and renames to `dist` only on success; on any failure `dist` is removed (nothing to publish).
-- `netlify.toml`: set Netlify's Base directory to `site` (see the file).
+- `../netlify.toml` (repo root): sets `base = "site"`, the build command and `publish = "dist"` (relative to the base), so Netlify needs no Base directory setting.
