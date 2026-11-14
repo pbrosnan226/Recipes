@@ -1,6 +1,5 @@
 // Recipe page (S-57): reads the slug from /recipe?name=<slug>, loads that recipe and its parts from Supabase
-// with the public read-only key (GET only), and shows it at what the source makes. The servings dropdown,
-// ticking and Cook mode are other stories (S-61 and later).
+// with the public read-only key (GET only), and shows it at what the source makes. The servings dropdown rescales it in the browser (S-61). Ticking and Cook mode are other stories.
 (function () {
   var cfg = window.RECIPES_CONFIG || {};
   var base = (cfg.supabaseUrl || "").replace(/\/+$/, "");
@@ -74,12 +73,18 @@
     var times = [["Prep", r.prep_time], ["Cook", r.cook_time], ["Total", r.total_time]].filter(function (t) { return t[1]; });
     document.title = r.name;
 
-    var ingHtml = sc.groups.map(function (g) {
-      return (g.name ? '<li class="sub">' + esc(g.name) + "</li>" : "") + g.rows.map(function (x) {
-        return '<li><label><input type="checkbox"><span>' + ingredientHtml(x) + "</span></label></li>";
+    function ingListHtml(sc) {
+      return sc.groups.map(function (g) {
+        return (g.name ? '<li class="sub">' + esc(g.name) + "</li>" : "") + g.rows.map(function (x) {
+          return '<li><label><input type="checkbox"><span>' + ingredientHtml(x) + "</span></label></li>";
+        }).join("\n");
       }).join("\n");
-    }).join("\n");
-    var stepHtml = sc.steps.map(function (s, i) { return '<li><span class="n">' + (i + 1) + "</span><p>" + esc(s) + "</p></li>"; }).join("\n");
+    }
+    function stepListHtml(sc) {
+      return sc.steps.map(function (s, i) { return '<li><span class="n">' + (i + 1) + "</span><p>" + esc(s) + "</p></li>"; }).join("\n");
+    }
+    var ingHtml = ingListHtml(sc);
+    var stepHtml = stepListHtml(sc);
 
     var notes = r.recipe_note.slice().sort(byPos), noteHtml;
     var items = [];
@@ -119,6 +124,16 @@
       '</section><section class="body"><div class="ings"><h2>Ingredients</h2><ul class="ing" id="ing">' + ingHtml + "</ul></div>" +
       '<div class="method"><h2>Method</h2><ol class="steps" id="steps">' + stepHtml + "</ol>" +
       (items.length ? '<div class="notes"><h2>Notes</h2><ul>' + noteHtml + "</ul></div>" : "") + "</div></section>" + nutHtml;
+    // S-61: the dropdown rescales the Ingredients and the amounts in the steps, in the browser (no request).
+    var sel = document.getElementById("sv");
+    sel.addEventListener("change", function () {
+      var next = window.RecipeScale.scale(ings, steps, r.base_amount, Number(sel.value));
+      var ingEl = document.getElementById("ing");
+      var ticked = Array.prototype.map.call(ingEl.querySelectorAll("input"), function (c) { return c.checked; });
+      ingEl.innerHTML = ingListHtml(next);
+      Array.prototype.forEach.call(ingEl.querySelectorAll("input"), function (c, i) { c.checked = !!ticked[i]; });
+      document.getElementById("steps").innerHTML = stepListHtml(next);
+    });
     var img = root.querySelector(".photo img");
     if (img) img.addEventListener("error", function () { img.parentNode.remove(); });
   }
