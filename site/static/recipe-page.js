@@ -28,10 +28,24 @@
   function num(n) { return String(Number(n)); }
 
   var select = "*,course(name),recipe_tag(position,tag(name)),serving_option(*),recipe_ingredient(*),step(*),recipe_note(*),nutrient(*)";
-  fetch(base + "/rest/v1/recipe?select=" + encodeURIComponent(select) + "&slug=eq." + encodeURIComponent(slug), { method: "GET", headers: headers })
-    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-    .then(function (rows) { if (rows.length) show(rows[0]); })
-    .catch(function () { /* no recipe to show */ });
+  function load() {
+    fetch(base + "/rest/v1/recipe?select=" + encodeURIComponent(select) + "&slug=eq." + encodeURIComponent(slug), { method: "GET", headers: headers })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (rows) { if (rows.length) show(rows[0]); /* an empty answer is "no such recipe" (S-59), not a failure */ },
+        fail);
+  }
+
+  // S-58: the request failed (not an empty answer). No recipe content; the message and a Try again button,
+  // under the unchanged header.
+  function fail() {
+    root.innerHTML = '<p class="empty" role="alert">Couldn\'t load recipes.</p>' +
+      '<button type="button" class="chip" id="retry">Try again</button>';
+    document.getElementById("retry").addEventListener("click", function () {
+      root.innerHTML = "";
+      load();
+    });
+  }
+  load();
 
   function ingredientHtml(x) {
     var amount = String(x.amount || "").trim(), name = String(x.name || "").trim();
