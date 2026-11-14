@@ -6,7 +6,15 @@
   var base = (cfg.supabaseUrl || "").replace(/\/+$/, "");
   var root = document.getElementById("recipe");
   var slug = new URLSearchParams(location.search).get("name");
-  if (!root || !base || !cfg.supabaseKey || !slug) return;
+  if (!root) return;
+  // S-59: no recipe with that name. Not a load failure, so no "Couldn't load recipes." and no Try again.
+  function missing() {
+    document.title = "Recipe not found";
+    root.innerHTML = '<p class="empty">That recipe isn\'t here.</p>' +
+      '<a class="backlink" href="/">Back to all recipes</a>';
+  }
+  if (!slug || !slug.trim()) { missing(); return; }
+  if (!base || !cfg.supabaseKey) return;
   var headers = { apikey: cfg.supabaseKey, Authorization: "Bearer " + cfg.supabaseKey, "Accept-Profile": "recipes" };
 
   function esc(s) {
@@ -31,7 +39,7 @@
   function load() {
     fetch(base + "/rest/v1/recipe?select=" + encodeURIComponent(select) + "&slug=eq." + encodeURIComponent(slug), { method: "GET", headers: headers })
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then(function (rows) { if (rows.length) show(rows[0]); /* an empty answer is "no such recipe" (S-59), not a failure */ },
+      .then(function (rows) { if (rows.length) show(rows[0]); else missing(); /* an empty answer is "no such recipe" (S-59), not a failure */ },
         fail);
   }
 
