@@ -21,20 +21,35 @@
     return base + "/storage/v1/object/public/recipe-photos/" + p.split("/").map(encodeURIComponent).join("/");
   }
 
-  Promise.all([
-    get("recipe?select=name,slug,site,photo_path,course(name),recipe_tag(position,tag(name))&order=name"),
-    get("course?select=name,position&order=position")
-  ]).then(function (res) {
-    var rows = res[0].map(function (r) {
-      return {
-        name: r.name, slug: r.slug, site: r.site || "", photo: r.photo_path || "",
-        course: r.course ? r.course.name : "",
-        tags: (r.recipe_tag || []).slice().sort(function (a, b) { return a.position - b.position; })
-          .map(function (t) { return t.tag.name; })
-      };
+  function load() {
+    Promise.all([
+      get("recipe?select=name,slug,site,photo_path,course(name),recipe_tag(position,tag(name))&order=name"),
+      get("course?select=name,position&order=position")
+    ]).then(function (res) {
+      var rows = res[0].map(function (r) {
+        return {
+          name: r.name, slug: r.slug, site: r.site || "", photo: r.photo_path || "",
+          course: r.course ? r.course.name : "",
+          tags: (r.recipe_tag || []).slice().sort(function (a, b) { return a.position - b.position; })
+            .map(function (t) { return t.tag.name; })
+        };
+      });
+      build(rows, res[1].map(function (c) { return c.name; }));
+    }).catch(fail);
+  }
+
+  // S-55: no cards, search or chips; the message and a Try again button, under the unchanged header.
+  function fail() {
+    document.getElementById("tools").innerHTML = "";
+    root.innerHTML = '<p class="empty" role="alert">Couldn\'t load recipes.</p>' +
+      '<button type="button" class="chip" id="retry">Try again</button>';
+    document.getElementById("retry").addEventListener("click", function () {
+      root.innerHTML = "";
+      load();
     });
-    build(rows, res[1].map(function (c) { return c.name; }));
-  }).catch(function () { /* nothing extra is shown when the recipes can't be loaded */ });
+  }
+
+  load();
 
   function build(rows, courses) {
     var chipHtml = ["All"].concat(courses).map(function (c) {
