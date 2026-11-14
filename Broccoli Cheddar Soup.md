@@ -18,6 +18,8 @@ tags:
 
 A creamy, filling soup with broccoli flavor built in layers.
 
+![Broccoli cheddar soup](images/Broccoli%20Cheddar%20Soup.jpg)
+
 Servings: `INPUT[inlineSelect(option(3), option(6), option(9), option(12), option(18)):servings_wanted]` (the source makes 6)
 
 ```dataviewjs

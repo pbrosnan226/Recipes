@@ -19,6 +19,8 @@ tags:
 
 Rice simmered in vegetable broth and coconut milk with kidney beans, jalapeño, thyme and allspice, finished with sliced green onions.
 
+![West Indian rice and beans](images/West%20Indian%20Rice%20and%20Beans.jpg)
+
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 
 ```dataviewjs

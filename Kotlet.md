@@ -20,6 +20,8 @@ tags:
 
 An Iranian ground beef and potato patty, fried until golden brown and crispy outside and soft inside. Good warm or cold, plain or with bread.
 
+![Kotlet](images/Kotlet.jpg)
+
 Servings: `INPUT[inlineSelect(option(1), option(2), option(3), option(4), option(6)):servings_wanted]` (the source makes 2)
 
 ```dataviewjs
