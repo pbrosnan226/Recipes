@@ -56,7 +56,7 @@ function main() {
   fs.rmSync(dist, { recursive: true, force: true });
   fs.rmSync(tmp, { recursive: true, force: true });
   fs.mkdirSync(tmp, { recursive: true });
-  for (const f of ["style.css", "scale.js", "home.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
+  for (const f of ["style.css", "scale.js", "home.js", "recipe-page.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
   fs.cpSync(path.join(staticDir, "fonts"), path.join(tmp, "fonts"), { recursive: true });
   fs.writeFileSync(
     path.join(tmp, "config.js"),
@@ -64,7 +64,7 @@ function main() {
   );
   fs.writeFileSync(path.join(tmp, "robots.txt"), "User-agent: *\nDisallow: /\n");
   fs.writeFileSync(path.join(tmp, "index.html"), page("Recipes", `<div class="top"><h1>Everything we cook.</h1><div id="tools" style="display:contents"></div></div>\n<div id="home"></div>`, '<script src="/home.js"></script>'));
-  fs.writeFileSync(path.join(tmp, "recipe.html"), page("Recipe", `<article id="recipe"></article>`));
+  fs.writeFileSync(path.join(tmp, "recipe.html"), page("Recipe", `<article id="recipe"></article>`, '<script src="/recipe-page.js"></script>'));
   fs.renameSync(tmp, dist);
   console.log(`Published the page shell into ${dist} (settings read from ${url[0]} and ${key[0]}).`);
 }
