@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-13 Rate a recipe</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-13 Rate a recipe</h1>
+<p class="meta"><b>Actors:</b> Member, Supabase</p>
+<p class="meta"><b>Starts when:</b> A signed-in Member opens a recipe page.</p>
+<p class="meta"><b>Ends when:</b> The rating is saved or removed.</p>
+<p class="meta">Blocked on sign-in (W-06); not built until sign-in is planned and built.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph sb["Supabase"]
+    save["Save or remove the rating, clear Want to try on a rating"]
+  end
+  subgraph m["Member"]
+    start(["Start"]) --> d{"What next?"}
+    d -- "Tap a star (left half = half star)" --> s1["Step 1: Rating shown, Want to try cleared"]
+    d -- "Tap another star" --> s2["Step 2: Rating changes"]
+    d -- "Select Remove rating" --> s3["Step 3: Rating removed, recipe unmarked"]
+    s1 --> save
+    s2 --> save
+    s3 --> save
+    save --> ok{"Saved?"}
+    ok -- "Yes" --> s4["Step 4: Average and count update"]
+    ok -- "No" --> err["Row returns to its old state and says saving failed"]
+    s4 --> done(["End"])
+    err --> done
+  end
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

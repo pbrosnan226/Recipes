@@ -1,5 +1,7 @@
 # S-13 Copy photo files into the site
 
+**Superseded 2026-11-13 by S-44 (uploading the existing photos to Storage), S-51 (uploading new photos), S-05.11 and S-09.2 (showing them from Storage).** The Build no longer reads the notes or `images/` and copies no photo (S-63.3). S-13.1 to S-13.6 are superseded by S-44.8 to S-44.10 and S-05.11/S-09.18; S-13.7 is superseded by S-44.13. The criteria are kept for history.
+
 **Workflow:** [W-03 Publish new or changed recipes](../workflows/W-03-publish-new-or-changed-recipes.html), steps 3 and 5
 **Screens:** None (build log only; the photo appears on the [Recipe page](../mockups/recipe-page.html), see S-09)
 

@@ -1,5 +1,7 @@
 # S-01 Read the recipe notes and skip unreadable ones
 
+**Superseded 2026-11-13 as a build step by S-43 and S-44.** The Build no longer reads notes (W-03 changed). The note reader (`site/lib/read.js`) and the rules below stay in the repo and are reused by the import (W-11 step 1, S-43.1): S-01.1 to S-01.17 now apply when Claude imports the notes, not when the Build runs, and a note the reader skips is named in Claude's report, not in a build log. S-01.18 is superseded by S-20.1. S-01.19 is superseded by S-62. The criteria are kept for history.
+
 **Workflow:** [W-03 Publish new or changed recipes](../workflows/W-03-publish-new-or-changed-recipes.html), steps 3 and 4
 **Screens:** None (build log only)
 
@@ -30,8 +32,8 @@ The build has started (S-04).
 - S-01.15 (new 2026-11-14) Verify that when a recipe note has a `course` property whose value is one of Breakfast, Main, Side, Soup, Dessert or Sauce, the Build takes it as the recipe's course.
 - S-01.16 (new 2026-11-14) Verify that a recipe note with no `course` property is read with no course, and that the recipe then appears on the Home page only under the chip **All**.
 - S-01.17 (new 2026-11-14) Verify that when a recipe note's `course` value is not one of the six (or is empty, or holds more than one value), the Build reads the recipe with no course, does not skip the note, and writes a build log line starting `NOTE` that names the note and says its course isn't valid.
-- S-01.18 (new 2026-11-14) Verify that the Build offers the course list Breakfast, Main, Side, Soup, Dessert, Sauce, in that order, for the course chips, whatever courses the notes use.
-- S-01.19 (deferred 2026-11-14, see todo.md: search by ingredient; the number is reserved)
+- S-01.18 (new 2026-11-14; Superseded 2026-11-13 by S-20.1) Verify that the Build offers the course list Breakfast, Main, Side, Soup, Dessert, Sauce, in that order, for the course chips, whatever courses the notes use.
+- S-01.19 (deferred 2026-11-14, see todo.md: search by ingredient; the number is reserved) (Superseded 2026-11-13 by S-62: search by ingredient is now in scope; the number is not reused)
 
 ## Post-conditions
 - Every readable recipe note is available to S-02 as a recipe.

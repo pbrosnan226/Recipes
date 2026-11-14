@@ -13,7 +13,7 @@ The Visitor selects a course chip on the Home page.
 - The Home page is open.
 
 ## Acceptance criteria
-- S-20.1 Verify that the course chips are **All**, **Breakfast**, **Main**, **Side**, **Soup**, **Dessert** and **Sauce**, in that order, and that **All** is selected when the page opens.
+- S-20.1 (changed 2026-11-13: the chips are read from the COURSE table) Verify that the course chips are **All** followed by the courses read from the COURSE table in position order (**Breakfast**, **Main**, **Side**, **Soup**, **Dessert** and **Sauce**), and that **All** is selected when the page opens.
 - S-20.2 Verify that when the Visitor selects a course chip, the system shows only the recipes whose course is that course, and shows that chip as the one selected.
 - S-20.3 Verify that only one chip is selected at a time.
 - S-20.4 Verify that when the Visitor selects **All**, the system shows recipes of every course, including recipes with no course.

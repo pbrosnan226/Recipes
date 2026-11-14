@@ -1,5 +1,7 @@
 # S-16 Update the extraction wording for stored photos
 
+**Superseded 2026-11-13 by S-53** (the new extraction wording for saving to the database and uploading photos to Storage). The criteria are kept for history.
+
 **Workflow:** [W-04 Save a recipe's photo](../workflows/W-04-save-a-recipes-photo.html), steps 2 to 6 (the rules the Extractor follows)
 **Screens:** None
 
