@@ -120,19 +120,20 @@ After the recipe is saved (`SAVED <id>`), download the source's photo from the a
 recipe page and upload it to the Storage bucket. Upload it exactly as downloaded, with no resizing,
 converting or editing. Name the file after the recipe, with the extension of the file type actually
 downloaded (`French Toast.jpg` when a JPEG came down, `French Toast.webp` for a WebP). The upload uses
-the service key from the environment variable `SUPABASE_SERVICE_KEY`. Then set the recipe's photo path
+the service key from the environment variable `SUPABASE_SERVICE_KEY`, which `supabase/with-key.sh`
+fills from the logged-in Supabase CLI (nothing to look up or paste). Then set the recipe's photo path
 to the uploaded file's path in the bucket. The recipe keeps no address of the photo on the source
 site. Save no photo in `images/`. One script does the download, the upload and the photo path
 (`<id>` is the number after `SAVED`):
 
 ```bash
-SUPABASE_SERVICE_KEY=... node supabase/upload-photo.js "<recipe name>" "<photo address>" <id>
+supabase/with-key.sh node supabase/upload-photo.js "<recipe name>" "<photo address>" <id>
 ```
 
 It prints `PHOTO UPLOADED <file name>` or `PHOTO FAILED: <why>`; on a failure see "When the photo is
 missing". The photo then shows on the recipe's card and page with no push and no rebuild.
 
-Never read the service key, and never print it in chat, in a command, in a file or in a log.
+Never read the service key, and never print it in chat, in a command, in a file or in a log. If `with-key.sh` can't get it, the Owner runs `supabase login`.
 
 When the photo can't be downloaded or uploaded, keep the recipe saved without a photo and tell the
 Owner in chat which photo failed (recipe name and photo address) and why. When the source gives no
@@ -177,7 +178,7 @@ with the same name or the same slug (the slug is the name in lowercase, spaces a
 hyphens). This only reads the database:
 
 ```bash
-SUPABASE_SERVICE_KEY=... node supabase/find-clash.js <recipe.json>
+supabase/with-key.sh node supabase/find-clash.js <recipe.json>
 ```
 
 - `NO CLASH`: save without asking.
@@ -205,7 +206,7 @@ creates none), `tags` in the order the recipe lists them, and `notes` as `{level
 0, or 1 for a sub-note listed under the note before it (the first note is level 0).
 
 ```bash
-SUPABASE_SERVICE_KEY=... node supabase/save-recipe.js <recipe.json>
+supabase/with-key.sh node supabase/save-recipe.js <recipe.json>
 ```
 
 Never read, ask for or print the key; it comes from the environment. The recipe, aliases, tags,
