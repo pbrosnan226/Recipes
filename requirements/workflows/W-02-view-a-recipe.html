@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-02 View a recipe</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-02 View a recipe</h1>
+<p class="meta"><b>Actors:</b> Visitor</p>
+<p class="meta"><b>Starts when:</b> The Visitor selects a card on the home page.</p>
+<p class="meta"><b>Ends when:</b> The Visitor goes back to the list or the source.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph v["Visitor"]
+    start(["Start"]) --> s1["Step 1: See the recipe page"]
+    s1 --> d{"What next?"}
+    d -- "Change servings" --> s2["Step 2: Ingredients and steps rescale"]
+    d -- "Tick an ingredient" --> s3["Step 3: Ingredient is struck through"]
+    d -- "Cook mode" --> s4["Step 4: Go to W-08"]
+    d -- "Select a tag" --> s5["Step 5: Go to the list filtered by that tag"]
+    d -- "Source link" --> s6a["Step 6: Open the original recipe page"]
+    d -- "Back to all recipes" --> s6b["Step 6: Return to the list"]
+    s2 --> d
+    s3 --> d
+    s4 --> d
+    s5 --> done(["End"])
+    s6a --> done
+    s6b --> done
+  end
+  click s1 "../mockups/recipe.html"
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

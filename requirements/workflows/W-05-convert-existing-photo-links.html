@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-05 Convert existing photo links to stored files</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-05 Convert existing photo links to stored files</h1>
+<p class="meta"><b>Actors:</b> Owner, Extractor</p>
+<p class="meta"><b>Starts when:</b> The Owner asks Claude to store the photos of the 21 existing notes.</p>
+<p class="meta"><b>Ends when:</b> Every note has a stored photo or is listed as failed.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph ext["Extractor"]
+    s1["Step 1: List each note's photo link"]
+    s3{"Step 3: Download works?"}
+    s4["Step 4: Save the file as downloaded in images/, named after the note"]
+    s5["Step 5: Replace the external photo line with the file image"]
+    s6["Step 6: Leave the note without a photo line, list it with the reason"]
+    more{"More notes?"}
+    s7["Step 7: Report files saved and failures"]
+  end
+  subgraph owner["Owner"]
+    start(["Start"]) --> s0["Owner asks to store the photos"]
+    s2["Step 2: Confirm the listed downloads"]
+    done(["End"])
+  end
+  s0 --> s1
+  s1 --> s2
+  s2 --> s3
+  s3 -- "Yes" --> s4 --> s5 --> more
+  s3 -- "No" --> s6 --> more
+  more -- "Yes" --> s3
+  more -- "No" --> s7 --> done
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

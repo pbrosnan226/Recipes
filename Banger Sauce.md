@@ -4,6 +4,7 @@ site: "Food Network"
 aliases:
   - Tequila Shrimp Banger Sauce
 created: 2026-09-24
+course: Sauce
 servings: 50
 servings_wanted: 50
 prep_time: 10 minutes

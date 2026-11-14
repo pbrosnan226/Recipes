@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home</title><link rel="stylesheet" href="style.css"><script src="mock.js"></script></head>
+<body data-auth="in">
+<div class="mockbar"><b>Home</b>
+<span><a href="../workflows/W-01-browse-the-recipe-list.html">W-01 steps 1-6</a>, <a href="../workflows/W-07-favorite-a-recipe.html">W-07 step 3</a>, <a href="../workflows/W-06-sign-in.html">W-06 step 1</a></span>
+<a href="index.html">Mockups index</a><span class="spacer"></span><button id="authToggle" type="button"></button></div>
+
+<header class="hdr">
+<a class="logo" href="home.html">Recipes</a>
+<nav class="main">
+<a id="navBrowse" class="on" href="home.html">Browse</a>
+<a id="navFav" data-show="in" href="home.html?view=fav">Favorites</a>
+<a class="signin" data-show="out" href="#">Sign in</a>
+<a data-show="in" data-signout href="#">Sign out</a>
+</nav>
+</header>
+
+<main>
+<div class="top">
+<h1 id="title">Everything we cook.</h1>
+<label for="q" style="position:absolute;left:-9999px">Search recipes</label>
+<input id="q" class="search" type="search" placeholder="Search by name, site, tag or ingredient">
+<div class="row">
+<div class="chips" id="chips"></div>
+<label class="sort">Sort by
+<select id="sort"><option value="name">Name</option><option value="site">Site</option></select></label>
+</div>
+</div>
+<p class="count" id="count"></p>
+<div class="grid" id="grid"></div>
+<p class="empty" id="none" hidden>Nothing matches that. Try another word.</p>
+<p class="empty" id="nofav" hidden>No favorites yet.</p>
+</main>
+
+<script>
+/* Example data: four recipes from the vault. Courses are the plan's examples. */
+var R=[
+{name:"French Toast",course:"Breakfast",site:"Serious Eats",tags:["recipe"],href:"recipe.html",
+ ing:["white bread","eggs","sugar","kosher salt","ground cinnamon","nutmeg","vanilla extract","whole milk","unsalted butter","maple syrup"]},
+{name:"Chickpea Curry",course:"Main",site:"A Couple Cooks",tags:["recipe","chickpeas","curry","indian"],
+ ing:["Yellow onion","Large garlic clove","Grated ginger","Coconut oil or olive oil","Baby spinach leaves (or chopped spinach)","Crushed fire roasted tomatoes","Curry powder","Cumin","Coriander","Kosher salt","Chickpeas","Full fat canned coconut milk","White or brown basmati rice, to serve"]},
+{name:"Apple Pie",course:"Dessert",site:"Sally's Baking Addiction",tags:["recipe","apple pie"],
+ ing:["Homemade Pie Crust or All Butter Pie Crust","apple slices","Granulated sugar (or packed brown sugar)","All-purpose flour","Lemon juice","Ground cinnamon","Ground allspice","Ground nutmeg","Egg wash","Coarse sugar for sprinkling on crust"]},
+{name:"Broccoli Cheddar Soup",course:"Soup",site:"Serious Eats",tags:["recipe"],
+ ing:["broccoli","vegetable oil","kosher salt and freshly ground black pepper","unsalted butter","onion","carrot","garlic","water or chicken stock","whole milk","russet potato","sharp cheddar cheese","deli-style American cheese","mustard powder","hot sauce"]}];
+var COURSES=["All","Breakfast","Main","Side","Soup","Dessert","Sauce"];
+var P=new URLSearchParams(location.search);
+var course="All",q=P.get("q")||"",view=P.get("view")==="fav"?"fav":"all";
+var $q=document.getElementById("q");$q.value=q;
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
+function draw(){
+ if(view==="fav"&&!Mock.signedIn())view="all";
+ document.getElementById("title").textContent=view==="fav"?"Your favorites.":"Everything we cook.";
+ document.getElementById("navFav").className=view==="fav"?"on":"";
+ document.getElementById("navBrowse").className=view==="fav"?"":"on";
+ document.getElementById("chips").innerHTML=COURSES.map(function(c){return '<button type="button" class="chip'+(c===course?' on':'')+'" data-c="'+c+'">'+c+'</button>'}).join("");
+ var t=$q.value.trim().toLowerCase(),sk=document.getElementById("sort").value,fv=Mock.favs();
+ var L=R.filter(function(r){
+  if(view==="fav"&&fv.indexOf(r.name)<0)return false;
+  if(course!=="All"&&r.course!==course)return false;
+  return !t||(r.name+" "+r.site+" "+r.tags.join(" ")+" "+r.ing.join(" ")).toLowerCase().indexOf(t)>-1});
+ L.sort(function(a,b){var x=(sk==="site"?a.site:a.name).toLowerCase(),y=(sk==="site"?b.site:b.name).toLowerCase();
+  if(x===y){x=a.name.toLowerCase();y=b.name.toLowerCase()}return x<y?-1:x>y?1:0});
+ document.getElementById("grid").innerHTML=L.map(function(r){
+  var open=r.href?' href="'+r.href+'"':'';
+  return '<div class="card"><a'+open+'><div class="photo" role="img" aria-label="Photo placeholder for '+esc(r.name)+'">Photo</div></a>'+
+   '<div class="meta"><span class="eyebrow">'+esc(r.course)+'</span><a'+open+' class="name">'+esc(r.name)+'</a>'+
+   '<div class="tags">'+r.tags.map(function(g){return '<button type="button" class="tag" data-tag="'+esc(g)+'">'+esc(g)+'</button>'}).join("")+'</div></div></div>'}).join("");
+ var n=L.length;
+ document.getElementById("count").textContent=n+(n===1?" recipe":" recipes");
+ var noFavs=view==="fav"&&fv.length===0;
+ document.getElementById("none").hidden=!(n===0&&!noFavs);
+ document.getElementById("nofav").hidden=!noFavs;
+ document.getElementById("count").hidden=noFavs;
+}
+document.getElementById("chips").onclick=function(e){var c=e.target.dataset.c;if(c){course=c;draw()}};
+document.getElementById("grid").onclick=function(e){var g=e.target.dataset.tag;if(g){$q.value=g;draw();window.scrollTo(0,0)}};
+document.getElementById("sort").onchange=draw;
+$q.oninput=draw;
+document.addEventListener("authchange",draw);
+document.addEventListener("DOMContentLoaded",draw);
+</script>
+</body></html>

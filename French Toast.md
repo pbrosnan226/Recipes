@@ -5,6 +5,7 @@ author: Daniel Gritzer
 aliases:
   - Perfect Quick-and-Easy French Toast
 created: 2026-11-07
+course: Breakfast
 servings: 4
 servings_wanted: 12
 prep_time: 5 mins

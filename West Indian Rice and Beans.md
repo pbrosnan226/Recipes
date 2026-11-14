@@ -6,7 +6,7 @@ author: Blake Royer
 aliases:
   - "Dinner Tonight: West Indian Rice and Beans"
 created: 2026-09-24
-course: Rice
+course: Main
 cuisine: Caribbean
 servings: 4
 servings_wanted: 4
@@ -18,8 +18,6 @@ tags:
 ---
 
 Rice simmered in vegetable broth and coconut milk with kidney beans, jalapeño, thyme and allspice, finished with sliced green onions.
-
-![West Indian rice and beans](http://web.archive.org/web/20210504081850im_/https://www.seriouseats.com/recipes/images/200903301westindianbeansandrice.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

@@ -5,7 +5,7 @@ author: Sally
 aliases:
   - My Best Apple Pie Recipe
 created: 2026-11-12
-course: Pie
+course: Dessert
 cuisine: American
 servings: 8
 servings_wanted: 8
@@ -20,7 +20,7 @@ tags:
 
 A lattice-topped apple pie with a filling that is pre-cooked briefly on the stove for juicier, more flavorful apples.
 
-![Slice of apple pie](https://sallysbakingaddiction.com/wp-content/uploads/2017/07/slice-of-apple-pie-2.jpg)
+![Slice of apple pie](images/Apple%20Pie.jpg)
 
 Servings: `INPUT[inlineSelect(option(8), option(16)):servings_wanted]` (the source makes 8, and says it serves 8-10)
 

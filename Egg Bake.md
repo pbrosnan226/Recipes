@@ -22,7 +22,7 @@ tags:
 
 An adaptable breakfast casserole — sausage, mushrooms, bell peppers, spinach and cheddar over cubes of crusty bread. It can be assembled and refrigerated up to 24 hours before baking.
 
-![Breakfast casserole](https://sallysbakingaddiction.com/wp-content/uploads/2015/09/breakfast-casserole-2.jpg)
+![Breakfast casserole](images/Egg%20Bake.jpg)
 
 Servings: `INPUT[inlineSelect(option(6), option(12), option(18), option(24), option(36)):servings_wanted]` (the source makes 12)
 

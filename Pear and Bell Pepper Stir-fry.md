@@ -4,7 +4,7 @@ site: "Paleo Leap"
 aliases:
   - Pear And Bell Pepper Ground Beef Stir-Fry
 created: 2026-09-24
-course: Main Course
+course: Main
 cuisine: Chinese
 servings: 4
 servings_wanted: 4
@@ -21,7 +21,7 @@ tags:
 
 Ground beef stir-fried with bell peppers, zucchini, mushrooms, carrot and sliced pear, then finished with beef stock reduced by half.
 
-![Pear and bell pepper ground beef stir-fry](https://paleoleap.com/wp-content/uploads/2018/11/pear-bell-pepper-ground-beef-stir-fry-recipe.jpg)
+![Pear and bell pepper ground beef stir-fry](images/Pear%20and%20Bell%20Pepper%20Stir-fry.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

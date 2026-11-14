@@ -4,7 +4,7 @@ site: "Serious Eats"
 aliases:
   - Succotash (Corn, Bean, and Vegetable Stew)
 created: 2026-09-24
-course: Side Dish
+course: Side
 cuisine: American
 servings: 8
 servings_wanted: 8
@@ -21,7 +21,7 @@ tags:
 
 Corn, summer squash, bell pepper and beans cooked down in bacon fat and butter with charred poblanos, until a buttery glaze coats the vegetables.
 
-![Succotash](https://www.seriouseats.com/thmb/_Nbd67XrWXdaIIce8i4C-x8NjQo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__2018__07__20180706-succotash-vicky-wasik-20-6c553736289d4312938efd57bdb1af99.jpg)
+![Succotash](images/Succotash.jpg)
 
 Servings: `INPUT[inlineSelect(option(4), option(8), option(12), option(16), option(24)):servings_wanted]` (the source makes 8)
 

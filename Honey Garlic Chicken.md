@@ -5,7 +5,7 @@ author: Nagi
 aliases:
   - Honey Garlic Chicken Breast
 created: 2026-09-24
-course: Mains
+course: Main
 cuisine: Western
 servings: 4
 servings_wanted: 4
@@ -21,7 +21,7 @@ tags:
 
 Chicken breast cut into steaks, dusted with flour, seared, then finished in a honey, garlic, soy and vinegar sauce. The flour gives the sauce a crust to cling to.
 
-![Honey garlic chicken breast](https://www.recipetineats.com/tachyon/2020/02/Honey-Garlic-Chicken-Breast_5-SQ.jpg)
+![Honey garlic chicken breast](images/Honey%20Garlic%20Chicken.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

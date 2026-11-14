@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-03 Publish new or changed recipes</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-03 Publish new or changed recipes</h1>
+<p class="meta"><b>Actors:</b> Owner, Build</p>
+<p class="meta"><b>Starts when:</b> The Owner pushes recipe changes to GitHub.</p>
+<p class="meta"><b>Ends when:</b> The new site is live.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph build["Build"]
+    s2["Step 2: Build starts on the push"] --> s3["Step 3: Read every recipe note, its course and photo file"]
+    s3 --> d4{"Can the note be read?"}
+    d4 -- "No" --> s4["Step 4: Skip the note, name it in the build log"]
+    more{"More notes?"}
+    s4 --> more
+    d4 -- "Yes" --> ph{"Photo file there?"}
+    ph -- "No" --> phn["Step 3: Log a NOTE, build the recipe without a photo"]
+    ph -- "Yes" --> more
+    phn --> more
+    more -- "Yes" --> s3
+    more -- "No" --> ok{"Build succeeds?"}
+    ok -- "Yes" --> s5["Step 5: Make the list and recipe pages, copy the photos, publish"]
+    ok -- "No" --> keep["Previous site stays live"]
+  end
+  subgraph owner["Owner"]
+    start(["Start"]) --> s1["Step 1: Push the repo to GitHub"]
+    s6["Step 6: See the changes on the next page load"] --> done(["End"])
+    keepend["Fix the problem and push again"] --> done
+  end
+  s1 --> s2
+  s5 --> s6
+  keep --> keepend
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

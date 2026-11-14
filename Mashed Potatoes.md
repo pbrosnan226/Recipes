@@ -5,6 +5,7 @@ author: J. Kenji López-Alt
 aliases:
   - Pommes Purée (Rich and Creamy Mashed Potatoes)
 created: 2026-11-12
+course: Side
 servings: 4
 servings_wanted: 4
 prep_time: 15 mins
@@ -17,7 +18,7 @@ tags:
 
 Ultra-creamy French-style mashed potatoes made with Yukon Golds, hot cream and melted butter.
 
-![Pommes purée](https://www.seriouseats.com/thmb/YtYalIbexqECmmBfH2JSufPTlRw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20220203-pommes-puree-vicky-wasik-1-2-40031afa69bd4338a1d0cc085c76f934.jpg)
+![Pommes purée](images/Mashed%20Potatoes.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8)):servings_wanted]` (the source makes 4 to 5)
 

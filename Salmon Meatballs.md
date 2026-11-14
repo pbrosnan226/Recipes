@@ -5,7 +5,7 @@ author: Rian Handler
 aliases:
   - Salmon Meatballs With Avocado Crema
 created: 2026-09-24
-course: Main Dish
+course: Main
 servings: 4
 servings_wanted: 4
 prep_time: 20 minutes
@@ -20,7 +20,7 @@ tags:
 
 Salmon chopped in a food processor, bound with panko, egg and garlic, baked as tablespoon-sized meatballs and served under a blended avocado, lime and herb crema.
 
-![Salmon meatballs with avocado crema](https://hips.hearstapps.com/hmg-prod/images/delish-salmon-meatballs-horizontal-1535564670.jpg)
+![Salmon meatballs with avocado crema](images/Salmon%20Meatballs.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

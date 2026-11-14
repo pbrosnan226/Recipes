@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe: ingredient sub-headings</title><link rel="stylesheet" href="style.css"><script src="mock.js"></script>
+<style>ul.ing li.sub{border-bottom:0;padding:20px 0 4px;font-family:var(--serif);font-weight:600;font-size:20px;color:var(--accent)}</style></head>
+<body data-auth="in">
+<div class="mockbar"><b>Recipe (state: ingredient sub-headings)</b>
+<span><a href="../workflows/W-02-view-a-recipe.html">W-02 steps 1, 3</a></span>
+<a href="recipe.html">Recipe</a><a href="index.html">Mockups index</a><span class="spacer"></span><button id="authToggle" type="button"></button></div>
+<header class="hdr"><a class="logo" href="home.html">Recipes</a>
+<nav class="main"><a href="home.html">Browse</a><a data-show="in" href="home.html?view=fav">Favorites</a>
+<a class="signin" data-show="out" href="#">Sign in</a><a data-show="in" data-signout href="#">Sign out</a></nav></header>
+<main>
+<a class="backlink" href="home.html">&larr; Back to all recipes</a>
+<h1 class="serif" style="font-weight:400;font-size:64px;line-height:1.05;margin:8px 0 32px">Apple Crumble Pie</h1>
+<p class="label" style="margin-bottom:32px">Only the ingredients are drawn here. The rest of the page is as on the Recipe screen.</p>
+<div class="ings"><h2>Ingredients</h2>
+<ul class="ing" id="ing">
+<li class="sub">Crust</li>
+<li><label><input type="checkbox"><span>1 and 1/2 cups (188g) all-purpose flour (spooned &amp; leveled), plus more for work surface</span></label></li>
+<li><label><input type="checkbox"><span>1 Tablespoon (12g) granulated sugar</span></label></li>
+<li><label><input type="checkbox"><span>1/4 teaspoon salt</span></label></li>
+<li><label><input type="checkbox"><span>1/2 cup (8 Tbsp; 113g) cold unsalted butter, cubed</span></label></li>
+<li><label><input type="checkbox"><span>1/4 cup (60g/ml) ice-cold water, plus more as needed</span></label></li>
+<li><label><input type="checkbox"><span>egg wash: 1 large egg beaten with 1 Tablespoon (15g/ml) milk</span></label></li>
+<li class="sub">Crumble Topping</li>
+<li><label><input type="checkbox"><span>1/2 cup (100g) packed light or dark brown sugar</span></label></li>
+<li><label><input type="checkbox"><span>1 teaspoon ground cinnamon</span></label></li>
+<li><label><input type="checkbox"><span>3/4 cup (94g) all-purpose flour (spooned &amp; leveled)</span></label></li>
+<li><label><input type="checkbox"><span>3/4 cup (95g) chopped walnuts</span></label></li>
+<li><label><input type="checkbox"><span>5 Tablespoons (71g) unsalted butter, melted and slightly cooled</span></label></li>
+<li class="sub">Filling</li>
+<li><label><input type="checkbox"><span>10 cups (1.25kg) 1/4-inch-thick apple slices (about 8 large peeled and cored apples)*</span></label></li>
+<li><label><input type="checkbox"><span>1/2 cup (100g) granulated sugar</span></label></li>
+<li><label><input type="checkbox"><span>1/4 cup (31g) all-purpose flour (spooned &amp; leveled)</span></label></li>
+<li><label><input type="checkbox"><span>1 Tablespoon (15g/ml) fresh lemon juice</span></label></li>
+<li><label><input type="checkbox"><span>1 and 1/2 teaspoons ground cinnamon</span></label></li>
+<li><label><input type="checkbox"><span>1/4 teaspoon ground cloves</span></label></li>
+<li><label><input type="checkbox"><span>1/4 teaspoon ground nutmeg</span></label></li>
+<li><label><input type="checkbox"><span>1 teaspoon pure vanilla extract</span></label></li>
+</ul></div>
+</main>
+<script>document.getElementById("ing").onchange=function(e){e.target.closest("li").classList.toggle("done",e.target.checked)};</script>
+</body></html>

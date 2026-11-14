@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-08 Use Cook mode</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-08 Use Cook mode</h1>
+<p class="meta"><b>Actors:</b> Visitor</p>
+<p class="meta"><b>Starts when:</b> The Visitor selects Cook mode on a recipe page.</p>
+<p class="meta"><b>Ends when:</b> Cook mode is off.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph v["Visitor"]
+    start(["Start"]) --> s1["Step 1: Select Cook mode, steps get larger"]
+    s1 --> s2{"Step 2: Browser can keep the screen awake?"}
+    s2 -- "Yes" --> awake["Screen stays awake"]
+    s2 -- "No" --> big["Only the larger steps apply"]
+    awake --> back{"Tab hidden and shown again?"}
+    back -- "Yes" --> awake
+    back -- "No" --> s3["Step 3: Select Leave cook mode or leave the page"]
+    big --> s3
+    s3 --> done(["End"])
+  end
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

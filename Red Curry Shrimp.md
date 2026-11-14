@@ -4,7 +4,7 @@ site: "Serious Eats"
 aliases:
   - Red Curry with Shrimp, Zucchini, and Carrot
 created: 2026-09-24
-course: Mains
+course: Main
 cuisine: Thai
 servings: 4
 servings_wanted: 4
@@ -21,7 +21,7 @@ tags:
 
 Red curry paste fried in coconut cream, then simmered with zucchini, carrot, peas and shrimp, and finished off the heat with cilantro, mint and lime.
 
-![Red curry with shrimp, zucchini and carrot](https://www.seriouseats.com/thmb/-LrRivJSZzhoGEqpoaSotxJJwMc=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__recipes__images__2013__05__20130514-252313-dinner-tonight-shrimp-red-curry-primary-aeeb73ca4e384837819e537c8f56608b.jpg)
+![Red curry with shrimp, zucchini and carrot](images/Red%20Curry%20Shrimp.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

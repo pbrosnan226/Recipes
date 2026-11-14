@@ -4,7 +4,7 @@ site: "Paleo Leap"
 aliases:
   - Oven-Baked French Onion Chicken
 created: 2026-09-24
-course: Main Course
+course: Main
 cuisine: French
 servings: 4
 servings_wanted: 4
@@ -21,7 +21,7 @@ tags:
 
 Chicken breasts rubbed with dried onion and oregano, browned, then baked with softened onions, garlic, thyme and rosemary in beef stock.
 
-![Oven-baked French onion chicken](https://paleoleap.com/wp-content/uploads/2018/07/french-onion-chicken-recipe.jpg)
+![Oven-baked French onion chicken](images/Oven%20Baked%20French%20Onion%20Chicken.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

@@ -58,7 +58,7 @@ it and mention it to the user. A dead domain may now serve something unrelated â
   for ingredients with none ("salt and pepper", "to taste") and for repeat mentions of something
   already given in the same step. Amounts the source ties to a batch, a pan or a piece ("2 slices at
   a time", "1 tablespoon of butter per batch") stay as literal text so they don't scale.
-- **Include:** the author's recipe-card notes, the nutrition table, a link to the source photo.
+- **Include:** the author's recipe-card notes, the nutrition table, the source photo saved as a file in `images/` (not a link to it).
 - **Skip:** reader comments and their variations, the author's replies to commenters, blog headnotes,
   SEO filler, affiliate "special tools" lists, and book/product promos.
 - **Omit what the source doesn't publish.** No nutrition table, no Nutrition section. No yield, no
@@ -124,7 +124,7 @@ author: <recipe author>
 aliases:
   - <the source's own title, when the filename differs>
 created: <YYYY-MM-DD>
-course: <recipeCategory>
+course: <one of Breakfast, Main, Side, Soup, Dessert, Sauce; see Course below>
 cuisine: <recipeCuisine>
 servings: <base servings>
 servings_wanted: <base servings>
@@ -139,7 +139,7 @@ tags:
 
 <one-line paraphrase of the source's own description>
 
-![<dish>](<photo url>)
+![<dish>](images/<note name with spaces as %20>.<extension>)
 
 Servings: `INPUT[...]` (the source makes <base servings>)
 
@@ -159,9 +159,25 @@ Per serving, approximate (calculated automatically by the source site):
 | -------- | ----- | ------- | --- | -------- | ----- | ------ | ----- |
 ```
 
-The photo is hot-linked, so check it before trusting it: prefer the full-size WordPress URL over a
-`-225x225` thumbnail (strip the suffix and confirm), and confirm the URL returns 200 â€”
-`food.fnr.sndimg.com` (Food Network) blocks hotlinking, so those notes go without a photo.
+## Photo
+
+Download the source's photo into `images/` in the vault root (create the folder if it doesn't exist).
+Name the file after the note, with the extension of the file type actually downloaded
+(`images/French Toast.jpg` for `French Toast.md` when a JPEG came down, `images/French Toast.webp`
+for a WebP). Store it exactly as downloaded, with no resizing, converting or editing. The note's photo
+line is `![<dish>](images/French%20Toast.jpg)`: the dish name as alt text and the path with spaces
+written as `%20`. The note holds no other address for the photo.
+
+When the photo can't be downloaded (blocked, dead link), leave out the photo line, leave no file in
+`images/`, and tell the Owner in chat which photo failed (recipe name and photo address) and why.
+When the source gives no photo, write no photo line and say so in chat.
+
+## Course
+
+Every note has a `course` property holding exactly one of Breakfast, Main, Side, Soup, Dessert or
+Sauce. When the source's own category is exactly one of those words (ignoring upper and lower case),
+write that course, in its canonical capitalisation (Breakfast, Main, Side, Soup, Dessert, Sauce) even though matching the source's category ignores case. When it isn't, or the source gives none, ask the Owner to choose one of the six
+and write their choice. Never write a `course` outside the list.
 
 ## 5. Close out
 

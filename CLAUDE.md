@@ -18,5 +18,12 @@ that matter most:
 - **Keep servings adjustable.** Each note has a servings dropdown that rescales the ingredients and
   the amounts quoted in the steps (Dataview + Meta Bind plugins, renderer in `scripts/scale/view.js`).
   The `recipe-extract` skill has the format.
-- **Capture** the author's recipe-card notes, the nutrition table, and a link to the source photo.
+- **Capture** the author's recipe-card notes, the nutrition table, and the source photo as a file in `images/`, linked from the note.
   **Skip** reader comments, blog headnotes, and the author's book promos.
+
+## Testing (site)
+
+Tests for the recipe site live in `site/tests/` (Playwright, WebKit, iPhone 17 only). Run from `site/`:
+`npx playwright test` (starts a fixture site on :8899 and builds + previews the real site on :8888 itself).
+Build tests (S-01 to S-04) build fixture notes in temp copies of the site code, so `site/dist` is never touched.
+On the iPhone emulation, mouse `click()` doesn't reach the page; the UI tests use `tap()`.

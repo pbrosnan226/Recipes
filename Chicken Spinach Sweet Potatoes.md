@@ -4,7 +4,7 @@ site: "Paleo Leap"
 aliases:
   - Chicken With Spinach, Sweet Potatoes And Mushrooms
 created: 2026-09-24
-course: Main Course
+course: Main
 cuisine: American
 servings: 4
 servings_wanted: 4
@@ -21,7 +21,7 @@ tags:
 
 Chicken, sweet potatoes, mushrooms and spinach baked together in a creamy coconut milk gravy.
 
-![Chicken with spinach, sweet potatoes and mushrooms](https://paleoleap.com/wp-content/uploads/2020/01/chicken-spinach-potatoes-mushrooms-recipe.jpg)
+![Chicken with spinach, sweet potatoes and mushrooms](images/Chicken%20Spinach%20Sweet%20Potatoes.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

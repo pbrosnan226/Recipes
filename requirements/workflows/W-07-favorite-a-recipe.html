@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-07 Favorite a recipe</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-07 Favorite a recipe</h1>
+<p class="meta"><b>Actors:</b> Member, Supabase</p>
+<p class="meta"><b>Starts when:</b> A Member opens a recipe page, or selects Favorites in the header.</p>
+<p class="meta"><b>Ends when:</b> The favorite is saved or removed, or the Member sees their favorites.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph sb["Supabase"]
+    save["Save or remove the favorite"] --> okq{"Saved?"}
+  end
+  subgraph m["Member"]
+    start(["Start"]) --> d{"What next?"}
+    d -- "Select Favorite" --> s1["Step 1: Button shows Favorited"]
+    d -- "Select Favorited" --> s2["Step 2: Favorite is removed"]
+    d -- "Select Favorites in header" --> s3["Step 3: Home shows only my favorites"]
+    s1 --> save
+    s2 --> save
+    okq -- "Yes" --> done(["End"])
+    okq -- "No" --> err["Button returns to its old state, message says so"]
+    err --> done
+    s3 --> any{"Any favorites?"}
+    any -- "Yes" --> done
+    any -- "No" --> emp["Page says there are no favorites yet"]
+    emp --> done
+  end
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

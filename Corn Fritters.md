@@ -4,7 +4,7 @@ site: "Serious Eats"
 aliases:
   - Zucchini-and-Corn Fritters With Herb Sour Cream
 created: 2026-09-24
-course: Appetizer
+course: Side
 cuisine: American
 servings: 15 fritters
 servings_wanted: 15
@@ -21,7 +21,7 @@ tags:
 
 Shredded zucchini and onion squeezed dry, bound with egg, flour and Gruyère, and pan-fried with fresh corn kernels. Served with a herbed sour cream.
 
-![Zucchini and corn fritters with herb sour cream](https://www.seriouseats.com/thmb/izABf7m--EoFhBJaQUyltDQhZxk=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__recipes__images__2017__07__20170718-zucchini-fritters-matt-clifton9-6c6769446bea4fba870b70d65cdab220.jpg)
+![Zucchini and corn fritters with herb sour cream](images/Corn%20Fritters.jpg)
 
 Makes: `INPUT[inlineSelect(option(7.5), option(15), option(30), option(45)):servings_wanted]`
 

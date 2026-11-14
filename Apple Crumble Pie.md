@@ -5,7 +5,7 @@ author: Sally
 aliases:
   - Apple Crumble Pie
 created: 2026-11-12
-course: Pie
+course: Dessert
 cuisine: American
 yield: one 9-inch pie
 pies_wanted: 1
@@ -20,7 +20,7 @@ tags:
 
 Apple pie topped with a thick, buttery brown sugar and walnut crumble instead of a top crust.
 
-![Apple crumble pie](https://sallysbakingaddiction.com/wp-content/uploads/2015/07/homemade-apple-crumble-pie.jpg)
+![Apple crumble pie](images/Apple%20Crumble%20Pie.jpg)
 
 Pies: `INPUT[inlineSelect(option(1, 1 pie), option(2, 2 pies)):pies_wanted]` (the source makes one 9-inch pie)
 

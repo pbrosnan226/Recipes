@@ -5,7 +5,7 @@ author: Sally
 aliases:
   - Homemade Buttery Flaky Pie Crust Recipe
 created: 2026-11-12
-course: Pie
+course: Dessert
 cuisine: American
 servings: 2
 servings_wanted: 2
@@ -19,7 +19,7 @@ tags:
 
 A butter-and-shortening dough that makes enough for a double-crust pie.
 
-![Pie crust](https://sallysbakingaddiction.com/wp-content/uploads/2015/07/perfect-pie-crust-3.jpg)
+![Pie crust](images/Pie%20Crust.jpg)
 
 Pie crusts: `INPUT[inlineSelect(option(1), option(2)):servings_wanted]` (the source makes 2)
 

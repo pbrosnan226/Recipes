@@ -5,7 +5,7 @@ author: Sonja Overhiser
 aliases:
   - Cozy Chickpea Curry
 created: 2026-09-24
-course: Main Dish
+course: Main
 cuisine: Indian Inspired
 servings: 4
 servings_wanted: 4
@@ -22,7 +22,7 @@ tags:
 
 Onion, garlic, ginger and spinach cooked down with fire roasted tomatoes, chickpeas, curry spices and coconut milk, served over basmati rice.
 
-![Chickpea curry](https://www.acouplecooks.com/wp-content/uploads/2019/11/Chickpea-Curry-007.jpg)
+![Chickpea curry](images/Chickpea%20Curry.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

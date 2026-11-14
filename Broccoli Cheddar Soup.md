@@ -5,6 +5,7 @@ author: J. Kenji López-Alt
 aliases:
   - Broccoli Cheese Soup
 created: 2026-10-28
+course: Soup
 servings: 6
 servings_wanted: 6
 prep_time: 5 mins

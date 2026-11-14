@@ -22,7 +22,7 @@ tags:
 
 Eggs beaten with fish sauce, lime juice and a little rice flour, then poured from a height into hot oil so they puff up with ragged, crisp edges.
 
-![Khai jiao, Thai-style omelet](https://www.seriouseats.com/thmb/eZJtd_Aer4s6czcM7yLmdBrHzPg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__recipes__images__20120217-193355-thai-omelet-final-a7596c179dfe45ec93293363a31b20ca.jpg)
+![Khai jiao, Thai-style omelet](images/Thai%20Omelet.jpg)
 
 Servings: `INPUT[inlineSelect(option(1), option(2), option(3), option(4), option(6)):servings_wanted]` (the source makes 1)
 

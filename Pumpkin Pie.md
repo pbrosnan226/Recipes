@@ -5,7 +5,7 @@ author: Sally
 aliases:
   - The Great Pumpkin Pie Recipe
 created: 2026-11-12
-course: Pie
+course: Dessert
 cuisine: American
 servings: 8
 servings_wanted: 8
@@ -20,7 +20,7 @@ tags:
 
 A rich, smooth, spiced pumpkin pie in a par-baked homemade crust, optionally decorated with sugared cranberries and pie crust leaves.
 
-![Pumpkin pie](https://sallysbakingaddiction.com/wp-content/uploads/2014/10/great-pumpkin-pie-2.jpg)
+![Pumpkin pie](images/Pumpkin%20Pie.jpg)
 
 Servings: `INPUT[inlineSelect(option(8), option(16)):servings_wanted]` (the source makes 8, and says it serves 8-10; it also makes 1 cup sugared cranberries)
 

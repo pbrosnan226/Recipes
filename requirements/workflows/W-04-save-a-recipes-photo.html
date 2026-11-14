@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-04 Save a recipe's photo</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-04 Save a recipe's photo</h1>
+<p class="meta"><b>Actors:</b> Owner, Extractor</p>
+<p class="meta"><b>Starts when:</b> The Owner asks Claude to add a recipe from a link.</p>
+<p class="meta"><b>Ends when:</b> The note and its image file (if any) are saved.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph ext["Extractor"]
+    s2["Step 2: Find the photo address on the recipe page"] --> s3{"Step 3: Download works?"}
+    s3 -- "Yes" --> s4["Step 4: Save the file as downloaded in images/, named after the note"]
+    s4 --> s5["Step 5: Write the note's photo line pointing to the file"]
+    s3 -- "No" --> s6["Step 6: Save the note without a photo, tell the Owner in chat why"]
+  end
+  subgraph owner["Owner"]
+    start(["Start"]) --> s1["Step 1: Share the recipe link"]
+    s7["Step 7: Push the changes (W-03)"] --> done(["End"])
+  end
+  s1 --> s2
+  s5 --> s7
+  s6 --> s7
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

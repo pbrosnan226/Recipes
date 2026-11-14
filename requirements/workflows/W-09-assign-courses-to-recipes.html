@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-09 Assign courses to recipes (one time)</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-09 Assign courses to recipes (one time)</h1>
+<p class="meta"><b>Actors:</b> Owner, Extractor</p>
+<p class="meta"><b>Starts when:</b> The Owner asks Claude to add courses to the existing notes.</p>
+<p class="meta"><b>Ends when:</b> Every note has a confirmed course.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph e["Extractor"]
+    s1["Step 1: Propose one course for each of the 24 notes"]
+    s3["Step 3: Write the course property in each note"]
+  end
+  subgraph o["Owner"]
+    start(["Start"]) --> s0["Owner asks for courses"]
+    s2{"Step 2: Confirm each course?"}
+    s2 -- "Change some" --> s1
+    s2 -- "Confirm all" --> s3
+    s3 --> done(["End"])
+  end
+  s0 --> s1
+  s1 --> s2
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

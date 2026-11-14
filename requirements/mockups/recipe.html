@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe</title><link rel="stylesheet" href="style.css"><script src="mock.js"></script><script src="recipe.js"></script></head>
+<body data-auth="in">
+<div class="mockbar"><b>Recipe</b>
+<span><a href="../workflows/W-02-view-a-recipe.html">W-02 steps 1-6</a>, <a href="../workflows/W-07-favorite-a-recipe.html">W-07 steps 1-2</a>, <a href="../workflows/W-08-use-cook-mode.html">W-08 step 1</a></span>
+<a href="recipe-phone.html">Recipe on phone</a><a href="index.html">Mockups index</a><span class="spacer"></span><button id="authToggle" type="button"></button></div>
+
+<header class="hdr">
+<a class="logo" href="home.html">Recipes</a>
+<nav class="main">
+<a href="home.html">Browse</a>
+<a data-show="in" href="home.html?view=fav">Favorites</a>
+<a class="signin" data-show="out" href="#">Sign in</a>
+<a data-show="in" data-signout href="#">Sign out</a>
+</nav>
+</header>
+
+<main>
+<a class="backlink" href="home.html">&larr; Back to all recipes</a>
+
+<section class="hero">
+<div class="text">
+<span class="eyebrow">Breakfast</span>
+<h1>French Toast</h1>
+<p class="lead">Basic French toast made from pantry staples.</p>
+<div class="facts">
+<div class="fact"><span class="label">Prep</span><span class="v">5 mins</span></div>
+<div class="fact"><span class="label">Cook</span><span class="v">35 mins</span></div>
+<div class="fact"><span class="label">Total</span><span class="v">40 mins</span></div>
+<div class="fact"><label class="label" for="sv">Servings</label>
+<div class="serv-row"><select id="sv"><option>2</option><option selected>4</option><option>6</option><option>8</option><option>12</option></select>
+<span class="note">(the source makes 4)</span></div></div>
+</div>
+<div class="actions">
+<button type="button" id="fav" class="pill" data-show="in">&#9825; Favorite</button>
+<button type="button" id="cook" class="pill">Cook mode</button>
+</div>
+<div class="rtags"><span class="label">Tags</span><a class="tag" href="home.html?q=recipe">recipe</a></div>
+<a class="srclink" href="https://www.seriouseats.com/perfect-quick-easy-french-toast">Original recipe at Serious Eats, by Daniel Gritzer &#8599;</a>
+</div>
+<div class="photo" role="img" aria-label="Photo placeholder for French Toast">Photo</div>
+</section>
+
+<section class="body">
+<div class="ings"><h2>Ingredients</h2><ul class="ing" id="ing"></ul></div>
+<div class="method"><h2>Method</h2><ol class="steps" id="steps"></ol></div>
+</section>
+
+<details class="nutr">
+<summary>Nutrition</summary>
+<p class="basis">Per serving</p>
+<div class="vals"><span>Calories <b>706</b></span><span>Carbs <b>81g</b></span><span>Fiber <b>2g</b></span><span>Sugars <b>52g</b></span><span>Protein <b>19g</b></span><span>Fat <b>34g</b></span><span>Sat. fat <b>15g</b></span><span>Cholesterol <b>322mg</b></span><span>Vitamin C <b>0mg</b></span><span>Sodium <b>566mg</b></span><span>Calcium <b>244mg</b></span><span>Iron <b>4mg</b></span><span>Potassium <b>426mg</b></span></div>
+</details>
+</main>
+</body></html>

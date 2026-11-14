@@ -4,7 +4,7 @@ site: "Serious Eats"
 aliases:
   - Mexican Street Corn Salad (Esquites)
 created: 2026-09-24
-course: Side Dish
+course: Side
 cuisine: Mexican
 servings: 4
 servings_wanted: 4
@@ -20,7 +20,7 @@ tags:
 
 Corn kernels charred hard in a hot skillet, then tossed off the heat with crumbled cheese, scallions, cilantro, jalapeño, mayonnaise, lime and chili powder.
 
-![Mexican street corn salad](https://www.seriouseats.com/thmb/Ua6AQAB90reXko4lseEKNzxk_mI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/esquites-mexican-street-corn-salad-recipe-10-9586c88e47084597ac6d34d1e71d4583.jpg)
+![Mexican street corn salad](images/Street%20Corn%20Salad.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

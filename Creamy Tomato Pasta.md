@@ -3,7 +3,7 @@ source: https://www.saltandlavender.com/creamy-tomato-pasta/
 site: "Salt & Lavender"
 author: Natasha Bull
 created: 2026-09-18
-course: Main Course
+course: Main
 cuisine: American
 servings: 4
 servings_wanted: 4
@@ -20,7 +20,7 @@ tags:
 
 Quick pasta made with everyday ingredients and a silky tomato sauce.
 
-![Creamy tomato pasta](https://www.saltandlavender.com/wp-content/uploads/2020/10/creamy-tomato-pasta-1.jpg)
+![Creamy tomato pasta](images/Creamy%20Tomato%20Pasta.jpg)
 
 Servings: `INPUT[inlineSelect(option(2), option(4), option(6), option(8), option(12)):servings_wanted]` (the source makes 4)
 

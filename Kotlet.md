@@ -6,7 +6,7 @@ author: "@mehnoosh_mah"
 aliases:
   - Kotlet (Persian Cutlet)
 created: 2026-09-24
-course: Main dishes
+course: Main
 cuisine: Persian
 servings: 2
 servings_wanted: 2
@@ -19,8 +19,6 @@ tags:
 ---
 
 An Iranian ground beef and potato patty, fried until golden brown and crispy outside and soft inside. Good warm or cold, plain or with bread.
-
-![Kotlet](http://web.archive.org/web/20190513163007im_/http://www.thepersianpot.com/wp-content/uploads/kotlet-300x209.jpg)
 
 Servings: `INPUT[inlineSelect(option(1), option(2), option(3), option(4), option(6)):servings_wanted]` (the source makes 2)
 

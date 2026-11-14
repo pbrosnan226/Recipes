@@ -5,7 +5,7 @@ aliases:
   - Four Cheese Smoked Mac 'n' Cheese
 created: 2026-09-24
 batch_wanted: 1
-course: Pastas
+course: Main
 cook_time: 1 hour 20 minutes
 tags:
   - recipe
@@ -15,7 +15,7 @@ tags:
 
 Elbow macaroni in a cream cheese sauce with extra sharp cheddar, smoked Gouda and Parmesan, baked in the oven — or finished in a smoker.
 
-![Four cheese smoked mac 'n' cheese](https://irepo.primecp.com/2019/03/404126/Four-Cheese-Smoked-Mac-n-Cheese_ExtraLarge1000_ID-3126278.jpg?v=3126278)
+![Four cheese smoked mac 'n' cheese](images/Mac%20and%20Cheese.jpg)
 
 The source doesn't publish a serving count.
 
