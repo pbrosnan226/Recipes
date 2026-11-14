@@ -250,6 +250,29 @@ or none. This writes no note and saves no file in `images/`.
 - `SAVE FAILED: <why>`: nothing of the recipe is in the database. Tell the Owner in chat that the
   save failed and give the reason, and download and upload no photo.
 
+## When the photo is missing
+
+The recipe is saved before its photo is handled, so a photo problem never undoes the save. In every
+case below the recipe stays saved exactly as it would be with a photo (same data, same parts), its
+photo path stays empty (`photo_path` null in the recipe JSON, and nothing sets it later), and the
+site shows it without a photo.
+
+- **The source gives no photo address:** download nothing, upload nothing, and tell the Owner in chat
+  that the recipe has no photo.
+- **The download fails** (blocked, dead link, not an image): upload nothing, so no file for this
+  recipe is left in the Storage bucket. Tell the Owner in chat which photo couldn't be downloaded
+  (the recipe name and the photo address) and why.
+- **The upload fails after the save** (for example `SUPABASE_SERVICE_KEY` isn't set, or Storage
+  refuses the file): do not retry by changing the recipe, and leave the photo path empty. Tell the
+  Owner in chat which photo couldn't be uploaded (the recipe name and the photo address) and why.
+- **The recipe replaced an existing one** (see "Ask before replacing a recipe") and has no new
+  photo for any of the reasons above: the old photo file stays in the bucket unused. Name it in
+  chat (the `photo file:` in the clash line) so the Owner can delete it.
+
+When you give the reason, use the error text from the download or the upload, with the key removed.
+The service key never appears in a message to the Owner, a command, a file or a log; if an error
+text contains it, leave that part out.
+
 ## 5. Close out
 
 Give the file link and nothing about the recipe itself; the note holds it. Mention only what went
