@@ -142,7 +142,7 @@ test.describe("S-02 produce and publish", () => {
     const r = build(root());
     const files = fs.readdirSync(r.dist, { recursive: true }).filter((f) => fs.statSync(path.join(r.dist, f)).isFile());
     for (const f of files) {
-      if (f === "home.js" || f === "recipe-page.js") continue; // the new Supabase page scripts (S-54, S-57), not part of the old note build
+      if (f === "home.js" || f === "recipe-page.js" || f === "auth.js" || f === "create-account.js") continue; // the new Supabase page scripts (S-54, S-57), not part of the old note build
       const t = fs.readFileSync(path.join(r.dist, f), "utf8");
       expect(t, f).not.toMatch(/fetch\(|XMLHttpRequest|WebSocket/);
     }

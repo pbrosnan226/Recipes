@@ -36,6 +36,7 @@ ${bodyMain}
 </main>
 <script src="/config.js"></script>
 <script src="/scale.js"></script>
+<script src="/auth.js"></script>
 ${scripts}
 </body></html>
 `;
@@ -56,7 +57,7 @@ function main() {
   fs.rmSync(dist, { recursive: true, force: true });
   fs.rmSync(tmp, { recursive: true, force: true });
   fs.mkdirSync(tmp, { recursive: true });
-  for (const f of ["style.css", "scale.js", "home.js", "recipe-page.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
+  for (const f of ["style.css", "scale.js", "auth.js", "home.js", "recipe-page.js", "create-account.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
   fs.cpSync(path.join(staticDir, "fonts"), path.join(tmp, "fonts"), { recursive: true });
   fs.writeFileSync(
     path.join(tmp, "config.js"),
@@ -64,6 +65,29 @@ function main() {
   );
   fs.writeFileSync(path.join(tmp, "robots.txt"), "User-agent: *\nDisallow: /\n");
   fs.writeFileSync(path.join(tmp, "index.html"), page("Recipes", `<div class="top"><h1>Everything we cook.</h1><div id="tools" style="display:contents"></div></div>\n<div id="home"></div>`, '<script src="/home.js"></script>'));
+  fs.writeFileSync(path.join(tmp, "create-account.html"), page("Create account", `<section class="auth">
+<h1>Create account</h1>
+<form id="ca-form" novalidate>
+<div class="field"><label for="ca-email">Email</label>
+<input id="ca-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" aria-describedby="ca-email-err">
+<p class="err" id="ca-email-err" role="alert" hidden></p></div>
+<div class="field"><label for="ca-password">Password</label>
+<input id="ca-password" name="password" type="password" autocomplete="new-password" aria-describedby="ca-password-help ca-password-err">
+<p class="help" id="ca-password-help">8+ characters</p>
+<p class="err" id="ca-password-err" role="alert" hidden></p></div>
+<div class="field"><label for="ca-confirm">Confirm password</label>
+<input id="ca-confirm" name="confirm" type="password" autocomplete="new-password" aria-describedby="ca-confirm-err">
+<p class="err" id="ca-confirm-err" role="alert" hidden></p></div>
+<p class="err form-err" id="ca-form-err" role="alert" hidden></p>
+<button class="pill on-sage" id="ca-submit" type="submit">Create account</button>
+</form>
+<p class="alt">Have an account? <a href="/sign-in">Sign in</a></p>
+</section>`, '<script src="/create-account.js"></script>'));
+  // The Sign in page is only a stand-in until S-78: the title and the Create account link.
+  fs.writeFileSync(path.join(tmp, "sign-in.html"), page("Sign in", `<section class="auth">
+<h1>Recipes</h1>
+<p class="alt"><a href="/create-account">Create account</a></p>
+</section>`));
   fs.writeFileSync(path.join(tmp, "recipe.html"), page("Recipe", `<article id="recipe"></article>`, '<script src="/recipe-page.js"></script>'));
   fs.renameSync(tmp, dist);
   console.log(`Published the page shell into ${dist} (settings read from ${url[0]} and ${key[0]}).`);

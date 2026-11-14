@@ -42,7 +42,7 @@ test("S-63.1 publishes Home, /recipe, styles, scripts and fonts", async () => {
     const t = fs.readFileSync(h, "utf8");
     for (const m of t.matchAll(/(?:src|href)="(\/[^"]+)"/g)) {
       if (m[1] === "/") continue;
-      expect(fs.existsSync(path.join(dist, m[1])), `${m[1]} referenced by ${path.basename(h)}`).toBe(true);
+      expect(fs.existsSync(path.join(dist, m[1])) || fs.existsSync(path.join(dist, m[1] + ".html")), `${m[1]} referenced by ${path.basename(h)}`).toBe(true);
     }
   }
   // style.css fonts exist
@@ -83,7 +83,7 @@ test("S-63.3 the build reads no note or image and makes no Supabase request", as
 test("S-63.4 no page for any single recipe", async () => {
   const { r, dist } = build(good, { withNotes: true });
   expect(r.status, r.stderr).toBe(0);
-  expect(html(dist).map((f) => path.relative(dist, f)).sort()).toEqual(["index.html", "recipe.html"]);
+  expect(html(dist).map((f) => path.relative(dist, f)).sort()).toEqual(["create-account.html", "index.html", "recipe.html", "sign-in.html"]);
   expect(fs.existsSync(path.join(dist, "recipes"))).toBe(false);
 });
 
@@ -120,11 +120,12 @@ test("S-63.7 the published site saves nothing", async () => {
   const scripts = walk(dist).filter((f) => f.endsWith(".js"));
   for (const f of scripts) {
     const t = fs.readFileSync(f, "utf8");
+    if (["auth.js", "create-account.js"].includes(path.basename(f))) continue; // S-77: sign-up scripts may POST and keep the session
     expect(t, f).not.toMatch(/method\s*:\s*["'`](POST|PUT|PATCH|DELETE)/i);
     expect(t, f).not.toMatch(/localStorage|sessionStorage|indexedDB|document\.cookie|sendBeacon/);
     expect(t, f).not.toMatch(/\/rpc\/|save_recipe/);
   }
-  for (const h of html(dist)) expect(fs.readFileSync(h, "utf8")).not.toMatch(/<form|<input[^>]*type="?(file|password)/i);
+  for (const h of html(dist).filter((h) => !/(create-account|sign-in)\.html$/.test(h))) expect(fs.readFileSync(h, "utf8")).not.toMatch(/<form|<input[^>]*type="?(file|password)/i);
 });
 
 test("S-63.8 every page has a noindex robots directive", async () => {
