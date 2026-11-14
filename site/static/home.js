@@ -23,7 +23,7 @@
 
   function load() {
     Promise.all([
-      get("recipe?select=name,slug,site,photo_path,course(name),recipe_tag(position,tag(name))&order=name"),
+      get("recipe?select=name,slug,site,photo_path,course(name),recipe_tag(position,tag(name)),recipe_ingredient(name)&recipe_ingredient.hidden=eq.false&order=name"),
       get("course?select=name,position&order=position")
     ]).then(function (res) {
       var rows = res[0].map(function (r) {
@@ -31,7 +31,8 @@
           name: r.name, slug: r.slug, site: r.site || "", photo: r.photo_path || "",
           course: r.course ? r.course.name : "",
           tags: (r.recipe_tag || []).slice().sort(function (a, b) { return a.position - b.position; })
-            .map(function (t) { return t.tag.name; })
+            .map(function (t) { return t.tag.name; }),
+          ings: (r.recipe_ingredient || []).map(function (i) { return String(i.name || "").toLowerCase(); })
         };
       });
       build(rows, res[1].map(function (c) { return c.name; }));
@@ -67,7 +68,7 @@
     }).join("\n");
     document.getElementById("tools").innerHTML =
       '<label for="q" class="sr">Search recipes</label>' +
-      '<input id="q" class="search" type="search" placeholder="Search by name, site or tag" autocomplete="off">' +
+      '<input id="q" class="search" type="search" placeholder="Search by name, site, tag or ingredient" autocomplete="off">' +
       '<div class="row"><div class="chips" id="chips" role="group" aria-label="Course">' + chipHtml + "</div>" +
       '<label class="sort">Sort by\n<select id="sort"><option value="name">Name</option><option value="site">Site</option></select></label></div>';
     root.innerHTML =
@@ -90,7 +91,8 @@
         var r = rows[i];
         if (course !== "All" && r.course !== course) return false;
         if (!t) return true;
-        return [r.name, r.site].concat(r.tags).some(function (f) { return f && f.toLowerCase().indexOf(t) > -1; });
+        return [r.name, r.site].concat(r.tags).some(function (f) { return f && f.toLowerCase().indexOf(t) > -1; }) ||
+          r.ings.some(function (n) { return n.indexOf(t) > -1; });
       });
       list.sort(function (a, b) {
         var A = rows[a], B = rows[b];

@@ -11,7 +11,7 @@ const siteDir = path.resolve(__dirname, "..");
 const URL_ = "https://wbeaswhbzkqmxcsweisu.supabase.co";
 const KEY = "sb_publishable_mS_LpC99jJUlk8Ljxp-jUw_epJ7l0gt";
 const H = { apikey: KEY, Authorization: "Bearer " + KEY, "Accept-Profile": "recipes" };
-const RECIPES_Q = "recipe?select=name,slug,site,photo_path,course(name),recipe_tag(position,tag(name))&order=name";
+const RECIPES_Q = "recipe?select=name,slug,site,photo_path,course(name),recipe_tag(position,tag(name)),recipe_ingredient(name)&recipe_ingredient.hidden=eq.false&order=name";
 
 let server, base, dist;
 let live; // { recipes, courses }
@@ -188,7 +188,7 @@ test("S-54.7b sort, search and tag selection need no further request", async ({ 
   const q = page.getByRole("searchbox", { name: "Search recipes" });
   const word = live.recipes[0].name.split(" ")[0];
   await q.fill(word);
-  const hits = live.recipes.filter((r) => [r.name, r.site, ...r.recipe_tag.map((t) => t.tag.name)].some((f) => f && f.toLowerCase().includes(word.toLowerCase()))).length;
+  const hits = live.recipes.filter((r) => [r.name, r.site, ...r.recipe_tag.map((t) => t.tag.name), ...(r.recipe_ingredient || []).map((i) => i.name)].some((f) => f && f.toLowerCase().includes(word.toLowerCase()))).length;
   await expect(page.locator("#grid .card:not([hidden])")).toHaveCount(hits);
   await q.fill("zzzqqq");
   await expect(page.getByText("Nothing matches that. Try another word.")).toBeVisible();
