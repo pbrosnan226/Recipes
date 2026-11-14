@@ -17,7 +17,9 @@
     X-Robots-Tag = "noindex"
 
 # Old recipe addresses (S-60): /recipes/<slug>.html -> /recipe?name=<slug>
+# Netlify's placeholder matches a whole path segment (the docs don't promise ":slug.html" splits at the dot), so the rule
+# uses ":slug" and passes "<slug>.html" on; the Recipe page (site/static/recipe-page.js) drops the ".html" and tidies the address.
 [[redirects]]
-  from = "/recipes/:slug.html"
+  from = "/recipes/:slug"
   to = "/recipe?name=:slug"
   status = 301

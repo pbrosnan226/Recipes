@@ -91,7 +91,7 @@ test("S-63.5 netlify.toml holds the redirect for the old recipe addresses", asyn
   const toml = fs.readFileSync(path.join(root, "netlify.toml"), "utf8");
   const block = toml.split("[[redirects]]")[1];
   expect(block).toBeTruthy();
-  expect(block).toMatch(/from\s*=\s*"\/recipes\/:slug\.html"/);
+  expect(block).toMatch(/from\s*=\s*"\/recipes\/:slug"/);
   expect(block).toMatch(/to\s*=\s*"\/recipe\?name=:slug"/);
   expect(block).toMatch(/status\s*=\s*301/);
   // the build does not need to write a _redirects file; none must contradict the toml

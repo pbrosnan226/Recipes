@@ -5,6 +5,12 @@
   var base = (cfg.supabaseUrl || "").replace(/\/+$/, "");
   var root = document.getElementById("recipe");
   var slug = new URLSearchParams(location.search).get("name");
+  // S-60: Netlify's placeholder matches a whole path segment, so the redirect from /recipes/<slug>.html can hand over "<slug>.html".
+  // Drop that ending and tidy the address to /recipe?name=<slug>.
+  if (slug && /\.html$/i.test(slug)) {
+    slug = slug.replace(/\.html$/i, "");
+    if (window.history && history.replaceState) history.replaceState(null, "", "/recipe?name=" + encodeURIComponent(slug));
+  }
   if (!root) return;
   // S-59: no recipe with that name. Not a load failure, so no "Couldn't load recipes." and no Try again.
   function missing() {
