@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>W-06 Sign in</title>
+<title>W-06 Sign in, sign out and reset a password</title>
 <style>
   body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
   .meta { color: #555; margin: 4px 0; }
@@ -13,31 +13,57 @@
 </head>
 <body>
 <p><a href="index.html">All workflows</a></p>
-<h1>W-06 Sign in</h1>
-<p class="meta"><b>Actors:</b> Member, Supabase</p>
-<p class="meta"><b>Starts when:</b> A Visitor selects Sign in in the site header.</p>
-<p class="meta"><b>Ends when:</b> The Member is signed in or signed out.</p>
+<h1>W-06 Sign in, sign out and reset a password</h1>
+<p class="meta"><b>Actors:</b> Visitor, Member, Supabase Auth</p>
+<p class="meta"><b>Starts when:</b> A Visitor selects Sign in in the site header, or a Member selects Sign out.</p>
+<p class="meta"><b>Ends when:</b> The Member is signed in or signed out, or the password is changed.</p>
 
 <pre class="mermaid">
 flowchart LR
-  subgraph sb["Supabase"]
-    s2{"Step 2: Is the email invited?"}
-    s2 -- "Yes" --> link["Step 2: Send a one-time link"]
-    s2 -- "No" --> no["Step 2: Site says the email isn't invited"]
+  subgraph sb["Supabase Auth"]
+    chk{"Step 2: Email and password right?"}
+    rq{"Step 6: Email has an account and limit not reached?"}
+    sendm["Step 6: Send the reset email"]
+    setp["Step 8: Change the password"]
   end
-  subgraph m["Member"]
-    start(["Start"]) --> s1["Step 1: Select Sign in, type email"]
-    s3["Step 3: Open the link from the email"] --> ok{"Link still valid?"}
-    ok -- "Yes" --> s4["Step 4: Signed in, Favorite and Favorites appear"]
-    ok -- "No" --> exp["Step 3: See a message and ask for a new link"]
-    s4 --> s5["Step 5: Optionally select Sign out"]
-    s5 --> done(["End"])
-    noend(["End"])
+  subgraph m["Visitor or Member"]
+    start(["Start"]) --> s1["Step 1: Select Sign in in the header"]
+    s1 --> s2["Step 2: Enter email and password, select Sign in"]
+    s3["Step 3: Signed in, Home shows Favorites and Sign out"] --> s4["Step 4: Optionally select Sign out"]
+    s4 --> out["Signed out, page shows its signed-out view"] --> done(["End"])
+    werr["Page says Wrong email or password"]
+    cerr["Page says No connection or Couldn't sign in"]
+    s5["Step 5: Select Forgot password?, enter email"]
+    s6["Step 6: Select Send reset link"]
+    sent["Page says a link is on its way"]
+    lim["Page says Too many emails, try again in an hour"]
+    s7["Step 7: Open the link in the email"]
+    lk{"Valid reset link?"}
+    bad["Page says that link is not a password reset link"]
+    s8["Step 8: Enter new password twice, select Set password"]
+    pw{"8+ characters and they match?"}
+    perr["Page says Use 8+ characters or Passwords dont match"]
+    done2["Sign in says Password changed, sign in with it"]
+    fin(["End"])
   end
-  s1 --> s2
-  link --> s3
-  no --> noend
-  exp --> s1
+  s2 --> chk
+  chk -- "Yes" --> s3
+  chk -- "Wrong or empty" --> werr --> s2
+  chk -- "No connection or other failure" --> cerr --> s2
+  s1 --> s5
+  s5 --> s6 --> rq
+  rq -- "Yes" --> sendm --> sent --> s7
+  rq -- "No account" --> sent
+  rq -- "Limit reached" --> lim
+  s7 --> lk
+  lk -- "Yes" --> s8
+  lk -- "No" --> bad
+  s8 --> pw
+  pw -- "Yes" --> setp --> done2 --> fin
+  pw -- "No" --> perr --> s8
+  sent --> fin
+  lim --> fin
+  bad --> fin
 </pre>
 
 <p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
