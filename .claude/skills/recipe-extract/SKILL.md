@@ -179,7 +179,7 @@ and save their choice. Never save a `course` outside the list.
 After reading the page (step 1) and before anything is saved to the database or uploaded to
 Storage, build the recipe in the shape `supabase/import-notes.js` gives `recipes.save_recipe`
 (`source_url`, `created`, `base_amount`, `amount_noun`, `course`, `ingredients` with `key`,
-`quantity`, `fixed_text`, and `steps`) and run it through the checker:
+`quantity`, `fixed_text`, `steps`, `name` and `tags` in order) and run it through the checker:
 
 ```bash
 node supabase/check-recipe.js <recipe.json>
@@ -194,6 +194,11 @@ under Photo, not a failure here). The checker then confirms:
 - its course is one of Breakfast, Main, Side, Soup, Dessert or Sauce (chosen as under Course);
 - every ingredient has a quantity or fixed text;
 - every `{key}` in a step is the key of an ingredient of this recipe.
+- its tags pass the tag rules (see Tags): every tag is lowercase; none is `recipe` or `recipes`; none is
+  the recipe's name or two or more consecutive words of it (ignoring case, a hyphen counting as a
+  space); none repeats another exactly; and a recipe with a course has its lowercase course word as
+  its first tag, once (a recipe with no course has no course tag). Whether a tag is useful or a
+  synonym of another is not checked; that stays your own judgment.
 
 When every check passes (it prints `OK`), go on to save the recipe. When any check fails, save
 nothing and upload nothing, and tell the Owner in chat which check failed, using the checker's lines.
