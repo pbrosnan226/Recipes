@@ -41,6 +41,7 @@ select{height:36px;font:500 16px var(--sans);color:var(--text);background:var(--
 .card .name{font-family:var(--serif);font-size:24px;line-height:1.2}
 .card .meta{display:flex;flex-direction:column;gap:4px}
 .card .rating{font-size:14px;color:var(--muted)}
+.card .badge{align-self:flex-start;font-size:13px;font-weight:500;padding:2px 10px;border-radius:12px;border:1px solid var(--field-line);color:var(--text)}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tag{font:13px var(--sans);color:var(--accent);background:transparent;border:1px solid var(--field-line);border-radius:14px;padding:3px 10px;cursor:pointer}
 .empty{font-family:var(--serif);font-size:24px;color:var(--muted)}

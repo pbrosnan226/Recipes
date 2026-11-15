@@ -59,15 +59,47 @@
     }
   };
 
+  // S-66: the signed-in Member's own ratings and Want to try marks, read with their own sign-in (the row policy returns only
+  // their rows). Nothing is requested when signed out. Each part is a map { recipe_id: stars } / { recipe_id: true }, or null when
+  // that request fails (cards then show no personal part). Kept on window.RecipesPersonal for S-67, S-68 and S-70.
+  function personalRows(path, pick) {
+    if (!(window.RecipesAuth && RecipesAuth.signedIn())) return Promise.resolve(null);
+    return RecipesAuth.api(path).then(function (r) {
+      if (!r.ok) return null;
+      return r.json().then(function (rows) {
+        var m = {};
+        rows.forEach(function (x) { m[x.recipe_id] = pick(x); });
+        return m;
+      });
+    }, function () { return null; });
+  }
+  window.RecipesPersonal = {
+    ratings: null, wantToTry: null,
+    // "Your rating: 4.5", or "" when not rated / not loaded.
+    ratingText: function (id) {
+      var m = this.ratings;
+      return m && m[id] != null ? "Your rating: " + Number(m[id]).toFixed(1) : "";
+    },
+    // Badge only when marked and not rated (rating wins).
+    wants: function (id) {
+      return !!(this.wantToTry && this.wantToTry[id] && !(this.ratings && this.ratings[id] != null));
+    }
+  };
+
   function load() {
+    RecipesPersonal.ratings = RecipesPersonal.wantToTry = null;
     Promise.all([
       get("recipe?select=id,name,slug,site,photo_path,course(name),recipe_tag(position,tag(name)),recipe_ingredient(name)&recipe_ingredient.hidden=eq.false&order=name"),
       get("course?select=name,position&order=position"),
       favMode ? favoriteIds() : Promise.resolve(undefined),
-      ratingSummary()
+      ratingSummary(),
+      personalRows("rating?select=recipe_id,stars", function (x) { return x.stars; }),
+      personalRows("want_to_try?select=recipe_id", function () { return true; })
     ]).then(function (res) {
       var favs = res[2];
       RecipesRatings.summary = res[3];
+      RecipesPersonal.ratings = res[4];
+      RecipesPersonal.wantToTry = res[5];
       if (favMode && favs === null) { location.replace("/"); return; }
       var recipes = favMode ? res[0].filter(function (r) { return favs.indexOf(r.id) > -1; }) : res[0];
       var rows = recipes.map(function (r) {
@@ -105,12 +137,13 @@
       var tags = r.tags.map(function (t) {
         return '<a class="tag" href="/?q=' + encodeURIComponent(t) + '" data-tag="' + esc(t) + '">' + esc(t) + "</a>";
       }).join("");
-      var rt = RecipesRatings.text(r.id);
+      var rt = RecipesRatings.text(r.id), mine = RecipesPersonal.ratingText(r.id);
       return '<article class="card"><a class="photo t' + (i % 4) + '" href="' + esc(href) + '" tabindex="-1" aria-hidden="true">' +
         (r.photo ? '<img src="' + esc(photoUrl(r.photo)) + '" alt="' + esc(r.name) + '" loading="lazy">' : "") + "</a>" +
         '<div class="meta">' + (r.course ? '<span class="eyebrow">' + esc(r.course) + "</span>" : "") +
         '<a class="name" href="' + esc(href) + '">' + esc(r.name) + "</a>" +
-        (rt ? '<span class="rating">' + esc(rt) + "</span>" : "") + (tags ? '<div class="tags">' + tags + "</div>" : "") + "</div></article>";
+        (rt ? '<span class="rating">' + esc(rt) + "</span>" : "") +
+        (mine ? '<span class="rating mine">' + esc(mine) + "</span>" : RecipesPersonal.wants(r.id) ? '<span class="badge">Want to try</span>' : "") + (tags ? '<div class="tags">' + tags + "</div>" : "") + "</div></article>";
     }).join("\n");
     document.getElementById("tools").innerHTML =
       '<label for="q" class="sr">Search recipes</label>' +
