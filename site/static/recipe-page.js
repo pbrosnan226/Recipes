@@ -72,7 +72,7 @@
 
   // S-25: Favorite / Favorited, for a signed-in Member only (the box is not drawn for a Visitor). Favorites are read and
   // written with the Member's own sign-in. A favorites list that can't be read (including the table not existing yet)
-  // counts as "not a favorite". Selecting Favorited again (remove) is S-26.
+  // counts as "not a favorite". Selecting Favorited removes it (S-26).
   function favoriteButton(recipeId) {
     var box = document.getElementById("actions");
     if (!box || !recipeId) return;
@@ -92,13 +92,19 @@
     set(false);
     var busy = false;
     btn.addEventListener("click", function () {
-      if (busy || btn.getAttribute("aria-pressed") === "true") return;
+      if (busy) return;
       busy = true;
       msg.hidden = true;
-      set(true);
-      RecipesAuth.api("favorite", { method: "POST", prefer: "return=minimal", body: { user_id: RecipesAuth.userId(), recipe_id: recipeId } })
-        .then(function (res) { if (!res.ok && res.status !== 409) throw new Error("HTTP " + res.status); /* 409: already saved */ })
-        .catch(function () { set(false); msg.hidden = false; })
+      var was = btn.getAttribute("aria-pressed") === "true";
+      set(!was);
+      // Favorite adds the Member's row (S-25); Favorited deletes it (S-26). Only the favorite row is touched, so the
+      // Want to try mark and the rating stay as they are. A failure puts the button back.
+      var call = was
+        ? RecipesAuth.api("favorite?user_id=eq." + encodeURIComponent(RecipesAuth.userId()) + "&recipe_id=eq." + encodeURIComponent(recipeId), { method: "DELETE", prefer: "return=minimal" })
+        : RecipesAuth.api("favorite", { method: "POST", prefer: "return=minimal", body: { user_id: RecipesAuth.userId(), recipe_id: recipeId } });
+      call
+        .then(function (res) { if (!res.ok && !(!was && res.status === 409)) throw new Error("HTTP " + res.status); /* 409 on add: already saved */ })
+        .catch(function () { set(was); msg.hidden = false; })
         .then(function () { busy = false; });
     });
     RecipesAuth.api("favorite?select=recipe_id&recipe_id=eq." + encodeURIComponent(recipeId))
