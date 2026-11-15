@@ -52,7 +52,7 @@ test('S-81.10 kind with nothing to say adds no tag; no filler tag', () => {
   assert.ok(/A kind with nothing to say adds no tag\. Add no filler tag\./.test(tags));
 });
 test('S-81.11 before saving, list existing tags (S-83) and reuse one with same meaning', () => {
-  assert.ok(/Before saving, list the existing tags .*\(S-83\) and reuse one that already means the same/.test(tags));
+  assert.ok(/Before saving, list the existing tags .*list-tags\.js.*Reuse a listed tag that already means the same/.test(tags));
 });
 test('S-81.12 "Tags in order" line no longer contradicts the rules', () => {
   const line = flat(skill).match(/\*\*Tags in order:\*\*[^*]*?(?=- \*\*|$)/);

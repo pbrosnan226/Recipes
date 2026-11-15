@@ -183,7 +183,20 @@ Nothing in the database changes in this step, and nothing changes until the Owne
    changes** or **cancel**.
    - Changes: go back to step 2 and show a new table.
    - Cancel: change nothing and tell the Owner that nothing was changed.
-   - Confirm: the confirmed table is applied by a separate step (not part of this one).
+   - Confirm: apply the confirmed table (next section).
+
+### Apply the confirmed table
+
+Only after the Owner confirmed. Save the confirmed table as JSON and run (one all-or-nothing change;
+the database function `supabase/apply-tag-cleanup.sql` must be applied first, with the Owner's approval):
+
+```bash
+supabase/with-key.sh node supabase/apply-tag-cleanup.js table.json
+```
+
+It prints `TAG CLEANUP APPLIED` with the tags renamed, merged, dropped and added and how many recipes
+changed: tell the Owner exactly that. If it prints `TAG CLEANUP FAILED`, nothing was changed: tell the
+Owner why. Nothing else changes: no recipe is deleted and no recipe field other than its tags.
 
 ## Photo
 
