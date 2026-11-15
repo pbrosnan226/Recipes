@@ -1,7 +1,4 @@
 // S-70: personal parts hidden from signed-out Visitors. Shell built into a temp copy; every Supabase call is stubbed (no live calls).
-// NOTE for the tester: S-70.3 and S-70.5 for the Recipe page concern the Want to try button, half-star row and Remove rating
-// button, which arrive with S-71 to S-75 and do not exist yet. Here the signed-out Recipe page is checked to have none of them
-// (trivially true today). Re-check S-70.3 and S-70.5 (signed-in controls shown) once S-71 to S-75 are built.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const os = require("os");
@@ -45,15 +42,16 @@ const cors = { "access-control-allow-origin": "*" };
 const session = { access_token: "tok", refresh_token: "ref", expires_at: 9999999999, user: { id: "u1", email: "sam@example.com", name: "Sam" } };
 const recipe = { id: "r1", slug: "apple-pie", name: "Apple Pie", site: "", author: "", source_url: "x", photo_path: null, base_amount: 4, amount_noun: "servings", servings_label: "Servings", description: "", prep_time: "", cook_time: "", total_time: "", course: { name: "Main" }, recipe_tag: [], serving_option: [{ position: 1, amount: 4, label: "4" }], recipe_ingredient: [], step: [], recipe_note: [], nutrient: [] };
 const card = { id: "r1", slug: "apple-pie", name: "Apple Pie", site: "", photo_path: null, course: { name: "Main" }, recipe_tag: [], recipe_ingredient: [] };
-async function stub(page) {
+async function stub(page, opts = {}) {
   const reqs = [];
   await page.route(URL_ + "/**", async (route) => {
     const u = route.request().url();
     reqs.push(u);
     const ok = (json) => route.fulfill({ status: 200, json, headers: cors });
     if (u.includes("/rest/v1/recipe_rating_summary")) return ok([{ recipe_id: "r1", average: "4.5000", rating_count: 3 }]);
-    if (u.includes("/rest/v1/rating?")) return ok([{ recipe_id: "r1", stars: 4 }]);
-    if (u.includes("/rest/v1/want_to_try")) return ok([{ recipe_id: "r1" }]);
+    if (u.includes("/rest/v1/rating?")) return ok(opts.rated === false ? [] : [{ recipe_id: "r1", stars: 4 }]);
+    if (u.includes("/rest/v1/want_to_try")) return ok(opts.rated === undefined ? [{ recipe_id: "r1" }] : []);
+    if (u.includes("/rest/v1/favorite")) return ok([]);
     if (u.includes("/rest/v1/recipe?") && u.includes("slug")) return ok([recipe]);
     if (u.includes("/rest/v1/recipe?")) return ok([card]);
     if (u.includes("/rest/v1/course")) return ok([{ name: "Main", position: 1 }]);
@@ -81,7 +79,9 @@ test("S-70.3/.4: signed-out Recipe page shows the average and none of the person
   await page.goto(base + "/recipe?name=apple-pie");
   await expect(page.locator("#avg")).toHaveText("4.5 (3)");
   await expect(page.locator("h1")).toHaveText("Apple Pie");
-  await expect(page.locator(".want-to-try, #want-to-try, .stars, #stars, .star")).toHaveCount(0);
+  await page.waitForTimeout(300);
+  await expect(page.locator("#actions")).toHaveCount(0);
+  await expect(page.locator("#want, #stars, .stars, .star, #remove-rating")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /want to try/i })).toHaveCount(0);
   await expect(page.getByRole("button", { name: /remove rating/i })).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText("Your rating");
@@ -94,5 +94,23 @@ test("S-70.5 (Home part): a signed-in Member sees the second row, own rating and
   await page.goto(base + "/");
   await expect(page.locator("#mine .chip")).toHaveText(["All", "Want to try", "Rated"]);
   await expect(page.locator("#grid .rating.mine")).toHaveText("Your rating: 4.0");
-  // Recipe page controls for a Member: re-check when S-71 to S-75 are built.
+});
+
+test("S-70.5 (Recipe part): a signed-in Member sees Want to try and the star row; Remove rating only when rated", async ({ page }) => {
+  await signIn(page);
+  await stub(page, { rated: false });
+  await page.goto(base + "/recipe?name=apple-pie");
+  await expect(page.locator("#actions")).toBeVisible();
+  await expect(page.locator("#want")).toBeVisible();
+  await expect(page.locator("#stars .star")).toHaveCount(5);
+  await expect(page.locator("#stars")).toBeVisible();
+  await expect(page.locator("#remove-rating")).toBeHidden();
+});
+
+test("S-70.5 (Recipe part): Remove rating is shown when the Member has rated", async ({ page }) => {
+  await signIn(page);
+  await stub(page, { rated: true });
+  await page.goto(base + "/recipe?name=apple-pie");
+  await expect(page.locator("#stars")).toBeVisible();
+  await expect(page.locator("#remove-rating")).toBeVisible();
 });
