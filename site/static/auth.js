@@ -37,6 +37,25 @@
     }, function () { return { ok: false, kind: "noconnection" }; });
   }
 
+  // Result: { ok: true } | { ok: false, kind: "noconnection" | "wrong" | "other" }
+  function signIn(email, password) {
+    return fetch(base + "/auth/v1/token?grant_type=password", {
+      method: "POST",
+      headers: { apikey: cfg.supabaseKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, password: password })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (b) {
+        if (r.ok && b.access_token) {
+          save({ access_token: b.access_token, refresh_token: b.refresh_token, expires_at: b.expires_at, user: b.user });
+          return { ok: true };
+        }
+        var code = b.error_code || b.code;
+        if (code === "invalid_credentials" || code === "validation_failed" || code === "email_address_invalid") return { ok: false, kind: "wrong" };
+        return { ok: false, kind: "other" };
+      });
+    }, function () { return { ok: false, kind: "noconnection" }; });
+  }
+
   function header() {
     var nav = document.querySelector("nav.main");
     if (!nav) return;
@@ -66,6 +85,6 @@
     }
   }
 
-  window.RecipesAuth = { signUp: signUp, signedIn: function () { return !!read(); }, header: header };
+  window.RecipesAuth = { signUp: signUp, signIn: signIn, signedIn: function () { return !!read(); }, header: header };
   header();
 })();

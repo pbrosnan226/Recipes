@@ -57,7 +57,7 @@ function main() {
   fs.rmSync(dist, { recursive: true, force: true });
   fs.rmSync(tmp, { recursive: true, force: true });
   fs.mkdirSync(tmp, { recursive: true });
-  for (const f of ["style.css", "scale.js", "auth.js", "home.js", "recipe-page.js", "create-account.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
+  for (const f of ["style.css", "scale.js", "auth.js", "home.js", "recipe-page.js", "create-account.js", "sign-in.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
   fs.cpSync(path.join(staticDir, "fonts"), path.join(tmp, "fonts"), { recursive: true });
   fs.writeFileSync(
     path.join(tmp, "config.js"),
@@ -83,10 +83,23 @@ function main() {
 </form>
 <p class="alt">Have an account? <a href="/sign-in">Sign in</a></p>
 </section>`, '<script src="/create-account.js"></script>'));
-  // The Sign in page is only a stand-in until S-78: the title and the Create account link.
   fs.writeFileSync(path.join(tmp, "sign-in.html"), page("Sign in", `<section class="auth">
 <h1>Recipes</h1>
+<form id="si-form" novalidate>
+<div class="field"><label for="si-email">Email</label>
+<input id="si-email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+<div class="field"><label for="si-password">Password</label>
+<input id="si-password" name="password" type="password" autocomplete="current-password"></div>
+<p class="err form-err" id="si-form-err" role="alert" hidden></p>
+<button class="pill on-sage" id="si-submit" type="submit">Sign in</button>
+</form>
+<p class="alt"><a href="/forgot-password">Forgot password?</a></p>
 <p class="alt"><a href="/create-account">Create account</a></p>
+</section>`, '<script src="/sign-in.js"></script>'));
+  // The Forgot password page is only a stand-in until S-79: the title and a link back to Sign in.
+  fs.writeFileSync(path.join(tmp, "forgot-password.html"), page("Forgot password", `<section class="auth">
+<h1>Forgot password</h1>
+<p class="alt"><a href="/sign-in">Back to sign in</a></p>
 </section>`));
   fs.writeFileSync(path.join(tmp, "recipe.html"), page("Recipe", `<article id="recipe"></article>`, '<script src="/recipe-page.js"></script>'));
   fs.renameSync(tmp, dist);
