@@ -7,7 +7,7 @@ const { checkRecipe } = require('../check-recipe');
 
 const good = () => ({
   name: 'Egg Bake', source_url: 'https://example.com/egg-bake', created: '2026-11-13', course: 'Breakfast',
-  base_amount: 4, amount_noun: 'servings',
+  base_amount: 4, amount_noun: 'servings', tags: ['breakfast'],
   ingredients: [
     { key: 'milk', name: 'milk', quantity: 2, fixed_text: null },
     { key: 'salt', name: 'salt', quantity: null, fixed_text: 'to taste' },
@@ -39,7 +39,7 @@ for (const [name, mutate, re] of cases) {
 
 test('all six courses are accepted (S-48.5)', () => {
   for (const c of ['Breakfast', 'Main', 'Side', 'Soup', 'Dessert', 'Sauce']) {
-    const r = good(); r.course = c;
+    const r = good(); r.course = c; r.tags = [c.toLowerCase()];
     assert.deepStrictEqual(checkRecipe(r), []);
   }
 });

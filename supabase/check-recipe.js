@@ -42,10 +42,54 @@ function checkRecipe(r) {
       if (!keys.has(mm[1])) fails.push(`Step ${n + 1} uses {${mm[1]}}, which is not an ingredient of this recipe.`);
     }
   });
+  // S-82 tags (plan: Data and rules, Tags; answers 107, 109, 110)
+  fails.push(...checkTags(r));
   return fails;
 }
 
-module.exports = { checkRecipe, COURSES };
+// Words of a text, lowercase, a hyphen counting as a space.
+const words = (t) => String(t).toLowerCase().split(/[\s-]+/).filter(Boolean);
+const hasRun = (hay, needle) => {
+  for (let i = 0; i + needle.length <= hay.length; i++) if (needle.every((w, k) => hay[i + k] === w)) return true;
+  return false;
+};
+
+function checkTags(r) {
+  const fails = [];
+  const tags = Array.isArray(r.tags) ? r.tags : [];
+  const courseWords = COURSES.map((c) => c.toLowerCase());
+  const courseWord = COURSES.includes(r.course) ? r.course.toLowerCase() : null;
+  const nameWords = words(r.name || "");
+  const seen = new Set();
+  tags.forEach((raw, n) => {
+    const tag = String(raw);
+    const q = JSON.stringify(tag);
+    if (tag !== tag.toLowerCase()) fails.push(`Tag ${q} is not lowercase (tags must be lowercase).`);
+    if (["recipe", "recipes"].includes(tag.trim().toLowerCase())) fails.push(`Tag ${q} is not allowed: "recipe" and "recipes" are never tags.`);
+    const tw = words(tag);
+    const isCourseTag = courseWords.includes(tw.join(" "));
+    if (!isCourseTag && tw.length && nameWords.length && hasRun(nameWords, tw) && (tw.length >= 2 || nameWords.length === 1)) {
+      fails.push(`Tag ${q} repeats the recipe's name or two or more consecutive words of it.`);
+    }
+    const key = tag.trim().toLowerCase();
+    if (seen.has(key) || tags.findIndex((t) => t === raw) !== n) fails.push(`Tag ${q} appears more than once.`);
+    seen.add(key);
+  });
+  const lower = tags.map((t) => String(t).trim().toLowerCase());
+  if (courseWord) {
+    const at = lower.reduce((a, t, i) => (t === courseWord ? a.concat(i) : a), []);
+    if (!at.length) fails.push(`Missing course tag: a ${r.course} recipe must have "${courseWord}" as its first tag.`);
+    else if (at.length > 1) fails.push(`Tag ${JSON.stringify(courseWord)} (the course word) appears more than once; it must appear once, first.`);
+    else if (at[0] !== 0) fails.push(`Tag ${JSON.stringify(courseWord)} (the course word) must be the first tag, not number ${at[0] + 1}.`);
+  } else if (blank(r.course)) {
+    lower.forEach((t, i) => {
+      if (courseWords.includes(t)) fails.push(`Tag ${JSON.stringify(tags[i])} is a course tag, but the recipe has no course.`);
+    });
+  }
+  return fails;
+}
+
+module.exports = { checkRecipe, checkTags, COURSES };
 
 if (require.main === module) {
   const fs = require("fs");

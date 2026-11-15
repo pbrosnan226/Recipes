@@ -104,7 +104,7 @@ No note, no template. Save these, as the ERD (`requirements/erd.md`) defines the
   total minutes (whole minutes; none when the source gives no total time), and the nutrition basis
   line as written.
 - **Aliases:** the source's own title, when the name differs.
-- **Tags in order:** from the site's own categories and keywords, in the order the recipe lists them.
+- **Tags in order:** chosen by the rules under Tags, in the order given there.
 - **Serving options** (see Servings).
 - **Ingredients** (see Servings).
 - **Steps:** reworded, with `{key}` tokens for amounts.
@@ -113,6 +113,90 @@ No note, no template. Save these, as the ERD (`requirements/erd.md`) defines the
 - **Nutrients:** one per row of the source's nutrition table (name and amount as written).
 
 The photo is not part of the data; see Photo.
+
+## Tags
+
+A recipe's tags are chosen by these rules, not copied wholesale from the site's categories and
+keywords. They come from these kinds, in this order, when they apply:
+
+1. **Course:** the lowercase course word, the same as the recipe's course (`main` for Main). It comes
+   first, once. A recipe with no course has no course tag.
+2. **Protein:** only when the source states it or it is plainly the main one.
+3. **Cuisine:** from the source.
+4. **Healthy:** only when the source itself calls the recipe healthy, light, low-calorie or similar.
+5. **Holiday:** only when the source names the holiday.
+6. **Other tags**, after those, when they help find the recipe (for example a diet or a method).
+
+A kind with nothing to say adds no tag. Add no filler tag.
+
+A tag is redundant, and not saved, when it:
+
+- repeats another tag of the recipe (a synonym, or the same word singular and plural);
+- repeats the course (the course word a second time);
+- is the dish's own name or part of it (two or more consecutive words: `apple pie` on Apple Pie; a
+  single word such as `chicken` on Chicken Parmesan is fine);
+- is `recipe` or `recipes`.
+
+Tags are lowercase and singular, with hyphens for a multiword tag (`main-dish`, `gluten-free`).
+
+Before saving, list the existing tags (names only, tags no recipe uses left out). This only reads the
+database:
+
+```bash
+supabase/with-key.sh node supabase/list-tags.js
+```
+
+It prints `TAGS: a, b, c` (or `NO TAGS`). Reuse a listed tag that already means the same instead of
+making a new spelling. If it prints `TAG LIST FAILED`, save nothing and tell the Owner in chat.
+
+## Tag cleanup (one time)
+
+When the Owner asks to clean up the tags of the existing recipes, propose first and change nothing.
+Nothing in the database changes in this step, and nothing changes until the Owner confirms.
+
+1. Read every tag and the recipes that use it (read-only):
+
+   ```bash
+   supabase/with-key.sh node supabase/tag-cleanup.js read
+   ```
+
+   If it prints `TAG READ FAILED`, tell the Owner and change nothing.
+2. Decide, for each tag, to **keep**, **rename** (with the new name) or **drop** it, under the Tags
+   rules above (lowercase, singular, hyphens; no redundant tag; no dish-name tag; never `recipe` or
+   `recipes`; merge synonyms and plural forms into one). Write the proposal as JSON,
+   `[{"tag":"Side Dish","action":"rename","to":"side"},{"tag":"apple pie","action":"drop"}]`, with
+   every existing tag in it. Add no protein, cuisine, healthy or holiday tag: only the missing
+   course tag is added, and the script adds it itself (first, and only for a recipe that has a
+   course; a recipe with no course gets no course tag). Two tags merging into one keep a single
+   link at the position of the first one the recipe had.
+3. Check and show the table (read-only):
+
+   ```bash
+   supabase/with-key.sh node supabase/tag-cleanup.js table proposal.json
+   ```
+
+   It runs the same tag checks as a new recipe (`supabase/check-recipe.js`) on every recipe's tags
+   as they would be after the cleanup. If it prints `TABLE FAILED`, tell the Owner which tag, change
+   nothing, and fix the proposal (or ask the Owner) before showing a table.
+4. Show the Owner the whole old-to-new table it prints (every tag marked keep, rename or drop, the
+   recipes that use it, and the course tags to add), then ask them to **confirm**, **ask for
+   changes** or **cancel**.
+   - Changes: go back to step 2 and show a new table.
+   - Cancel: change nothing and tell the Owner that nothing was changed.
+   - Confirm: apply the confirmed table (next section).
+
+### Apply the confirmed table
+
+Only after the Owner confirmed. Save the confirmed table as JSON and run (one all-or-nothing change;
+the database function `supabase/apply-tag-cleanup.sql` must be applied first, with the Owner's approval):
+
+```bash
+supabase/with-key.sh node supabase/apply-tag-cleanup.js table.json
+```
+
+It prints `TAG CLEANUP APPLIED` with the tags renamed, merged, dropped and added and how many recipes
+changed: tell the Owner exactly that. If it prints `TAG CLEANUP FAILED`, nothing was changed: tell the
+Owner why. Nothing else changes: no recipe is deleted and no recipe field other than its tags.
 
 ## Photo
 
@@ -151,7 +235,7 @@ and save their choice. Never save a `course` outside the list.
 After reading the page (step 1) and before anything is saved to the database or uploaded to
 Storage, build the recipe in the shape `supabase/import-notes.js` gives `recipes.save_recipe`
 (`source_url`, `created`, `base_amount`, `amount_noun`, `course`, `ingredients` with `key`,
-`quantity`, `fixed_text`, and `steps`) and run it through the checker:
+`quantity`, `fixed_text`, `steps`, `name` and `tags` in order) and run it through the checker:
 
 ```bash
 node supabase/check-recipe.js <recipe.json>
@@ -166,6 +250,11 @@ under Photo, not a failure here). The checker then confirms:
 - its course is one of Breakfast, Main, Side, Soup, Dessert or Sauce (chosen as under Course);
 - every ingredient has a quantity or fixed text;
 - every `{key}` in a step is the key of an ingredient of this recipe.
+- its tags pass the tag rules (see Tags): every tag is lowercase; none is `recipe` or `recipes`; none is
+  the recipe's name or two or more consecutive words of it (ignoring case, a hyphen counting as a
+  space); none repeats another exactly; and a recipe with a course has its lowercase course word as
+  its first tag, once (a recipe with no course has no course tag). Whether a tag is useful or a
+  synonym of another is not checked; that stays your own judgment.
 
 When every check passes (it prints `OK`), go on to save the recipe. When any check fails, save
 nothing and upload nothing, and tell the Owner in chat which check failed, using the checker's lines.
@@ -202,7 +291,7 @@ name the Owner gives it (the slug is made from it: lowercase, spaces and punctua
 keep times, nutrient amounts, the nutrition basis line, the servings label and ingredient text as
 the source writes them with no conversion, set `total_minutes` to the total time in whole minutes
 (`null` when the source gives no total time), `course` to one of the six existing courses (the save
-creates none), `tags` in the order the recipe lists them, and `notes` as `{level, text}` with level
+creates none), `tags` chosen and ordered by the Tags rules, and `notes` as `{level, text}` with level
 0, or 1 for a sub-note listed under the note before it (the first note is level 0).
 
 ```bash

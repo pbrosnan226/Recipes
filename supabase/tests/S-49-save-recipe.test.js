@@ -7,7 +7,7 @@ const { slugify, prepare, saveRecipe } = require('../save-recipe');
 
 const good = () => ({
   name: 'Mom’s Egg Bake!', source_url: 'https://example.com/e', created: '2026-11-13', course: 'Breakfast',
-  base_amount: 4, amount_noun: 'servings', total_time: '1 hr 5 min', total_minutes: 65,
+  base_amount: 4, amount_noun: 'servings', total_time: '1 hr 5 min', total_minutes: 65, tags: ['breakfast'],
   ingredients: [{ key: 'milk', name: 'milk', quantity: 2 }], steps: ['Add {milk}.'],
   notes: [{ level: 0, text: 'a' }, { level: 1, text: 'b' }],
 });
@@ -55,7 +55,7 @@ const SKILL = () => fs.readFileSync(path.join(__dirname, '..', '..', '.claude', 
 const full = () => ({
   ...good(), archived_url: 'https://archive.example/e', site: 'Example', author: 'A. Cook', description: 'd',
   servings_label: 'Serves 4 to 6', prep_time: '10 min', cook_time: '55 min', nutrition_basis: 'Per 1 slice (100g)',
-  nutrients: [{ name: 'Calories', amount: '210 kcal' }], tags: ['b', 'a', 'c'],
+  nutrients: [{ name: 'Calories', amount: '210 kcal' }], tags: ['breakfast', 'a', 'c'],
 });
 const sentFor = async (r) => { let s; await saveRecipe(r, 'k', async (u, o) => { s = JSON.parse(o.body).j; return { ok: true, text: async () => '"id"' }; }); return s; };
 
@@ -86,7 +86,7 @@ test('S-49.3 all parts go in one function call (single transaction) and each tab
 });
 test('S-49.4 tags keep the listed order and are deduplicated by name', async () => {
   const s = await sentFor(full());
-  assert.deepStrictEqual(s.tags, ['b', 'a', 'c']);
+  assert.deepStrictEqual(s.tags, ['breakfast', 'a', 'c']);
   assert.match(SQL(), /with ordinality t\(v, ord\)/);
   assert.match(SQL(), /on conflict \(name\) do nothing/);
 });
@@ -149,7 +149,7 @@ test('S-49.12 course is looked up, never created; unknown course is refused befo
   assert.match(SQL(), /\(select id from course where name = j->>'course'\)/);
   assert.doesNotMatch(SQL(), /insert into course/i);
   for (const c of ['Breakfast', 'Main', 'Side', 'Soup', 'Dessert', 'Sauce']) {
-    const r = good(); r.course = c; assert.strictEqual((await saveRecipe(r, 'k', async () => ({ ok: true, text: async () => '"i"' }))).ok, true, c);
+    const r = good(); r.course = c; r.tags = [c.toLowerCase()]; assert.strictEqual((await saveRecipe(r, 'k', async () => ({ ok: true, text: async () => '"i"' }))).ok, true, c);
   }
   const r = good(); r.course = 'Brunch'; let called = false;
   assert.strictEqual((await saveRecipe(r, 'k', async () => { called = true; })).ok, false); assert.strictEqual(called, false);

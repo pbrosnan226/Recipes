@@ -22,7 +22,7 @@ const bullet = (label) => {
 
 const good = () => ({
   name: 'Egg Bake', source_url: 'https://example.com/e', created: '2026-11-14', course: 'Breakfast',
-  base_amount: 4, amount_noun: 'servings', total_time: null,
+  base_amount: 4, amount_noun: 'servings', total_time: null, tags: ['breakfast'],
   ingredients: [{ key: 'milk', name: 'milk', quantity: 2 }], steps: ['Add {milk}.'],
   notes: [{ level: 0, text: 'a' }], photo_path: null,
 });
