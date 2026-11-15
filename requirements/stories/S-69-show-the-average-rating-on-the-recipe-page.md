@@ -2,11 +2,11 @@
 
 **Workflow:** [W-02 View a recipe](../workflows/W-02-view-a-recipe.html), step 1 (added 2026-11-13)
 **Screens:** Recipe (None, not mocked up)
-**Status:** Blocked on sign-in (W-06) and the Supabase migration; not built until both exist.
+**Status:** (changed 2026-11-14) Sign-in is planned (W-06, W-14; S-77 to S-80) and the recipes are in Supabase; build after the sign-in stories.
 
 ## Actors
 - **Visitor**: anyone who opens the site (primary)
-- **Member**: an invited person who is signed in (sees the same average)
+- **Member**: anyone signed in with an account (changed 2026-11-14) (sees the same average)
 
 ## Trigger
 The Visitor opens a recipe's page.

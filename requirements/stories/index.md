@@ -1,6 +1,6 @@
 # Stories
 
-S-01 to S-12 are built and are amended for the 2026-11-14 redesign (changed criteria are marked in each story). S-13 to S-19 are the photo-change stories. S-20 to S-37 are the redesign, courses and Cook mode stories. The Shopping list, sign-in and favorites are deferred (see [todo.md](../todo.md)); their story numbers are reserved and marked Deferred. The Owner does all pushing and deploying, outside every story.
+S-01 to S-12 are built and are amended for the 2026-11-14 redesign (changed criteria are marked in each story). S-13 to S-19 are the photo-change stories. S-20 to S-37 are the redesign, courses and Cook mode stories. The Shopping list is deferred (see [todo.md](../todo.md)). Sign-in, accounts and favorites came back on 2026-11-14: S-21, S-24 to S-28 are rewritten and S-77 to S-80 are new. The Owner does all pushing and deploying, outside every story.
 
 **2026-11-13, database-backed recipes:** S-38 to S-64 are new. The notes-at-build-time stories are marked Superseded where the change replaces them (S-01, S-02, S-03, S-04, S-13, S-14, S-15 and S-16); nothing is deleted or renumbered. Changed criteria are marked "(changed 2026-11-13)" in each story.
 
@@ -28,7 +28,7 @@ S-01 to S-12 are built and are amended for the 2026-11-14 redesign (changed crit
 | 2 | [S-10 Change the servings](S-10-change-the-servings.md) (changed 2026-11-13) | [Recipe](../mockups/recipe.html), [Recipe on phone](../mockups/recipe-phone.html) |
 | 2 | [S-61 Scale the amounts in the browser](S-61-scale-amounts-in-the-browser.md) (new 2026-11-13) | [Recipe](../mockups/recipe.html), [Recipe on phone](../mockups/recipe-phone.html) |
 | 3 | [S-37 Tick off an ingredient](S-37-tick-off-an-ingredient.md) (new) | [Recipe](../mockups/recipe.html), [Recipe on phone](../mockups/recipe-phone.html), [Recipe: ingredient sub-headings](../mockups/recipe--sub-headings.html) |
-| 4 | Cook mode: [S-29](S-29-turn-on-cook-mode.md). The Favorite part of this step is deferred. | [Recipe](../mockups/recipe.html) |
+| 4 | Cook mode: [S-29](S-29-turn-on-cook-mode.md). Favorite: [S-25](S-25-favorite-a-recipe.md) and [S-26](S-26-remove-a-favorite.md) (back in scope 2026-11-14) | [Recipe](../mockups/recipe.html) |
 | 5 | [S-11 Open the list filtered to a recipe's tag](S-11-open-the-list-from-a-recipes-tag.md) (changed) | [Recipe](../mockups/recipe.html), [Home](../mockups/home.html) |
 | 6 | [S-12 Open the source or go back to the list](S-12-follow-the-source-or-go-back.md) (changed) | [Recipe](../mockups/recipe.html), [Home](../mockups/home.html) |
 
@@ -68,19 +68,35 @@ Step 9 (the Owner opens the site) is the Owner's, outside every story; S-54.5 an
 | 3 to 6 | [S-18 Download the existing photos and replace the links](S-18-download-the-existing-photos-and-replace-the-links.md) | None |
 | 6, 7 | [S-19 Report the converted photos and the failures](S-19-report-the-converted-photos-and-failures.md) | None |
 
-## W-06 Sign in and W-07 Favorite a recipe (Deferred 2026-11-14, see [todo.md](../todo.md))
-Not built now. Do not build any story below.
+## Sign-in, accounts and favorites (back in scope 2026-11-14)
+The sign-in, Create account, Forgot password and Reset password pages have no mockups: the Owner chose to skip them (answer 102). Workout's screens and wording are the reference. S-22 and S-23 (email-link sign-in) were never written and stay unused. The Supabase settings rule for the build is S-64.
 
+### [W-06 Sign in, sign out and reset a password](../workflows/W-06-sign-in.html)
+| Step | Story | Screens |
+|---|---|---|
+| 1, 3, 4 (header) | [S-21 Show Sign in or Sign out in the header](S-21-show-sign-in-or-sign-out-in-the-header.md) (rewritten 2026-11-14) | [Home](../mockups/home.html), [Recipe](../mockups/recipe.html); header not mocked up |
+| 1 to 3 | [S-78 Sign in](S-78-sign-in.md) (new 2026-11-14) | Sign in (no mockup), [Home](../mockups/home.html) |
+| 4 | [S-24 Sign out and stay signed in](S-24-sign-out-and-stay-signed-in.md) (rewritten 2026-11-14) | [Home](../mockups/home.html), [Recipe](../mockups/recipe.html) |
+| 5, 6 | [S-79 Request a password reset email](S-79-request-a-password-reset-email.md) (new 2026-11-14) | Sign in, Forgot password (no mockups) |
+| 7, 8 | [S-80 Set a new password from the reset link](S-80-set-a-new-password-from-the-reset-link.md) (new 2026-11-14) | Reset password, Sign in (no mockups) |
+
+### [W-14 Create an account](../workflows/W-14-create-an-account.html)
+| Step | Story | Screens |
+|---|---|---|
+| 1 to 3 | [S-77 Create an account](S-77-create-an-account.md) (new 2026-11-14) | Sign in, Create account (no mockups), [Home](../mockups/home.html) |
+
+### [W-07 Favorite a recipe](../workflows/W-07-favorite-a-recipe.html)
+| Step | Story | Screens |
+|---|---|---|
+| 1 | [S-25 Favorite a recipe](S-25-favorite-a-recipe.md) (rewritten 2026-11-14) | [Recipe](../mockups/recipe.html); button not mocked up |
+| 2 | [S-26 Remove a favorite](S-26-remove-a-favorite.md) (rewritten 2026-11-14) | [Recipe](../mockups/recipe.html); button not mocked up |
+| 3 | [S-27 See my favorites](S-27-see-my-favorites.md) (rewritten 2026-11-14) | [Home](../mockups/home.html); Favorites view not mocked up |
+| 3 (none) | [S-28 See that there are no favorites yet](S-28-see-that-there-are-no-favorites-yet.md) (rewritten 2026-11-14) | [Home](../mockups/home.html); state not mocked up |
+
+### Reserved numbers, not built
 | Workflow | Story | Status |
 |---|---|---|
-| W-06 | [S-21 Show Sign in or Sign out in the header](S-21-show-sign-in-or-sign-out-in-the-header.md) | Deferred |
-| W-06 | S-22 Request a sign-in link, S-23 Open the sign-in link (numbers reserved, never written) | Deferred |
-| W-06 | [S-24 Sign out and stay signed in](S-24-sign-out-and-stay-signed-in.md) | Deferred |
-| W-07 | [S-25 Favorite a recipe](S-25-favorite-a-recipe.md) | Deferred |
-| W-07 | [S-26 Remove a favorite](S-26-remove-a-favorite.md) | Deferred |
-| W-07 | [S-27 See my favorites](S-27-see-my-favorites.md) | Deferred |
-| W-07 | [S-28 See that there are no favorites yet](S-28-see-that-there-are-no-favorites-yet.md) | Deferred |
-| Supabase | [S-35 Read the Supabase settings from the build settings](S-35-read-the-supabase-settings-from-the-build-settings.md) (changed 2026-11-13: the recipe settings are now S-63 and S-64) | Deferred (sign-in part) |
+| Supabase | [S-35 Read the Supabase settings from the build settings](S-35-read-the-supabase-settings-from-the-build-settings.md) (changed 2026-11-14: the build fails when the settings are missing, see S-64; covers sign-in too) | Not built; covered by S-63 and S-64 |
 | Supabase | S-36 Set up Supabase (number reserved, never written; the recipes schema setup is W-10, S-38 to S-42) | Deferred |
 
 ## [W-08 Use Cook mode](../workflows/W-08-use-cook-mode.html)
@@ -117,7 +133,7 @@ Not built now. Do not build any story below.
 | 6 | [S-47 Write the guide to retiring the notes](S-47-write-the-guide-to-retiring-the-notes.md) (new 2026-11-13) | None |
 
 ## Want to try and ratings (S-65 to S-76, new 2026-11-13)
-Blocked on sign-in (W-06) and the Supabase migration; not built until both exist. None of these screens is mocked up.
+(changed 2026-11-14) Sign-in is planned (W-06, W-14; S-77 to S-80) and the recipes are in Supabase; build these after the sign-in stories. A Member is anyone signed in with an account. None of these screens is mocked up.
 
 ### [W-01 Browse the recipe list](../workflows/W-01-browse-the-recipe-list.html) (added parts)
 | Step | Story | Screens |

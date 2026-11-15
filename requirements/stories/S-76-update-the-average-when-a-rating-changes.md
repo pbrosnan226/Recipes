@@ -2,10 +2,10 @@
 
 **Workflow:** [W-13 Rate a recipe](../workflows/W-13-rate-a-recipe.html), step 4
 **Screens:** Recipe (None, not mocked up)
-**Status:** Blocked on sign-in (W-06) and the Supabase migration; not built until both exist.
+**Status:** (changed 2026-11-14) Sign-in is planned (W-06, W-14; S-77 to S-80) and the recipes are in Supabase; build after the sign-in stories.
 
 ## Actors
-- **Member**: an invited person who is signed in (primary)
+- **Member**: anyone signed in with an account (changed 2026-11-14) (primary)
 
 ## Trigger
 A rating the Member gives, changes or removes is saved.

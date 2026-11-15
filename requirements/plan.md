@@ -101,7 +101,7 @@ Diagrams: [workflows/index.html](workflows/index.html)
   6. If nothing matches, the page shows "Nothing matches that. Try another word." Otherwise Visitor selects a card and goes to W-02.
   7. If the recipes can't be loaded (Supabase down, no network), the page shows "Couldn't load recipes." with a Try again button. Try again loads them again and goes to step 1.
 - **Ends when:** The Visitor opens a recipe or leaves the site.
-- **Added 2026-11-13 (blocked on sign-in):** The sort control also offers Rating: for a Visitor it sorts by the average rating, for a signed-in Member by their own rating; unrated recipes go last. A signed-in Member also sees a second chip row All / Want to try / Rated (their own marks) that combines with the course chips, sort and search; signed-out Visitors don't see it. Each card shows the average rating (or "No ratings yet"); for a Member it also shows their own rating if they rated the recipe, otherwise a "Want to try" badge if they marked it. Empty wording for the two filters is still to be set.
+- **Added 2026-11-13 (needs a signed-in Member; sign-in planned 2026-11-14):** The sort control also offers Rating: for a Visitor it sorts by the average rating, for a signed-in Member by their own rating; unrated recipes go last. A signed-in Member also sees a second chip row All / Want to try / Rated (their own marks) that combines with the course chips, sort and search; signed-out Visitors don't see it. Each card shows the average rating (or "No ratings yet"); for a Member it also shows their own rating if they rated the recipe, otherwise a "Want to try" badge if they marked it. Empty wording for the two filters is still to be set.
 - **Errors and edge cases:** A recipe with no photo shows a plain tinted box; a recipe with no course shows only under All. Clearing the search or choosing All restores the full list. Chips, sort and search combine. Without JavaScript the page shows only "Turn on JavaScript to see recipes." A recipe added in Supabase shows on the next page load, with no rebuild.
 
 ### W-02 View a recipe
@@ -111,10 +111,10 @@ Diagrams: [workflows/index.html](workflows/index.html)
   1. The page loads the recipe named in the address from Supabase and shows the course, name, description, times, servings dropdown, source link, photo, ingredients (a checkbox list of scaled amount and name, with sub-heading rows for groups), method, the author's notes and the nutrition (when the recipe has them).
   2. Visitor may change the servings dropdown; the amounts in the ingredients and in the steps rescale (computed in the browser from the ingredient rows, with the same results the notes' scaler gave).
   3. Visitor may tick an ingredient's checkbox; it is struck through. Ticks are not remembered.
-  4. Visitor may use Cook mode (W-08). (Favoriting is deferred.)
+  4. Visitor may use Cook mode (W-08). A signed-in Member may select Favorite or Favorited (W-07).
   5. Visitor may select a tag; goes to the home list filtered to that tag.
   6. Visitor may open the nutrition section, select the source link (opens the original recipe page) or select Back to all recipes.
-- **Added 2026-11-13 (blocked on sign-in):** The page shows the average rating with its count (or "No ratings yet"). A signed-in Member also sees the Want to try button (W-12), the half-star row and Remove rating (W-13).
+- **Added 2026-11-13 (needs a signed-in Member; sign-in planned 2026-11-14):** The page shows the average rating with its count (or "No ratings yet"). A signed-in Member also sees the Want to try button (W-12), the half-star row and Remove rating (W-13).
 - **Ends when:** The Visitor goes back to the list or the source.
 - **Errors and edge cases:** If the recipe can't be loaded, the page shows "Couldn't load recipes." with a Try again button. If no recipe has that name (deleted or never existed), it shows "That recipe isn't here." with a Back to all recipes link. The dropdown starts at the source's servings every visit. A recipe with no photo, notes, description, times or nutrition simply omits those parts. A recipe whose photo file is missing shows without a photo. Recipes that scale by batches show the batch dropdown the note defines.
 
@@ -172,7 +172,7 @@ Diagrams: [workflows/index.html](workflows/index.html)
   7. Visitor opens the link in the email; the Reset password page shows New password (helper "8+ characters"), Confirm password, Set password and Back to sign in.
   8. Visitor enters the same new password of 8 or more characters in both fields and selects Set password; the password changes and Sign in shows "Password changed. Sign in with it."
 - **Ends when:** The Member is signed in or signed out, or the password is changed.
-- **Errors and edge cases:** Forgot password: an empty or invalid email shows "Enter a valid email." under Email and sends nothing; "No connection." when offline; when the hourly limit on emails is reached, "Too many emails. Try again in an hour." Reset password: under 8 characters shows "Use 8+ characters." under New password; a mismatch shows "Passwords don't match." under Confirm password; offline shows "No connection." above Set password; opening Reset password without a valid reset link shows "That link is not a password reset link." with Back to sign in. "Password changed. Sign in with it." stays until the Member signs in or leaves Sign in. Closing the site and reopening keeps a Member signed in on that device until they select Sign out. A Member sees and changes only their own favorites, marks and ratings.
+- **Errors and edge cases:** Forgot password: an empty or invalid email shows "Enter a valid email." under Email and sends nothing; "No connection." when offline; any other failure shows "Couldn't send reset link. Try again."; when the hourly limit on emails is reached, "Too many emails. Try again in an hour." Reset password: under 8 characters shows "Use 8+ characters." under New password; a mismatch shows "Passwords don't match." under Confirm password; reusing the current password shows "Use a new password."; any other failure shows "Couldn't set password. Try again."; offline shows "No connection." above Set password; opening Reset password without a valid reset link shows "That link is not a password reset link." with Back to sign in. "Password changed. Sign in with it." stays until the Member signs in or leaves Sign in. Closing the site and reopening keeps a Member signed in on that device until they select Sign out. A Member sees and changes only their own favorites, marks and ratings.
 
 ### W-14 Create an account (new 2026-11-14; copies Workout's W-01 steps 1 to 3)
 - **Actors:** Visitor, Supabase Auth
@@ -192,7 +192,7 @@ Diagrams: [workflows/index.html](workflows/index.html)
   2. Member selects Favorited again to remove it.
   3. Member selects Favorites in the header; the home page titled "Your favorites." shows only their favorites, with the same course chips, sort and search.
 - **Ends when:** The favorite is saved or removed, or the Member sees their favorites.
-- **Errors and edge cases:** Each Member sees only their own favorites. Signed-out Visitors see no Favorite button and no Favorites link, and a Favorites address shows the normal Home page (answer 55). If saving fails, the button returns to its old state and says "Couldn't save. Try again." (same wording as answer 90). With no favorites, the Favorites view says "No favorites yet." A favorited recipe that no longer exists on the site is not shown.
+- **Errors and edge cases:** Each Member sees only their own favorites. Signed-out Visitors see no Favorite button and no Favorites link, and a Favorites address shows the normal Home page (answer 55). If saving fails, the button returns to its old state and says "Couldn't save. Try again." (same wording as answer 90). With no favorites, the Favorites view says "No favorites yet." A favorited recipe that no longer exists on the site is not shown. When a course chip or search leaves nothing in the Favorites view it says "Nothing matches that. Try another word."; "No favorites yet." is only for a Member with no favorites at all. Favorites that can't be loaded is left out for now (as answer 91).
 
 ### W-08 Use Cook mode
 - **Actors:** Visitor
@@ -239,7 +239,7 @@ Diagrams: [workflows/index.html](workflows/index.html)
 - **Ends when:** Every readable note is in the database, the comparison shows no differences, and the guide is written.
 - **Errors and edge cases:** Running the import again replaces only the names the Owner confirms, and creates no duplicates. A photo that is missing in `images/` leaves that recipe without a photo and is reported. The notes and images are not changed or deleted.
 
-### W-12 Mark a recipe "want to try" (new 2026-11-13; blocked on sign-in)
+### W-12 Mark a recipe "want to try" (new 2026-11-13; needs a signed-in Member, sign-in planned 2026-11-14)
 - **Actors:** Member
 - **Starts when:** A signed-in Member opens a recipe page.
 - **Steps:**
@@ -249,7 +249,7 @@ Diagrams: [workflows/index.html](workflows/index.html)
 - **Ends when:** The mark is saved or removed.
 - **Errors and edge cases:** Signed-out Visitors see no Want to try button. If saving fails, the button returns to its old state and says so. A recipe the Member has rated shows no Want to try button (rating cleared it); removing the rating brings the button back.
 
-### W-13 Rate a recipe (new 2026-11-13; blocked on sign-in)
+### W-13 Rate a recipe (new 2026-11-13; needs a signed-in Member, sign-in planned 2026-11-14)
 - **Actors:** Member
 - **Starts when:** A signed-in Member opens a recipe page.
 - **Steps:**
@@ -274,7 +274,7 @@ Mockups: the Owner's design file (https://claude.ai/artifact/UwuhyttRor8TPLzQUaW
 ### Recipe
 - **Used in:** W-02, W-07, W-08
 - **Shows:** Header, Back to all recipes, course, name, description, prep/cook/total time, servings dropdown with "(the source makes N)", Cook mode button, source link, photo, ingredients (a checkbox list of scaled amount and name, with a sub-heading row for each group; the 'As written' column is dropped), method, notes, nutrition (collapsible, per the recipe's own basis line).
-- **Actions:** servings → rescales ingredients and steps; checkbox → strikes the ingredient (not remembered); Cook mode → W-08; tag → Home filtered; source link; Back.
+- **Actions:** servings → rescales ingredients and steps; checkbox → strikes the ingredient (not remembered); Cook mode → W-08; Favorite / Favorited (signed-in Members only, next to Cook mode) → W-07; tag → Home filtered; source link; Back. (Favorite button added 2026-11-14; not mocked up.)
 - **Example data:** French Toast (servings 4; 2/4/6/8/12), Serious Eats.
 
 ### Want to try and ratings (2026-11-13; not mocked up, not a major change)
@@ -299,7 +299,7 @@ The Owner chose to leave the mockups as they are. Home gains a second chip row (
 - **Reset password shows:** New password (helper "8+ characters"), Confirm password, Set password and Back to sign in.
 - **Header:** signed out: Sign in; signed in: Favorites and Sign out.
 - **Example data:** sam@example.com, a password of 8 or more characters.
-- **Mockups:** to be chosen with the Owner (see Mockups below); Workout's mockups are the reference.
+- **Mockups:** none; the Owner chose to skip mockups for these screens (answer 102). Workout's screens and wording are the reference, drawn in the Recipes look (cream and sage) when built.
 
 ## Data model
 See [erd.md](erd.md).
@@ -445,3 +445,6 @@ See [erd.md](erd.md).
 | 99 | Same accounts as Workout and the Gambling App? | "Yes, same accounts everywhere" |
 | 100 | Where to land after creating an account or signing in | "Always Home" |
 | 101 | Create account, Forgot password and Reset password rules and wording | "Yes, exactly" as Workout (S-01, S-06, S-07), including no confirmation email and the "Too many emails. Try again in an hour." limit |
+| 102 | Mockups for Sign in, Create account, Forgot password, Reset password | "skip mock ups" |
+| 103 | Workout's three extra reset messages | Added all three: "Couldn't send reset link. Try again.", "Use a new password.", "Couldn't set password. Try again." |
+| 104 | Favorites view when a chip or search leaves nothing; favorites fail to load | "Nothing matches that. Try another word."; leave the load failure out |

@@ -34,7 +34,7 @@ The Visitor selects a recipe's card on the Home page (S-05), or opens the recipe
 - S-09.19 (changed 2026-11-14) Verify that on a phone-sized screen (about 390 px wide) the Recipe page shows its content in one column, and all parts that are shown are readable and usable without zooming or sideways scrolling.
 - S-09.20 (changed 2026-11-14) Verify that in light mode the page uses the cream (#F7F6EE) background with the sage green (#3F6B4F) accent, and that when the device is set to dark mode the page uses the dark version of that palette shown in the approved mockups (background #141A16, accent #8DBE9D); headings use Fraunces and body text uses Inter, from font files stored in the repo and published with the site, so no page loads a font from another site.
 - S-09.21 (new 2026-11-14) Verify that the Recipe page shows the recipe's course above its name when the recipe has a course.
-- S-09.22 (new 2026-11-14) Verify that the Recipe page shows a **Cook mode** button (S-29) and no **Favorite** button (favorites are deferred, see todo.md).
+- S-09.22 (new 2026-11-14; changed 2026-11-14: favorites are back in scope) Verify that the Recipe page shows a **Cook mode** button (S-29), and shows the **Favorite** or **Favorited** button only to a signed-in Member (S-25, S-26), never to a Visitor who isn't signed in.
 - S-09.23 (new 2026-11-14) Verify that the servings dropdown, the source makes text and the times are shown together in the recipe's header block, next to the photo on a wide screen.
 
 ## Post-conditions

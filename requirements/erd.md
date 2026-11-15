@@ -1,6 +1,6 @@
 # Recipe website data model
 
-**Status:** Draft
+**Status:** Approved on 2026-11-14
 
 Recipes, courses, tags and their parts are stored in the `recipes` schema of the Gambling App Supabase project (from 2026-11-13). The site reads them live with a read-only public key. Signed-in people (Supabase accounts shared with Workout and the Gambling App) also save their own favorites, Want to try marks and ratings.
 The same tables were first shaped when recipes came from notes read at build time; the notes remain in the repo as an archive.

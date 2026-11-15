@@ -2,11 +2,11 @@
 
 **Workflow:** [W-01 Browse the recipe list](../workflows/W-01-browse-the-recipe-list.html), step 3 (added 2026-11-13)
 **Screens:** Home (None, not mocked up)
-**Status:** Blocked on sign-in (W-06) and the Supabase migration; not built until both exist.
+**Status:** (changed 2026-11-14) Sign-in is planned (W-06, W-14; S-77 to S-80) and the recipes are in Supabase; build after the sign-in stories.
 
 ## Actors
 - **Visitor**: anyone who opens the site (primary)
-- **Member**: an invited person who is signed in
+- **Member**: anyone signed in with an account (changed 2026-11-14)
 
 ## Trigger
 The Visitor or Member chooses **Rating** in the **Sort by** control.

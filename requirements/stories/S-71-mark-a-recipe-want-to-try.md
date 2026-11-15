@@ -2,10 +2,10 @@
 
 **Workflow:** [W-12 Mark a recipe want to try](../workflows/W-12-mark-a-recipe-want-to-try.html), step 1
 **Screens:** Recipe (None, not mocked up)
-**Status:** Blocked on sign-in (W-06) and the Supabase migration; not built until both exist.
+**Status:** (changed 2026-11-14) Sign-in is planned (W-06, W-14; S-77 to S-80) and the recipes are in Supabase; build after the sign-in stories.
 
 ## Actors
-- **Member**: an invited person who is signed in (primary)
+- **Member**: anyone signed in with an account (changed 2026-11-14) (primary)
 
 ## Trigger
 The Member selects **Want to try** on a recipe's page.

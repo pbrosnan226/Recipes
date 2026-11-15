@@ -2,11 +2,11 @@
 
 **Workflow:** [W-01 Browse the recipe list](../workflows/W-01-browse-the-recipe-list.html), steps 1 and 2 (added 2026-11-13); [W-02 View a recipe](../workflows/W-02-view-a-recipe.html), step 1 (added 2026-11-13); [W-12](../workflows/W-12-mark-a-recipe-want-to-try.html) and [W-13](../workflows/W-13-rate-a-recipe.html), errors and edge cases
 **Screens:** Home, Recipe (None, not mocked up)
-**Status:** Blocked on sign-in (W-06) and the Supabase migration; not built until both exist.
+**Status:** (changed 2026-11-14) Sign-in is planned (W-06, W-14; S-77 to S-80) and the recipes are in Supabase; build after the sign-in stories.
 
 ## Actors
 - **Visitor**: anyone who opens the site and isn't signed in (primary)
-- **Member**: an invited person who is signed in
+- **Member**: anyone signed in with an account (changed 2026-11-14)
 
 ## Trigger
 The Visitor opens the Home page or a Recipe page.
