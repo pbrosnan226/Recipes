@@ -75,6 +75,25 @@
     }, function () { return { ok: false, kind: "noconnection" }; });
   }
 
+  // Sets the new password with the token from the reset link. The link's sign-in is never saved on this device.
+  // Result: { ok: true } | { ok: false, kind: "noconnection" | "same" | "weak" | "gone" | "other" }
+  function setPassword(token, password) {
+    return fetch(base + "/auth/v1/user", {
+      method: "PUT",
+      headers: { apikey: cfg.supabaseKey, Authorization: "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ password: password })
+    }).then(function (r) {
+      if (r.ok) return { ok: true };
+      return r.json().catch(function () { return {}; }).then(function (b) {
+        var code = b.error_code || b.code;
+        if (code === "same_password") return { ok: false, kind: "same" };
+        if (code === "weak_password") return { ok: false, kind: "weak" };
+        if (r.status === 401 || r.status === 403 || code === "bad_jwt" || code === "session_not_found" || code === "session_expired" || code === "user_not_found" || code === "no_authorization") return { ok: false, kind: "gone" };
+        return { ok: false, kind: "other" };
+      });
+    }, function () { return { ok: false, kind: "noconnection" }; });
+  }
+
   function header() {
     var nav = document.querySelector("nav.main");
     if (!nav) return;
@@ -104,6 +123,6 @@
     }
   }
 
-  window.RecipesAuth = { signUp: signUp, signIn: signIn, resetPassword: resetPassword, signedIn: function () { return !!read(); }, header: header };
+  window.RecipesAuth = { signUp: signUp, signIn: signIn, resetPassword: resetPassword, setPassword: setPassword, signedIn: function () { return !!read(); }, header: header };
   header();
 })();

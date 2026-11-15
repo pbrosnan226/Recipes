@@ -57,7 +57,7 @@ function main() {
   fs.rmSync(dist, { recursive: true, force: true });
   fs.rmSync(tmp, { recursive: true, force: true });
   fs.mkdirSync(tmp, { recursive: true });
-  for (const f of ["style.css", "scale.js", "auth.js", "home.js", "recipe-page.js", "create-account.js", "sign-in.js", "forgot-password.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
+  for (const f of ["style.css", "scale.js", "auth.js", "home.js", "recipe-page.js", "create-account.js", "sign-in.js", "forgot-password.js", "reset-password.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
   fs.cpSync(path.join(staticDir, "fonts"), path.join(tmp, "fonts"), { recursive: true });
   fs.writeFileSync(
     path.join(tmp, "config.js"),
@@ -85,6 +85,7 @@ function main() {
 </section>`, '<script src="/create-account.js"></script>'));
   fs.writeFileSync(path.join(tmp, "sign-in.html"), page("Sign in", `<section class="auth">
 <h1>Recipes</h1>
+<p class="notice" id="si-notice" role="status" hidden></p>
 <form id="si-form" novalidate>
 <div class="field"><label for="si-email">Email</label>
 <input id="si-email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
@@ -108,6 +109,23 @@ function main() {
 </form>
 <p class="alt"><a href="/sign-in">Back to sign in</a></p>
 </section>`, '<script src="/forgot-password.js"></script>'));
+  // The reset link lands here (S-80) with the recovery token in the address after the #; reset-password.js picks the view.
+  fs.writeFileSync(path.join(tmp, "reset-password.html"), page("Reset password", `<section class="auth">
+<h1>New password</h1>
+<form id="rp-form" novalidate hidden>
+<div class="field"><label for="rp-password">New password</label>
+<input id="rp-password" name="password" type="password" autocomplete="new-password" aria-describedby="rp-password-help rp-password-err">
+<p class="help" id="rp-password-help">8+ characters</p>
+<p class="err" id="rp-password-err" role="alert" hidden></p></div>
+<div class="field"><label for="rp-confirm">Confirm password</label>
+<input id="rp-confirm" name="confirm" type="password" autocomplete="new-password" aria-describedby="rp-confirm-err">
+<p class="err" id="rp-confirm-err" role="alert" hidden></p></div>
+<p class="err form-err" id="rp-form-err" role="alert" hidden></p>
+<button class="pill on-sage" id="rp-submit" type="submit">Set password</button>
+</form>
+<p id="rp-not-reset" role="alert" hidden></p>
+<p class="alt"><a href="/sign-in">Back to sign in</a></p>
+</section>`, '<script src="/reset-password.js"></script>'));
   fs.writeFileSync(path.join(tmp, "recipe.html"), page("Recipe", `<article id="recipe"></article>`, '<script src="/recipe-page.js"></script>'));
   fs.renameSync(tmp, dist);
   console.log(`Published the page shell into ${dist} (settings read from ${url[0]} and ${key[0]}).`);

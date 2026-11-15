@@ -6,6 +6,16 @@
   var formErr = document.getElementById("si-form-err"), btn = document.getElementById("si-submit");
   var busy = false;
 
+  // S-80.8: after a reset, "Password changed. Sign in with it." shows until the Visitor signs in or leaves this page.
+  var notice = document.getElementById("si-notice");
+  try {
+    if (notice && sessionStorage.getItem("recipes.passwordChanged")) {
+      sessionStorage.removeItem("recipes.passwordChanged");
+      notice.textContent = "Password changed. Sign in with it.";
+      notice.hidden = false;
+    }
+  } catch (e) {}
+
   function say(text) { formErr.textContent = text; formErr.hidden = false; }
   function busyOn(on) {
     busy = on;
