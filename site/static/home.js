@@ -21,12 +21,30 @@
     return base + "/storage/v1/object/public/recipe-photos/" + p.split("/").map(encodeURIComponent).join("/");
   }
 
+  // S-27: /?favorites=1 for a signed-in Member shows only their favorites, under the title "Your favorites."
+  // Anyone else gets the normal Home page.
+  var favMode = new URLSearchParams(location.search).has("favorites") && !!(window.RecipesAuth && RecipesAuth.signedIn());
+
+  // The ids of the Member's favorites, read with their own sign-in (the database returns only their own rows).
+  // Resolves to null when nobody is signed in any more (the sign-in could not be kept). A favorites list that can't be
+  // read counts as no favorites (load failure for favorites is left out for now, as for the recipe page).
+  function favoriteIds() {
+    return RecipesAuth.api("favorite?select=recipe_id").then(function (r) {
+      if (!r.ok) return [];
+      return r.json().then(function (rows) { return rows.map(function (f) { return f.recipe_id; }); });
+    }, function () { return RecipesAuth.signedIn() ? [] : null; });
+  }
+
   function load() {
     Promise.all([
-      get("recipe?select=name,slug,site,photo_path,course(name),recipe_tag(position,tag(name)),recipe_ingredient(name)&recipe_ingredient.hidden=eq.false&order=name"),
-      get("course?select=name,position&order=position")
+      get("recipe?select=id,name,slug,site,photo_path,course(name),recipe_tag(position,tag(name)),recipe_ingredient(name)&recipe_ingredient.hidden=eq.false&order=name"),
+      get("course?select=name,position&order=position"),
+      favMode ? favoriteIds() : Promise.resolve(undefined)
     ]).then(function (res) {
-      var rows = res[0].map(function (r) {
+      var favs = res[2];
+      if (favMode && favs === null) { location.replace("/"); return; }
+      var recipes = favMode ? res[0].filter(function (r) { return favs.indexOf(r.id) > -1; }) : res[0];
+      var rows = recipes.map(function (r) {
         return {
           name: r.name, slug: r.slug, site: r.site || "", photo: r.photo_path || "",
           course: r.course ? r.course.name : "",
@@ -71,9 +89,12 @@
       '<input id="q" class="search" type="search" placeholder="Search by name, site, tag or ingredient" autocomplete="off">' +
       '<div class="row"><div class="chips" id="chips" role="group" aria-label="Course">' + chipHtml + "</div>" +
       '<label class="sort">Sort by\n<select id="sort"><option value="name">Name</option><option value="site">Site</option></select></label></div>';
+    if (favMode) { var h1 = document.querySelector("h1"); if (h1) h1.textContent = "Your favorites."; }
+    // No favorites at all (S-28) gets its own message; a chip or search that leaves none is "Nothing matches that."
+    var noneText = favMode && !rows.length ? "No favorites yet." : "Nothing matches that. Try another word.";
     root.innerHTML =
       '<p class="count" id="count" aria-live="polite"></p><div class="grid" id="grid">' + cardHtml + "</div>" +
-      '<p class="empty" id="none" hidden>Nothing matches that. Try another word.</p>';
+      '<p class="empty" id="none" hidden>' + noneText + "</p>";
 
     var cards = Array.prototype.slice.call(root.querySelectorAll("#grid .card"));
     var grid = document.getElementById("grid"), $q = document.getElementById("q"), $sort = document.getElementById("sort");
