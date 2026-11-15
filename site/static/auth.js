@@ -116,11 +116,14 @@
 
   // Keeps a device signed in: when the saved access token has expired (or is about to), trades the refresh token for a
   // new one. A lost connection keeps the session; only Supabase refusing the refresh token ends it.
+  // One refresh at a time: a second caller gets the one already under way, so no second request is sent.
+  var inflight = null;
   function refresh() {
+    if (inflight) return inflight;
     var s = read();
     if (!s || !s.refresh_token || !base) return Promise.resolve();
     if (s.expires_at && s.expires_at * 1000 - Date.now() > 60000) return Promise.resolve();
-    return fetch(base + "/auth/v1/token?grant_type=refresh_token", {
+    inflight = fetch(base + "/auth/v1/token?grant_type=refresh_token", {
       method: "POST",
       headers: { apikey: cfg.supabaseKey, "Content-Type": "application/json" },
       body: JSON.stringify({ refresh_token: s.refresh_token })
@@ -131,8 +134,29 @@
         });
       }
       if (r.status === 400 || r.status === 401 || r.status === 403) { clear(); header(); }
-    }).catch(function () {});
+    }).catch(function () {}).then(function () { inflight = null; });
+    return inflight;
   }
+
+  // Calls the database as the signed-in Member (S-25; reused by the other personal stories). Waits for the refresh
+  // that runs when the page loads, so the token it sends is the fresh one and no second refresh request is made.
+  // path is below /rest/v1, e.g. "favorite?select=recipe_id". opts: { method, body (an object), prefer }.
+  // Returns the fetch Response (check .ok; a missing table or a refusal is a not-ok Response). Rejects when nobody is
+  // signed in or the connection is lost.
+  var loadRefresh = null;
+  function api(path, opts) {
+    opts = opts || {};
+    if (!loadRefresh) loadRefresh = Promise.resolve();
+    return Promise.all([loadRefresh, refresh()]).then(function () {
+      var s = read();
+      if (!s || !s.access_token) throw new Error("signed out");
+      var h = { apikey: cfg.supabaseKey, Authorization: "Bearer " + s.access_token, "Accept-Profile": "recipes", "Content-Profile": "recipes" };
+      if (opts.body !== undefined) h["Content-Type"] = "application/json";
+      if (opts.prefer) h.Prefer = opts.prefer;
+      return fetch(base + "/rest/v1/" + path, { method: opts.method || "GET", headers: h, body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined });
+    });
+  }
+  function userId() { var s = read(); return s && s.user ? s.user.id : null; }
 
   function header() {
     var nav = document.querySelector("nav.main");
@@ -162,7 +186,7 @@
     }
   }
 
-  window.RecipesAuth = { signUp: signUp, signIn: signIn, resetPassword: resetPassword, setPassword: setPassword, signedIn: function () { return !!read(); }, header: header, signOut: signOut, refresh: refresh };
+  window.RecipesAuth = { signUp: signUp, signIn: signIn, resetPassword: resetPassword, setPassword: setPassword, signedIn: function () { return !!read(); }, header: header, signOut: signOut, refresh: refresh, api: api, userId: userId };
   header();
-  refresh();
+  loadRefresh = refresh();
 })();

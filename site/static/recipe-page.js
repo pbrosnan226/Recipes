@@ -70,6 +70,47 @@
     return '<b class="amt">' + esc(amount) + "</b> " + esc(name);
   }
 
+  // S-25: Favorite / Favorited, for a signed-in Member only (the box is not drawn for a Visitor). Favorites are read and
+  // written with the Member's own sign-in. A favorites list that can't be read (including the table not existing yet)
+  // counts as "not a favorite". Selecting Favorited again (remove) is S-26.
+  function favoriteButton(recipeId) {
+    var box = document.getElementById("actions");
+    if (!box || !recipeId) return;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pill";
+    var msg = document.createElement("p");
+    msg.className = "note";
+    msg.setAttribute("role", "alert");
+    msg.hidden = true;
+    msg.textContent = "Couldn't save. Try again.";
+    function set(on) {
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.innerHTML = on ? "&#9829; Favorited" : "&#9825; Favorite";
+      btn.classList.toggle("on-sage", on);
+    }
+    set(false);
+    var busy = false;
+    btn.addEventListener("click", function () {
+      if (busy || btn.getAttribute("aria-pressed") === "true") return;
+      busy = true;
+      msg.hidden = true;
+      set(true);
+      RecipesAuth.api("favorite", { method: "POST", prefer: "return=minimal", body: { user_id: RecipesAuth.userId(), recipe_id: recipeId } })
+        .then(function (res) { if (!res.ok && res.status !== 409) throw new Error("HTTP " + res.status); /* 409: already saved */ })
+        .catch(function () { set(false); msg.hidden = false; })
+        .then(function () { busy = false; });
+    });
+    RecipesAuth.api("favorite?select=recipe_id&recipe_id=eq." + encodeURIComponent(recipeId))
+      .then(function (res) { return res.ok ? res.json() : []; })
+      .catch(function () { return []; })
+      .then(function (rows) {
+        if (Array.isArray(rows) && rows.length) set(true);
+        box.appendChild(btn);
+        box.appendChild(msg);
+      });
+  }
+
   function show(r) {
     var ings = r.recipe_ingredient.slice().sort(byPos);
     var steps = r.step.slice().sort(byPos).map(function (s) { return s.text; });
@@ -125,6 +166,7 @@
       '<div class="facts">' + times.map(function (t) { return '<div class="fact"><span class="label">' + t[0] + '</span><span class="v">' + esc(t[1]) + "</span></div>"; }).join("\n") +
       '<div class="fact"><label class="label" for="sv">' + esc(r.servings_label || "Servings") + '</label><div class="serv-row"><select id="sv" autocomplete="off">' + optHtml + "</select>" + makes + "</div></div></div>" +
       (tags.length ? '<div class="rtags"><span class="label">Tags</span>' + tags.map(function (t) { return '<a class="tag" href="/?q=' + encodeURIComponent(t) + '">' + esc(t) + "</a>"; }).join("") + "</div>" : "") +
+      (window.RecipesAuth && RecipesAuth.signedIn() ? '<div class="actions" id="actions"></div>' : "") +
       src + "</div>" +
       (r.photo_path ? '<div class="photo"><img src="' + esc(photoUrl(r.photo_path)) + '" alt="' + esc(r.name) + '"></div>' : "") +
       '</section><section class="body"><div class="ings"><h2>Ingredients</h2><ul class="ing" id="ing">' + ingHtml + "</ul></div>" +
@@ -140,6 +182,7 @@
       Array.prototype.forEach.call(ingEl.querySelectorAll("input"), function (c, i) { c.checked = !!ticked[i]; });
       document.getElementById("steps").innerHTML = stepListHtml(next);
     });
+    favoriteButton(r.id);
     var img = root.querySelector(".photo img");
     if (img) img.addEventListener("error", function () { img.parentNode.remove(); });
   }
