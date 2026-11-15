@@ -149,7 +149,7 @@
       '<label for="q" class="sr">Search recipes</label>' +
       '<input id="q" class="search" type="search" placeholder="Search by name, site, tag or ingredient" autocomplete="off">' +
       '<div class="row"><div class="chips" id="chips" role="group" aria-label="Course">' + chipHtml + "</div>" +
-      '<label class="sort">Sort by\n<select id="sort"><option value="name">Name</option><option value="site">Site</option></select></label></div>';
+      '<label class="sort">Sort by\n<select id="sort"><option value="name">Name</option><option value="site">Site</option><option value="rating">Rating</option></select></label></div>';
     if (favMode) { var h1 = document.querySelector("h1"); if (h1) h1.textContent = "Your favorites."; }
     // No favorites at all (S-28) gets its own message; a chip or search that leaves none is "Nothing matches that."
     var noneText = favMode && !rows.length ? "No favorites yet." : "Nothing matches that. Try another word.";
@@ -167,6 +167,16 @@
       if (img) img.addEventListener("error", function () { img.remove(); });
     });
 
+    // S-67: a Member sorts by their own rating, a Visitor by the average; null (no value, or data not loaded) sorts last.
+    function sortValue(id) {
+      if (window.RecipesAuth && RecipesAuth.signedIn()) {
+        var m = RecipesPersonal.ratings;
+        return m && m[id] != null ? Number(m[id]) : null;
+      }
+      var x = RecipesRatings.summary && RecipesRatings.summary[id];
+      return x && x.count > 0 ? x.average : null;
+    }
+
     function draw() {
       var t = $q.value.trim().toLowerCase(), key = $sort.value;
       var list = rows.map(function (r, i) { return i; }).filter(function (i) {
@@ -181,6 +191,11 @@
         if (key === "site") {
           if (!A.site !== !B.site) return !A.site ? 1 : -1;
           if (A.site) { var c = cmp(A.site, B.site); if (c) return c; }
+        }
+        if (key === "rating") {
+          var va = sortValue(A.id), vb = sortValue(B.id);
+          if ((va === null) !== (vb === null)) return va === null ? 1 : -1;
+          if (va !== null && va !== vb) return vb - va;
         }
         return cmp(A.name, B.name);
       });
