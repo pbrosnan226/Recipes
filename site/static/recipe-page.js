@@ -203,8 +203,71 @@
       st.wantToTry = Array.isArray(a[0]) && a[0].length > 0;
       st.rating = Array.isArray(a[1]) && a[1].length ? Number(a[1][0].stars) : null;
       st.loaded = true;
-      render();
+      R.renderControls();
     }, function () { /* unreadable: no button */ });
+  }
+
+  // S-73: the half-star row, for a signed-in Member only. Five stars; tapping the left half of star n saves n - 0.5, the right
+  // half n. Mouse/tap only: the row has no tab stop and no key handlers (S-73.9). saveRating() upserts the Member's one row
+  // (S-73 gives it, S-74 changes it), shows the new rating at once, clears the Want to try mark in the page (the database
+  // trigger deletes the row), then asks the average to refresh (S-76). A failure puts the rating and the mark back.
+  function starRow(recipeId) {
+    var box = document.getElementById("actions");
+    if (!box || !recipeId) return;
+    var R = window.RecipesRecipe, st = R.state;
+    var row = document.createElement("div");
+    row.className = "stars";
+    row.id = "stars";
+    row.setAttribute("role", "img");
+    row.style.order = "3";
+    var msg = document.createElement("p");
+    msg.className = "note";
+    msg.id = "rate-msg";
+    msg.style.order = "4";
+    msg.setAttribute("role", "alert");
+    msg.hidden = true;
+    var html = "";
+    for (var n = 1; n <= 5; n++) {
+      html += '<span class="star" data-n="' + n + '"><span class="fill">&#9733;</span><span class="base">&#9733;</span></span>';
+    }
+    row.innerHTML = html;
+    function render() {
+      row.hidden = !st.loaded;
+      var v = st.rating === null || st.rating === undefined ? 0 : Number(st.rating);
+      row.setAttribute("aria-label", v ? "Your rating: " + v + " of 5" : "Not rated yet");
+      Array.prototype.forEach.call(row.children, function (el, i) {
+        var f = Math.max(0, Math.min(1, v - i));
+        el.firstChild.style.width = f * 100 + "%";
+      });
+    }
+    R.renderers.push(render);
+    R.saveRating = function (stars) {
+      return RecipesAuth.api("rating?on_conflict=user_id,recipe_id", {
+        method: "POST", prefer: "resolution=merge-duplicates,return=minimal",
+        body: { user_id: RecipesAuth.userId(), recipe_id: recipeId, stars: stars, rated_at: new Date().toISOString() }
+      }).then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); });
+    };
+    var busy = false;
+    row.addEventListener("click", function (e) {
+      var star = e.target.closest ? e.target.closest(".star") : null;
+      if (!star || busy || !st.loaded) return;
+      var rect = star.getBoundingClientRect();
+      var value = Number(star.getAttribute("data-n")) - (e.clientX - rect.left < rect.width / 2 ? 0.5 : 0);
+      if (st.rating === value) return; // S-74.3: the current rating again does nothing
+      busy = true;
+      msg.hidden = true;
+      var oldRating = st.rating, oldWant = st.wantToTry;
+      st.rating = value;
+      st.wantToTry = false;
+      R.renderControls();
+      R.saveRating(value)
+        .then(function () { R.refreshAverage(); })
+        .catch(function () { st.rating = oldRating; st.wantToTry = oldWant; R.renderControls(); msg.hidden = false; msg.textContent = "Couldn't save. Try again."; })
+        .then(function () { busy = false; });
+    });
+    render();
+    box.appendChild(row);
+    box.appendChild(msg);
   }
 
   function show(r) {
@@ -281,6 +344,7 @@
     });
     favoriteButton(r.id);
     wantToTryButton(r.id);
+    starRow(r.id);
     ratingId = r.id;
     window.RecipesRecipe.refreshAverage();
     var img = root.querySelector(".photo img");
