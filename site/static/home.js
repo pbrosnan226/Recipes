@@ -25,6 +25,9 @@
   // Anyone else gets the normal Home page.
   var favMode = new URLSearchParams(location.search).has("favorites") && !!(window.RecipesAuth && RecipesAuth.signedIn());
 
+  // Title at once, so "Everything we cook." never flashes while the lists load (S-28.1).
+  if (favMode) { var h1early = document.querySelector("h1"); if (h1early) h1early.textContent = "Your favorites."; }
+
   // The ids of the Member's favorites, read with their own sign-in (the database returns only their own rows).
   // Resolves to null when nobody is signed in any more (the sign-in could not be kept). A favorites list that can't be
   // read counts as no favorites (load failure for favorites is left out for now, as for the recipe page).
