@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-14 Create an account</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-14 Create an account</h1>
+<p class="meta"><b>Actors:</b> Visitor, Supabase Auth</p>
+<p class="meta"><b>Starts when:</b> A Visitor selects Create account on the Sign in page.</p>
+<p class="meta"><b>Ends when:</b> The account exists and Home is showing, or the Visitor is still on Create account with the reason shown.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph sb["Supabase Auth"]
+    ex{"Step 2: Email already has an account?"}
+    mk["Step 3: Create the account, no confirmation email, sign in"]
+  end
+  subgraph m["Visitor"]
+    start(["Start"]) --> s1["Step 1: Select Create account on Sign in"]
+    s1 --> s2["Step 2: Enter email, password and confirm password, select Create account"]
+    v{"Valid email, 8+ characters, passwords match?"}
+    verr["Page says Enter a valid email, Use 8+ characters or Passwords dont match"]
+    taken["Page says Email already has an account, Sign in"]
+    net["Page says No connection or Couldn't create account"]
+    s3["Step 3: Home shows Favorites and Sign out"] --> done(["End"])
+    back["Select Have an account or Sign in, Sign in page shows"] --> done2(["End"])
+  end
+  s2 --> v
+  v -- "No" --> verr --> s2
+  v -- "Yes" --> ex
+  ex -- "No" --> mk --> s3
+  ex -- "Yes" --> taken --> back
+  ex -- "Failed to reach or other failure" --> net --> s2
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

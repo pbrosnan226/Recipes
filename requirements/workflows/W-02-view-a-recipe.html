@@ -14,24 +14,37 @@
 <body>
 <p><a href="index.html">All workflows</a></p>
 <h1>W-02 View a recipe</h1>
-<p class="meta"><b>Actors:</b> Visitor</p>
+<p class="meta"><b>Actors:</b> Visitor, Member (signed in), Supabase</p>
 <p class="meta"><b>Starts when:</b> The Visitor selects a card on the home page.</p>
 <p class="meta"><b>Ends when:</b> The Visitor goes back to the list or the source.</p>
 
 <pre class="mermaid">
 flowchart LR
+  subgraph sb["Supabase"]
+    db["Send the recipe named in the address"]
+  end
   subgraph v["Visitor"]
-    start(["Start"]) --> s1["Step 1: See the recipe page"]
+    start(["Start"]) --> s0["Open the recipe page, page asks for the recipe"]
+    s0 --> db
+    db --> ld{"Recipe loaded?"}
+    ld -- "Error" --> e1["See Couldn't load recipes, Try again"]
+    e1 -- "Try again" --> s0
+    ld -- "No recipe with that name" --> e2["See That recipe isn't here, Back to all recipes"]
+    e2 --> s6b
+    ld -- "Yes" --> s1["Step 1: See the recipe page with the average rating"]
     s1 --> d{"What next?"}
-    d -- "Change servings" --> s2["Step 2: Ingredients and steps rescale"]
+    d -- "Change servings" --> s2["Step 2: Ingredients and steps rescale in the browser"]
     d -- "Tick an ingredient" --> s3["Step 3: Ingredient is struck through"]
+    d -- "Member: Want to try" --> s7["Go to W-12"]
+    d -- "Member: rate or remove rating" --> s8["Go to W-13"]
     d -- "Cook mode" --> s4["Step 4: Go to W-08"]
     d -- "Select a tag" --> s5["Step 5: Go to the list filtered by that tag"]
     d -- "Source link" --> s6a["Step 6: Open the original recipe page"]
     d -- "Back to all recipes" --> s6b["Step 6: Return to the list"]
     s2 --> d
     s3 --> d
-    s4 --> d
+    s7 --> d
+    s8 --> d
     s5 --> done(["End"])
     s6a --> done
     s6b --> done

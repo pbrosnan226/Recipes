@@ -1,7 +1,7 @@
 // S-62: search the Home list by ingredient name. Shell built into a temp copy (site/dist untouched).
 // Expected sets are computed from live data fetched with a separate query (recipe + recipe_ingredient tables).
 // Original header: S-54: the Home page loads its recipes from Supabase. The shell is built into a temp copy (site/dist is never touched),
-// served on a random port. Live data (26 recipes) is used where it can give the case; page.route stubs the rest.
+// served on a random port. Live data (however many recipes are in the database) is used where it can give the case; page.route stubs the rest.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const os = require("os");
@@ -83,7 +83,7 @@ const ingredientOnlyWords = () => {
 };
 const open = async (page) => {
   await page.goto(base);
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(live.recipes.length);
 };
 const dataFor = (url, recipes) => {
   // emulate PostgREST: recipe_ingredient.hidden=eq.false drops hidden embedded rows
@@ -297,7 +297,7 @@ test("S-62.6 count and the nothing-matches message follow the cards", async ({ p
   await expect(page.locator("#count")).toHaveText(`${n} recipes`);
   await expect(none).toBeHidden();
   await q.fill("");
-  await expect(page.locator("#count")).toHaveText("26 recipes");
+  await expect(page.locator("#count")).toHaveText(`${live.recipes.length} recipes`);
   await expect(none).toBeHidden();
   // stub: a word only in an ingredient's unit gives the message, a word in an ingredient name gives one card
   await page.unroute(URL_ + "/rest/v1/**").catch(() => {});

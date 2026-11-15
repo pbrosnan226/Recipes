@@ -1,5 +1,7 @@
 # S-14 Save a recipe's photo when adding a recipe
 
+**Superseded 2026-11-13 by S-48 to S-52 (W-04 changed: the recipe goes to the database and the photo to Storage, not to a note and `images/`).** S-14.1 is carried by S-51.1; S-14.2 by S-51.2 and S-51.8; S-14.3 by S-51.3; S-14.4 by S-51.2; S-14.5 and S-14.6 (the note's photo line) no longer apply, replaced by S-51.4 and S-51.5; S-14.7 by S-52.5. The criteria are kept for history.
+
 **Workflow:** [W-04 Save a recipe's photo](../workflows/W-04-save-a-recipes-photo.html), steps 1 to 5
 **Screens:** None (chat and files)
 

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-10 Set up the recipes schema in Supabase</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-10 Set up the recipes schema in Supabase</h1>
+<p class="meta"><b>Actors:</b> Owner, Claude, Supabase</p>
+<p class="meta"><b>Starts when:</b> The Owner asks Claude to set up the database.</p>
+<p class="meta"><b>Ends when:</b> The schema, access rules and photo bucket exist and the Owner has the settings.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph sb["Supabase"]
+    s4["Step 4: Apply the SQL, check tables and access rules"]
+  end
+  subgraph cl["Claude"]
+    s1["Step 1: List projects, confirm Gambling App"] --> s2["Step 2: Show the SQL (tables, six courses, read-only access, bucket)"]
+    s2 --> ap{"Step 3: Owner approves?"}
+    ap -- "No" --> s2b["Step 3: Change the SQL"]
+    s2b --> s2
+    ap -- "Yes" --> s4
+    s4 --> ok{"Applied?"}
+    ok -- "No" --> err["Stop and report the error"]
+    ok -- "Yes" --> s5["Step 5: Give the project address, public read key, service key steps"]
+  end
+  subgraph owner["Owner"]
+    start(["Start"]) --> s0["Ask Claude to set up the database"]
+    s0 --> s1
+    done0["Add the settings to Netlify and the service key to the Mac"] --> done(["End"])
+    seen["Read the error"] --> done
+  end
+  s5 --> done0
+  err --> seen
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

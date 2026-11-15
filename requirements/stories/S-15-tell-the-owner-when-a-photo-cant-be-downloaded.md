@@ -1,5 +1,7 @@
 # S-15 Save the recipe without a photo when the download fails
 
+**Superseded 2026-11-13 by S-52 (W-04 changed).** S-15.1 is carried by S-52.1; S-15.2 and S-15.3 by S-52.2; S-15.4 by S-52.3; S-15.5 by S-52.6. The criteria are kept for history.
+
 **Workflow:** [W-04 Save a recipe's photo](../workflows/W-04-save-a-recipes-photo.html), steps 3 and 6
 **Screens:** None (chat and files)
 

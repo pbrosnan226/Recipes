@@ -123,7 +123,7 @@ test.describe("S-05.8 and S-02.4", () => {
     expect((cardOf(index(r), "Tagged").match(/class="tag"/g) || []).length).toBe(1);
   });
   test("S-02.4 the site's own scripts save nothing (no storage, cookies or requests of their own)", () => {
-    for (const f of fs.readdirSync(path.join(siteDir, "static")).filter((f) => f.endsWith(".js") && f !== "home.js" && f !== "recipe-page.js")) { // home.js and recipe-page.js are the new Supabase page scripts (S-54, S-57)
+    for (const f of fs.readdirSync(path.join(siteDir, "static")).filter((f) => f.endsWith(".js") && f !== "home.js" && f !== "recipe-page.js" && f !== "auth.js" && f !== "create-account.js")) { // home.js and recipe-page.js are the new Supabase page scripts (S-54, S-57); auth.js and create-account.js are S-77's sign-up scripts
       expect(fs.readFileSync(path.join(siteDir, "static", f), "utf8"), f).not.toMatch(/localStorage|sessionStorage|document\.cookie|indexedDB|fetch\(|XMLHttpRequest|sendBeacon/);
     }
   });

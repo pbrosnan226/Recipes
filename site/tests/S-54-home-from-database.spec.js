@@ -1,5 +1,5 @@
 // S-54: the Home page loads its recipes from Supabase. The shell is built into a temp copy (site/dist is never touched),
-// served on a random port. Live data (26 recipes) is used where it can give the case; page.route stubs the rest.
+// served on a random port. Live data (however many recipes are in the database) is used where it can give the case; page.route stubs the rest.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const os = require("os");
@@ -73,23 +73,23 @@ test("S-54.1 asks Supabase with the project address and public key from the sett
 });
 
 test("S-54.2 one card per database recipe, A to Z, All, Name, empty search", async ({ page }) => {
-  expect(live.recipes.length).toBe(26);
+  expect(live.recipes.length).toBeGreaterThan(0);
   await page.goto(base);
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(live.recipes.length);
   const n = await names(page);
-  expect(n.length).toBe(26);
+  expect(n.length).toBe(live.recipes.length);
   expect(n).toEqual([...n].sort(cmp));
   expect([...n].sort()).toEqual(live.recipes.map((r) => r.name).sort());
   await expect(page.locator("#chips .chip.on")).toHaveText("All");
   await expect(page.locator("#chips .chip", { hasText: /^All$/ })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByLabel("Sort by")).toHaveValue("name");
   await expect(page.getByRole("searchbox", { name: "Search recipes" })).toHaveValue("");
-  await expect(page.locator("#count")).toHaveText("26 recipes");
+  await expect(page.locator("#count")).toHaveText(`${live.recipes.length} recipes`);
 });
 
 test("S-54.3 each card shows course, name, tags and photo from the database", async ({ page }) => {
   await page.goto(base);
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(live.recipes.length);
   let withPhoto = 0;
   for (const r of live.recipes) {
     const card = page.locator("#grid .card", { has: page.locator("a.name", { hasText: new RegExp(`^${r.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`) }) });
@@ -115,7 +115,7 @@ test("S-54.4 no write request, no key other than the public one", async ({ page 
   const all = [];
   page.on("request", (r) => all.push(r));
   await page.goto(base);
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(live.recipes.length);
   await page.locator("#chips .chip").nth(1).tap();
   const sup = all.filter((r) => r.url().startsWith(URL_));
   expect(sup.length).toBeGreaterThan(0);
@@ -157,7 +157,7 @@ test("S-54.6 a recipe deleted from the database is gone on the next load", async
 
 test("S-54.7a chips filter the loaded recipes with no further request", async ({ page }) => {
   await page.goto(base);
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(live.recipes.length);
   await page.waitForLoadState("networkidle");
   const after = [];
   page.on("request", (r) => { if (!r.url().includes("/storage/v1/object/public/")) after.push(r.url()); });
@@ -169,13 +169,13 @@ test("S-54.7a chips filter the loaded recipes with no further request", async ({
   const expected = live.recipes.filter((r) => r.course && r.course.name === withCourse.course.name).length;
   await expect(page.locator("#grid .card:not([hidden])")).toHaveCount(expected);
   await page.locator("#chips .chip", { hasText: /^All$/ }).tap();
-  await expect(page.locator("#grid .card:not([hidden])")).toHaveCount(26);
+  await expect(page.locator("#grid .card:not([hidden])")).toHaveCount(live.recipes.length);
   expect(after).toEqual([]);
 });
 
 test("S-54.7b sort, search and tag selection need no further request", async ({ page }) => {
   await page.goto(base);
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(live.recipes.length);
   await page.waitForLoadState("networkidle");
   const after = [];
   page.on("request", (r) => { if (!r.url().includes("/storage/v1/object/public/")) after.push(r.url()); });

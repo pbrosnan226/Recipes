@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-11 Import the existing notes</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-11 Import the existing notes</h1>
+<p class="meta"><b>Actors:</b> Owner, Claude, Supabase</p>
+<p class="meta"><b>Starts when:</b> The schema from W-10 exists and the Owner asks Claude to import the notes.</p>
+<p class="meta"><b>Ends when:</b> Every readable note is in the database, the comparison shows no differences, and the guide is written.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph sb["Supabase"]
+    s3["Step 3: Save each recipe (all-or-nothing) and upload its photo"]
+    fl["Step 3: Save or upload fails, leave nothing part-saved"]
+  end
+  subgraph cl["Claude"]
+    s1["Step 1: Read every note, list what will import, existing names, unreadable notes"] --> s2{"Step 2: Owner confirms?"}
+    s2 -- "No" --> stop["Stop, nothing imported"]
+    s2 -- "Yes" --> s3
+    s3 --> s4["Step 4: Compare every field of every recipe with the current built site"]
+    s3 -- "Failure" --> fl
+    fl --> s4
+    s4 --> df{"Any differences?"}
+    df -- "Yes" --> s5["Step 5: List them, fix the import"]
+    s5 --> s4
+    df -- "No" --> s6["Step 6: Write the guide to retiring the notes"]
+  end
+  subgraph owner["Owner"]
+    start(["Start"]) --> s0["Ask Claude to import the notes"]
+    s0 --> s1
+    done0["Read the report and the guide"] --> done(["End"])
+  end
+  s6 --> done0
+  stop --> done
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Click a step to open its screen. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

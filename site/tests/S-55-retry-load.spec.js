@@ -1,5 +1,5 @@
 // S-55: the Home page loads its recipes from Supabase. The shell is built into a temp copy (site/dist is never touched),
-// served on a random port. Live data (26 recipes) is used where it can give the case; page.route stubs the rest.
+// served on a random port. Live data (however many recipes are in the database) is used where it can give the case; page.route stubs the rest.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const os = require("os");
@@ -115,7 +115,7 @@ test("S-55.4 recipes load after Try again: Home as S-54.2, message gone", async 
   await expect(tryBtn(page)).toBeVisible();
   state.mode = "ok";
   await tryBtn(page).tap();
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(live.recipes.length);
   await expect(failMsg(page)).toHaveCount(0);
   await expect(tryBtn(page)).toHaveCount(0);
   const n = await names(page);
@@ -123,7 +123,7 @@ test("S-55.4 recipes load after Try again: Home as S-54.2, message gone", async 
   await expect(page.locator("#chips .chip.on")).toHaveText("All");
   await expect(page.getByLabel("Sort by")).toHaveValue("name");
   await expect(page.getByRole("searchbox", { name: "Search recipes" })).toHaveValue("");
-  await expect(page.locator("#count")).toHaveText("26 recipes");
+  await expect(page.locator("#count")).toHaveText(`${live.recipes.length} recipes`);
 });
 
 test("S-55.5 still failing after Try again: message and button remain, and can be retried again", async ({ page }) => {
@@ -139,7 +139,7 @@ test("S-55.5 still failing after Try again: message and button remain, and can b
   await expect(page.locator(".card")).toHaveCount(0);
   state.mode = "ok";
   await tryBtn(page).tap();
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(live.recipes.length);
 });
 
 test("S-55.6 header still shows while the message shows, and after Try again", async ({ page }) => {
