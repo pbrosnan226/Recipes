@@ -145,7 +145,7 @@
 
   // S-71: the Want to try button, for a signed-in Member only. It shows when the Member has neither rated nor marked the
   // recipe ("Want to try"), and reads "On your list" when marked (S-72.1). It is hidden for a rated recipe (S-71.6).
-  // Selecting "Want to try" adds the Member's row; a failure puts the button back and says so. Removing (S-72) is not here yet.
+  // Selecting "Want to try" adds the Member's row; a failure puts the button back and says so. Selecting "On your list" removes the row (S-72).
   function wantToTryButton(recipeId) {
     var box = document.getElementById("actions");
     if (!box || !recipeId) return;
@@ -172,15 +172,21 @@
     R.renderers.push(render);
     var busy = false;
     btn.addEventListener("click", function () {
-      if (busy || st.wantToTry) return; // "On your list" selected again is S-72
+      if (busy) return;
       busy = true;
       msg.hidden = true;
       msg.textContent = "";
-      st.wantToTry = true;
+      var was = st.wantToTry;
+      st.wantToTry = !was;
       render();
-      RecipesAuth.api("want_to_try", { method: "POST", prefer: "return=minimal", body: { user_id: RecipesAuth.userId(), recipe_id: recipeId } })
+      // Want to try adds the Member's row (S-71); On your list deletes it (S-72). Only this Member's want_to_try row is
+      // touched. A failure puts the button back and says so.
+      var call = was
+        ? RecipesAuth.api("want_to_try?user_id=eq." + encodeURIComponent(RecipesAuth.userId()) + "&recipe_id=eq." + encodeURIComponent(recipeId), { method: "DELETE", prefer: "return=minimal" })
+        : RecipesAuth.api("want_to_try", { method: "POST", prefer: "return=minimal", body: { user_id: RecipesAuth.userId(), recipe_id: recipeId } });
+      call
         .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); })
-        .catch(function () { st.wantToTry = false; msg.textContent = "Couldn't save. Try again."; msg.hidden = false; })
+        .catch(function () { st.wantToTry = was; msg.textContent = "Couldn't save. Try again."; msg.hidden = false; })
         .then(function () { busy = false; render(); });
     });
     render();
