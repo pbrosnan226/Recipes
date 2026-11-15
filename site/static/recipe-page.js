@@ -231,8 +231,16 @@
       html += '<span class="star" data-n="' + n + '"><span class="fill">&#9733;</span><span class="base">&#9733;</span></span>';
     }
     row.innerHTML = html;
+    // S-75: Remove rating, shown only while the Member has a rating.
+    var rm = document.createElement("button");
+    rm.type = "button";
+    rm.className = "pill";
+    rm.id = "remove-rating";
+    rm.textContent = "Remove rating";
+    rm.style.order = "4";
     function render() {
       row.hidden = !st.loaded;
+      rm.hidden = !st.loaded || st.rating === null || st.rating === undefined;
       var v = st.rating === null || st.rating === undefined ? 0 : Number(st.rating);
       row.setAttribute("aria-label", v ? "Your rating: " + v + " of 5" : "Not rated yet");
       Array.prototype.forEach.call(row.children, function (el, i) {
@@ -247,7 +255,25 @@
         body: { user_id: RecipesAuth.userId(), recipe_id: recipeId, stars: stars, rated_at: new Date().toISOString() }
       }).then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); });
     };
+    // S-75: deletes only this Member's rating row. The Want to try mark is not brought back (the button returns because the
+    // recipe is unrated and unmarked). A failure puts the rating back.
+    R.removeRating = function () {
+      return RecipesAuth.api("rating?user_id=eq." + encodeURIComponent(RecipesAuth.userId()) + "&recipe_id=eq." + encodeURIComponent(recipeId), { method: "DELETE", prefer: "return=minimal" })
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); });
+    };
     var busy = false;
+    rm.addEventListener("click", function () {
+      if (busy || !st.loaded || st.rating === null || st.rating === undefined) return;
+      busy = true;
+      msg.hidden = true;
+      var oldRating = st.rating;
+      st.rating = null;
+      R.renderControls();
+      R.removeRating()
+        .then(function () { R.refreshAverage(); })
+        .catch(function () { st.rating = oldRating; R.renderControls(); msg.hidden = false; msg.textContent = "Couldn't save. Try again."; })
+        .then(function () { busy = false; });
+    });
     row.addEventListener("click", function (e) {
       var star = e.target.closest ? e.target.closest(".star") : null;
       if (!star || busy || !st.loaded) return;
@@ -267,6 +293,7 @@
     });
     render();
     box.appendChild(row);
+    box.appendChild(rm);
     box.appendChild(msg);
   }
 
