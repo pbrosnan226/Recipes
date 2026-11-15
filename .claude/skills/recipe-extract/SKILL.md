@@ -149,6 +149,42 @@ supabase/with-key.sh node supabase/list-tags.js
 It prints `TAGS: a, b, c` (or `NO TAGS`). Reuse a listed tag that already means the same instead of
 making a new spelling. If it prints `TAG LIST FAILED`, save nothing and tell the Owner in chat.
 
+## Tag cleanup (one time)
+
+When the Owner asks to clean up the tags of the existing recipes, propose first and change nothing.
+Nothing in the database changes in this step, and nothing changes until the Owner confirms.
+
+1. Read every tag and the recipes that use it (read-only):
+
+   ```bash
+   supabase/with-key.sh node supabase/tag-cleanup.js read
+   ```
+
+   If it prints `TAG READ FAILED`, tell the Owner and change nothing.
+2. Decide, for each tag, to **keep**, **rename** (with the new name) or **drop** it, under the Tags
+   rules above (lowercase, singular, hyphens; no redundant tag; no dish-name tag; never `recipe` or
+   `recipes`; merge synonyms and plural forms into one). Write the proposal as JSON,
+   `[{"tag":"Side Dish","action":"rename","to":"side"},{"tag":"apple pie","action":"drop"}]`, with
+   every existing tag in it. Add no protein, cuisine, healthy or holiday tag: only the missing
+   course tag is added, and the script adds it itself (first, and only for a recipe that has a
+   course; a recipe with no course gets no course tag). Two tags merging into one keep a single
+   link at the position of the first one the recipe had.
+3. Check and show the table (read-only):
+
+   ```bash
+   supabase/with-key.sh node supabase/tag-cleanup.js table proposal.json
+   ```
+
+   It runs the same tag checks as a new recipe (`supabase/check-recipe.js`) on every recipe's tags
+   as they would be after the cleanup. If it prints `TABLE FAILED`, tell the Owner which tag, change
+   nothing, and fix the proposal (or ask the Owner) before showing a table.
+4. Show the Owner the whole old-to-new table it prints (every tag marked keep, rename or drop, the
+   recipes that use it, and the course tags to add), then ask them to **confirm**, **ask for
+   changes** or **cancel**.
+   - Changes: go back to step 2 and show a new table.
+   - Cancel: change nothing and tell the Owner that nothing was changed.
+   - Confirm: the confirmed table is applied by a separate step (not part of this one).
+
 ## Photo
 
 After the recipe is saved (`SAVED <id>`), download the source's photo from the address found on the
