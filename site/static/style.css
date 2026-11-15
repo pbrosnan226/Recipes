@@ -40,6 +40,7 @@ select{height:36px;font:500 16px var(--sans);color:var(--text);background:var(--
 .photo{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--tint-text);background:var(--tint1)}
 .card .name{font-family:var(--serif);font-size:24px;line-height:1.2}
 .card .meta{display:flex;flex-direction:column;gap:4px}
+.card .rating{font-size:14px;color:var(--muted)}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tag{font:13px var(--sans);color:var(--accent);background:transparent;border:1px solid var(--field-line);border-radius:14px;padding:3px 10px;cursor:pointer}
 .empty{font-family:var(--serif);font-size:24px;color:var(--muted)}

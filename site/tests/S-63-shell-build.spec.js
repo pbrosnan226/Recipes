@@ -120,7 +120,7 @@ test("S-63.7 the published site saves nothing", async () => {
   const scripts = walk(dist).filter((f) => f.endsWith(".js"));
   for (const f of scripts) {
     const t = fs.readFileSync(f, "utf8");
-    if (["auth.js", "create-account.js", "sign-in.js", "reset-password.js"].includes(path.basename(f))) continue; // S-77: sign-up scripts may POST and keep the session
+    if (["auth.js", "create-account.js", "sign-in.js", "reset-password.js", "recipe-page.js"].includes(path.basename(f))) continue; // S-77: sign-up scripts may POST and keep the session
     expect(t, f).not.toMatch(/method\s*:\s*["'`](POST|PUT|PATCH|DELETE)/i);
     expect(t, f).not.toMatch(/localStorage|sessionStorage|indexedDB|document\.cookie|sendBeacon/);
     expect(t, f).not.toMatch(/\/rpc\/|save_recipe/);

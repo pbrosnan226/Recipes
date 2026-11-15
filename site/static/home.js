@@ -38,18 +38,41 @@
     }, function () { return RecipesAuth.signedIn() ? [] : null; });
   }
 
+  // S-65: the average rating per recipe, from the public summary view (no who-rated). Resolves to a map
+  // { recipe_id: {average, count} }, or null if the request fails (cards then show no rating text; Home still loads).
+  // Kept on window.RecipesRatings so later stories (rating sort, filter, badge, recipe page) reuse it.
+  function ratingSummary() {
+    return get("recipe_rating_summary?select=recipe_id,average,rating_count").then(function (rows) {
+      var m = {};
+      rows.forEach(function (x) { m[x.recipe_id] = { average: Number(x.average), count: Number(x.rating_count) }; });
+      return m;
+    }, function () { return null; });
+  }
+  window.RecipesRatings = {
+    summary: null,
+    // "4.5 (3)", "No ratings yet", or "" when the summary could not be loaded.
+    text: function (id) {
+      var m = this.summary;
+      if (!m) return "";
+      var x = m[id];
+      return x && x.count > 0 ? x.average.toFixed(1) + " (" + x.count + ")" : "No ratings yet";
+    }
+  };
+
   function load() {
     Promise.all([
       get("recipe?select=id,name,slug,site,photo_path,course(name),recipe_tag(position,tag(name)),recipe_ingredient(name)&recipe_ingredient.hidden=eq.false&order=name"),
       get("course?select=name,position&order=position"),
-      favMode ? favoriteIds() : Promise.resolve(undefined)
+      favMode ? favoriteIds() : Promise.resolve(undefined),
+      ratingSummary()
     ]).then(function (res) {
       var favs = res[2];
+      RecipesRatings.summary = res[3];
       if (favMode && favs === null) { location.replace("/"); return; }
       var recipes = favMode ? res[0].filter(function (r) { return favs.indexOf(r.id) > -1; }) : res[0];
       var rows = recipes.map(function (r) {
         return {
-          name: r.name, slug: r.slug, site: r.site || "", photo: r.photo_path || "",
+          id: r.id, name: r.name, slug: r.slug, site: r.site || "", photo: r.photo_path || "",
           course: r.course ? r.course.name : "",
           tags: (r.recipe_tag || []).slice().sort(function (a, b) { return a.position - b.position; })
             .map(function (t) { return t.tag.name; }),
@@ -82,10 +105,12 @@
       var tags = r.tags.map(function (t) {
         return '<a class="tag" href="/?q=' + encodeURIComponent(t) + '" data-tag="' + esc(t) + '">' + esc(t) + "</a>";
       }).join("");
+      var rt = RecipesRatings.text(r.id);
       return '<article class="card"><a class="photo t' + (i % 4) + '" href="' + esc(href) + '" tabindex="-1" aria-hidden="true">' +
         (r.photo ? '<img src="' + esc(photoUrl(r.photo)) + '" alt="' + esc(r.name) + '" loading="lazy">' : "") + "</a>" +
         '<div class="meta">' + (r.course ? '<span class="eyebrow">' + esc(r.course) + "</span>" : "") +
-        '<a class="name" href="' + esc(href) + '">' + esc(r.name) + "</a>" + (tags ? '<div class="tags">' + tags + "</div>" : "") + "</div></article>";
+        '<a class="name" href="' + esc(href) + '">' + esc(r.name) + "</a>" +
+        (rt ? '<span class="rating">' + esc(rt) + "</span>" : "") + (tags ? '<div class="tags">' + tags + "</div>" : "") + "</div></article>";
     }).join("\n");
     document.getElementById("tools").innerHTML =
       '<label for="q" class="sr">Search recipes</label>' +
