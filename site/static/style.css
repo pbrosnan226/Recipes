@@ -153,3 +153,4 @@ details.nutr summary{font-size:20px}
 .auth [hidden]{display:none}
 @media (prefers-color-scheme:dark){.auth .err{color:#F2B8B5}.auth input[aria-invalid]{border-color:#F2B8B5}}
 nav.main button{font:inherit}
+.mine-chips{margin-top:12px}
