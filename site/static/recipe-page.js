@@ -60,6 +60,27 @@
   }
   load();
 
+  // S-69: the average rating, from the public summary view (no who-rated). setAverage(average, count) draws "4.5 (3)" or
+  // "No ratings yet"; refreshAverage() re-reads the view for this recipe (later rating stories call it after a change).
+  // If the read fails the line stays hidden and the page is otherwise unaffected.
+  var ratingId = null;
+  window.RecipesRecipe = {
+    setAverage: function (average, count) {
+      var el = document.getElementById("avg");
+      if (!el) return;
+      count = Number(count);
+      el.textContent = count > 0 && isFinite(Number(average)) ? Number(average).toFixed(1) + " (" + count + ")" : "No ratings yet";
+      el.hidden = false;
+    },
+    refreshAverage: function () {
+      if (!ratingId) return Promise.resolve();
+      return fetch(base + "/rest/v1/recipe_rating_summary?select=recipe_id,average,rating_count&recipe_id=eq." + encodeURIComponent(ratingId), { method: "GET", headers: headers })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (rows) { window.RecipesRecipe.setAverage(rows.length ? rows[0].average : 0, rows.length ? rows[0].rating_count : 0); },
+          function () { /* no average shown; the page still works */ });
+    }
+  };
+
   function ingredientHtml(x) {
     var amount = String(x.amount || "").trim(), name = String(x.name || "").trim();
     var nw = name.toLowerCase().split(/\s+/).filter(Boolean), aw = amount.toLowerCase().split(/\s+/).filter(Boolean);
@@ -169,6 +190,7 @@
       (r.course ? '<span class="eyebrow">' + esc(r.course.name) + "</span>" : "") +
       "<h1>" + esc(r.name) + "</h1>" +
       (r.description ? '<p class="lead">' + esc(r.description) + "</p>" : "") +
+      '<p class="rating" id="avg" hidden></p>' +
       '<div class="facts">' + times.map(function (t) { return '<div class="fact"><span class="label">' + t[0] + '</span><span class="v">' + esc(t[1]) + "</span></div>"; }).join("\n") +
       '<div class="fact"><label class="label" for="sv">' + esc(r.servings_label || "Servings") + '</label><div class="serv-row"><select id="sv" autocomplete="off">' + optHtml + "</select>" + makes + "</div></div></div>" +
       (tags.length ? '<div class="rtags"><span class="label">Tags</span>' + tags.map(function (t) { return '<a class="tag" href="/?q=' + encodeURIComponent(t) + '">' + esc(t) + "</a>"; }).join("") + "</div>" : "") +
@@ -189,6 +211,8 @@
       document.getElementById("steps").innerHTML = stepListHtml(next);
     });
     favoriteButton(r.id);
+    ratingId = r.id;
+    window.RecipesRecipe.refreshAverage();
     var img = root.querySelector(".photo img");
     if (img) img.addEventListener("error", function () { img.parentNode.remove(); });
   }
