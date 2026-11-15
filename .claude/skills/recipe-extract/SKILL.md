@@ -139,8 +139,15 @@ A tag is redundant, and not saved, when it:
 
 Tags are lowercase and singular, with hyphens for a multiword tag (`main-dish`, `gluten-free`).
 
-Before saving, list the existing tags with the tag list script (S-83) and reuse one that already means
-the same instead of making a new spelling. If the list can't be read, save nothing and tell the Owner.
+Before saving, list the existing tags (names only, tags no recipe uses left out). This only reads the
+database:
+
+```bash
+supabase/with-key.sh node supabase/list-tags.js
+```
+
+It prints `TAGS: a, b, c` (or `NO TAGS`). Reuse a listed tag that already means the same instead of
+making a new spelling. If it prints `TAG LIST FAILED`, save nothing and tell the Owner in chat.
 
 ## Photo
 
