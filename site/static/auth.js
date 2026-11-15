@@ -56,6 +56,25 @@
     }, function () { return { ok: false, kind: "noconnection" }; });
   }
 
+  // Result: { ok: true } | { ok: false, kind: "noconnection" | "toomany" | "email" | "other" }
+  // Supabase answers the same whether or not the email has an account, and only sends to one that has.
+  function resetPassword(email) {
+    var back = encodeURIComponent(window.location.origin + "/reset-password");
+    return fetch(base + "/auth/v1/recover?redirect_to=" + back, {
+      method: "POST",
+      headers: { apikey: cfg.supabaseKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email })
+    }).then(function (r) {
+      if (r.ok) return { ok: true };
+      return r.json().catch(function () { return {}; }).then(function (b) {
+        var code = b.error_code || b.code;
+        if (code === "over_email_send_rate_limit" || r.status === 429) return { ok: false, kind: "toomany" };
+        if (code === "email_address_invalid" || code === "validation_failed") return { ok: false, kind: "email" };
+        return { ok: false, kind: "other" };
+      });
+    }, function () { return { ok: false, kind: "noconnection" }; });
+  }
+
   function header() {
     var nav = document.querySelector("nav.main");
     if (!nav) return;
@@ -85,6 +104,6 @@
     }
   }
 
-  window.RecipesAuth = { signUp: signUp, signIn: signIn, signedIn: function () { return !!read(); }, header: header };
+  window.RecipesAuth = { signUp: signUp, signIn: signIn, resetPassword: resetPassword, signedIn: function () { return !!read(); }, header: header };
   header();
 })();

@@ -57,7 +57,7 @@ function main() {
   fs.rmSync(dist, { recursive: true, force: true });
   fs.rmSync(tmp, { recursive: true, force: true });
   fs.mkdirSync(tmp, { recursive: true });
-  for (const f of ["style.css", "scale.js", "auth.js", "home.js", "recipe-page.js", "create-account.js", "sign-in.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
+  for (const f of ["style.css", "scale.js", "auth.js", "home.js", "recipe-page.js", "create-account.js", "sign-in.js", "forgot-password.js"]) fs.copyFileSync(path.join(staticDir, f), path.join(tmp, f));
   fs.cpSync(path.join(staticDir, "fonts"), path.join(tmp, "fonts"), { recursive: true });
   fs.writeFileSync(
     path.join(tmp, "config.js"),
@@ -96,11 +96,18 @@ function main() {
 <p class="alt"><a href="/forgot-password">Forgot password?</a></p>
 <p class="alt"><a href="/create-account">Create account</a></p>
 </section>`, '<script src="/sign-in.js"></script>'));
-  // The Forgot password page is only a stand-in until S-79: the title and a link back to Sign in.
   fs.writeFileSync(path.join(tmp, "forgot-password.html"), page("Forgot password", `<section class="auth">
 <h1>Forgot password</h1>
+<form id="fp-form" novalidate>
+<div class="field"><label for="fp-email">Email</label>
+<input id="fp-email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" aria-describedby="fp-email-err">
+<p class="err" id="fp-email-err" role="alert" hidden></p></div>
+<p class="notice" id="fp-sent" role="status" hidden></p>
+<p class="err form-err" id="fp-form-err" role="alert" hidden></p>
+<button class="pill on-sage" id="fp-submit" type="submit">Send reset link</button>
+</form>
 <p class="alt"><a href="/sign-in">Back to sign in</a></p>
-</section>`));
+</section>`, '<script src="/forgot-password.js"></script>'));
   fs.writeFileSync(path.join(tmp, "recipe.html"), page("Recipe", `<article id="recipe"></article>`, '<script src="/recipe-page.js"></script>'));
   fs.renameSync(tmp, dist);
   console.log(`Published the page shell into ${dist} (settings read from ${url[0]} and ${key[0]}).`);

@@ -147,6 +147,7 @@ details.nutr summary{font-size:20px}
 .auth .pill{width:100%}
 .auth .pill:disabled{opacity:.6;cursor:default}
 .auth .alt{margin:20px 0 0;font-size:15px;color:var(--muted)}
+.auth .notice{margin:0 0 12px;font-size:15px;color:var(--text)}
 .auth [hidden]{display:none}
 @media (prefers-color-scheme:dark){.auth .err{color:#F2B8B5}.auth input[aria-invalid]{border-color:#F2B8B5}}
 nav.main button{font:inherit}
