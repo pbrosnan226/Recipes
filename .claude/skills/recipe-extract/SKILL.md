@@ -104,7 +104,7 @@ No note, no template. Save these, as the ERD (`requirements/erd.md`) defines the
   total minutes (whole minutes; none when the source gives no total time), and the nutrition basis
   line as written.
 - **Aliases:** the source's own title, when the name differs.
-- **Tags in order:** from the site's own categories and keywords, in the order the recipe lists them.
+- **Tags in order:** chosen by the rules under Tags, in the order given there.
 - **Serving options** (see Servings).
 - **Ingredients** (see Servings).
 - **Steps:** reworded, with `{key}` tokens for amounts.
@@ -113,6 +113,34 @@ No note, no template. Save these, as the ERD (`requirements/erd.md`) defines the
 - **Nutrients:** one per row of the source's nutrition table (name and amount as written).
 
 The photo is not part of the data; see Photo.
+
+## Tags
+
+A recipe's tags are chosen by these rules, not copied wholesale from the site's categories and
+keywords. They come from these kinds, in this order, when they apply:
+
+1. **Course:** the lowercase course word, the same as the recipe's course (`main` for Main). It comes
+   first, once. A recipe with no course has no course tag.
+2. **Protein:** only when the source states it or it is plainly the main one.
+3. **Cuisine:** from the source.
+4. **Healthy:** only when the source itself calls the recipe healthy, light, low-calorie or similar.
+5. **Holiday:** only when the source names the holiday.
+6. **Other tags**, after those, when they help find the recipe (for example a diet or a method).
+
+A kind with nothing to say adds no tag. Add no filler tag.
+
+A tag is redundant, and not saved, when it:
+
+- repeats another tag of the recipe (a synonym, or the same word singular and plural);
+- repeats the course (the course word a second time);
+- is the dish's own name or part of it (two or more consecutive words: `apple pie` on Apple Pie; a
+  single word such as `chicken` on Chicken Parmesan is fine);
+- is `recipe` or `recipes`.
+
+Tags are lowercase and singular, with hyphens for a multiword tag (`main-dish`, `gluten-free`).
+
+Before saving, list the existing tags with the tag list script (S-83) and reuse one that already means
+the same instead of making a new spelling. If the list can't be read, save nothing and tell the Owner.
 
 ## Photo
 
@@ -202,7 +230,7 @@ name the Owner gives it (the slug is made from it: lowercase, spaces and punctua
 keep times, nutrient amounts, the nutrition basis line, the servings label and ingredient text as
 the source writes them with no conversion, set `total_minutes` to the total time in whole minutes
 (`null` when the source gives no total time), `course` to one of the six existing courses (the save
-creates none), `tags` in the order the recipe lists them, and `notes` as `{level, text}` with level
+creates none), `tags` chosen and ordered by the Tags rules, and `notes` as `{level, text}` with level
 0, or 1 for a sub-note listed under the note before it (the first note is level 0).
 
 ```bash
