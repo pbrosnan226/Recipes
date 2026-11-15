@@ -60,6 +60,32 @@
   }
   load();
 
+  // S-69: the average rating, from the public summary view (no who-rated). setAverage(average, count) draws "4.5 (3)" or
+  // "No ratings yet"; refreshAverage() re-reads the view for this recipe (later rating stories call it after a change).
+  // If the read fails the line stays hidden and the page is otherwise unaffected.
+  var ratingId = null;
+  // S-71: what this Member has done with this recipe, kept here so S-72 to S-75 can reuse it. wantToTry and rating are
+  // null until read (rating is the stars once S-73 reads it). Whoever changes them calls renderControls() to redraw.
+  window.RecipesRecipe = {
+    state: { recipeId: null, loaded: false, wantToTry: false, rating: null },
+    renderers: [],
+    renderControls: function () { window.RecipesRecipe.renderers.forEach(function (f) { f(); }); },
+    setAverage: function (average, count) {
+      var el = document.getElementById("avg");
+      if (!el) return;
+      count = Number(count);
+      el.textContent = count > 0 && isFinite(Number(average)) ? Number(average).toFixed(1) + " (" + count + ")" : "No ratings yet";
+      el.hidden = false;
+    },
+    refreshAverage: function () {
+      if (!ratingId) return Promise.resolve();
+      return fetch(base + "/rest/v1/recipe_rating_summary?select=recipe_id,average,rating_count&recipe_id=eq." + encodeURIComponent(ratingId), { method: "GET", headers: headers })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (rows) { window.RecipesRecipe.setAverage(rows.length ? rows[0].average : 0, rows.length ? rows[0].rating_count : 0); },
+          function () { /* no average shown; the page still works */ });
+    }
+  };
+
   function ingredientHtml(x) {
     var amount = String(x.amount || "").trim(), name = String(x.name || "").trim();
     var nw = name.toLowerCase().split(/\s+/).filter(Boolean), aw = amount.toLowerCase().split(/\s+/).filter(Boolean);
@@ -68,6 +94,207 @@
     if (nw.length && nw.length <= aw.length && tail.every(function (w, i) { return i === nw.length - 1 ? stem(w) === stem(nw[i]) : w === nw[i]; })) return '<b class="amt">' + esc(amount) + "</b>";
     if (/^for\s/i.test(amount)) return esc(name.charAt(0).toUpperCase() + name.slice(1)) + ', <b class="amt">' + esc(amount) + "</b>";
     return '<b class="amt">' + esc(amount) + "</b> " + esc(name);
+  }
+
+  // S-25: Favorite / Favorited, for a signed-in Member only (the box is not drawn for a Visitor). Favorites are read and
+  // written with the Member's own sign-in. A favorites list that can't be read (including the table not existing yet)
+  // counts as "not a favorite". Selecting Favorited removes it (S-26).
+  function favoriteButton(recipeId) {
+    var box = document.getElementById("actions");
+    if (!box || !recipeId) return;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pill";
+    var msg = document.createElement("p");
+    msg.className = "note";
+    msg.setAttribute("role", "alert");
+    msg.hidden = true;
+    msg.textContent = "Couldn't save. Try again.";
+    function set(on) {
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.innerHTML = on ? "&#9829; Favorited" : "&#9825; Favorite";
+      btn.classList.toggle("on-sage", on);
+    }
+    set(false);
+    var busy = false;
+    btn.addEventListener("click", function () {
+      if (busy) return;
+      busy = true;
+      msg.hidden = true;
+      var was = btn.getAttribute("aria-pressed") === "true";
+      set(!was);
+      // Favorite adds the Member's row (S-25); Favorited deletes it (S-26). Only the favorite row is touched, so the
+      // Want to try mark and the rating stay as they are. A failure puts the button back.
+      var call = was
+        ? RecipesAuth.api("favorite?user_id=eq." + encodeURIComponent(RecipesAuth.userId()) + "&recipe_id=eq." + encodeURIComponent(recipeId), { method: "DELETE", prefer: "return=minimal" })
+        : RecipesAuth.api("favorite", { method: "POST", prefer: "return=minimal", body: { user_id: RecipesAuth.userId(), recipe_id: recipeId } });
+      call
+        .then(function (res) { if (!res.ok && !(!was && res.status === 409)) throw new Error("HTTP " + res.status); /* 409 on add: already saved */ })
+        .catch(function () { set(was); msg.hidden = false; })
+        .then(function () { busy = false; });
+    });
+    RecipesAuth.api("favorite?select=recipe_id&recipe_id=eq." + encodeURIComponent(recipeId))
+      .then(function (res) { return res.ok ? res.json() : []; })
+      .catch(function () { return []; })
+      .then(function (rows) {
+        if (Array.isArray(rows) && rows.length) set(true);
+        box.appendChild(btn);
+        box.appendChild(msg);
+      });
+  }
+
+  // S-71: the Want to try button, for a signed-in Member only. It shows when the Member has neither rated nor marked the
+  // recipe ("Want to try"), and reads "On your list" when marked (S-72.1). It is hidden for a rated recipe (S-71.6).
+  // Selecting "Want to try" adds the Member's row; a failure puts the button back and says so. Selecting "On your list" removes the row (S-72).
+  function wantToTryButton(recipeId) {
+    var box = document.getElementById("actions");
+    if (!box || !recipeId) return;
+    var R = window.RecipesRecipe, st = R.state;
+    st.recipeId = recipeId;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pill";
+    btn.id = "want";
+    btn.style.order = "1";
+    var msg = document.createElement("p");
+    msg.className = "note";
+    msg.id = "want-msg";
+    msg.style.order = "2";
+    msg.setAttribute("role", "alert");
+    msg.hidden = true;
+    function render() {
+      var rated = st.rating !== null && st.rating !== undefined;
+      btn.hidden = !st.loaded || rated;
+      btn.setAttribute("aria-pressed", st.wantToTry ? "true" : "false");
+      btn.textContent = st.wantToTry ? "On your list" : "Want to try";
+      btn.classList.toggle("on-sage", st.wantToTry);
+    }
+    R.renderers.push(render);
+    var busy = false;
+    btn.addEventListener("click", function () {
+      if (busy) return;
+      busy = true;
+      msg.hidden = true;
+      msg.textContent = "";
+      var was = st.wantToTry;
+      st.wantToTry = !was;
+      render();
+      // Want to try adds the Member's row (S-71); On your list deletes it (S-72). Only this Member's want_to_try row is
+      // touched. A failure puts the button back and says so.
+      var call = was
+        ? RecipesAuth.api("want_to_try?user_id=eq." + encodeURIComponent(RecipesAuth.userId()) + "&recipe_id=eq." + encodeURIComponent(recipeId), { method: "DELETE", prefer: "return=minimal" })
+        : RecipesAuth.api("want_to_try", { method: "POST", prefer: "return=minimal", body: { user_id: RecipesAuth.userId(), recipe_id: recipeId } });
+      call
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); })
+        .catch(function () { st.wantToTry = was; msg.textContent = "Couldn't save. Try again."; msg.hidden = false; })
+        .then(function () { busy = false; render(); });
+    });
+    render();
+    box.appendChild(btn);
+    box.appendChild(msg);
+    // Read the Member's own rows (RLS limits them to the Member). If either read fails the button stays hidden.
+    function read(path) {
+      return RecipesAuth.api(path).then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); });
+    }
+    Promise.all([
+      read("want_to_try?select=recipe_id&recipe_id=eq." + encodeURIComponent(recipeId)),
+      read("rating?select=stars&recipe_id=eq." + encodeURIComponent(recipeId))
+    ]).then(function (a) {
+      st.wantToTry = Array.isArray(a[0]) && a[0].length > 0;
+      st.rating = Array.isArray(a[1]) && a[1].length ? Number(a[1][0].stars) : null;
+      st.loaded = true;
+      R.renderControls();
+    }, function () { /* unreadable: no button */ });
+  }
+
+  // S-73: the half-star row, for a signed-in Member only. Five stars; tapping the left half of star n saves n - 0.5, the right
+  // half n. Mouse/tap only: the row has no tab stop and no key handlers (S-73.9). saveRating() upserts the Member's one row
+  // (S-73 gives it, S-74 changes it), shows the new rating at once, clears the Want to try mark in the page (the database
+  // trigger deletes the row), then asks the average to refresh (S-76). A failure puts the rating and the mark back.
+  function starRow(recipeId) {
+    var box = document.getElementById("actions");
+    if (!box || !recipeId) return;
+    var R = window.RecipesRecipe, st = R.state;
+    var row = document.createElement("div");
+    row.className = "stars";
+    row.id = "stars";
+    row.setAttribute("role", "img");
+    row.style.order = "3";
+    var msg = document.createElement("p");
+    msg.className = "note";
+    msg.id = "rate-msg";
+    msg.style.order = "4";
+    msg.setAttribute("role", "alert");
+    msg.hidden = true;
+    var html = "";
+    for (var n = 1; n <= 5; n++) {
+      html += '<span class="star" data-n="' + n + '"><span class="fill">&#9733;</span><span class="base">&#9733;</span></span>';
+    }
+    row.innerHTML = html;
+    // S-75: Remove rating, shown only while the Member has a rating.
+    var rm = document.createElement("button");
+    rm.type = "button";
+    rm.className = "pill";
+    rm.id = "remove-rating";
+    rm.textContent = "Remove rating";
+    rm.style.order = "4";
+    function render() {
+      row.hidden = !st.loaded;
+      rm.hidden = !st.loaded || st.rating === null || st.rating === undefined;
+      var v = st.rating === null || st.rating === undefined ? 0 : Number(st.rating);
+      row.setAttribute("aria-label", v ? "Your rating: " + v + " of 5" : "Not rated yet");
+      Array.prototype.forEach.call(row.children, function (el, i) {
+        var f = Math.max(0, Math.min(1, v - i));
+        el.firstChild.style.width = f * 100 + "%";
+      });
+    }
+    R.renderers.push(render);
+    R.saveRating = function (stars) {
+      return RecipesAuth.api("rating?on_conflict=user_id,recipe_id", {
+        method: "POST", prefer: "resolution=merge-duplicates,return=minimal",
+        body: { user_id: RecipesAuth.userId(), recipe_id: recipeId, stars: stars, rated_at: new Date().toISOString() }
+      }).then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); });
+    };
+    // S-75: deletes only this Member's rating row. The Want to try mark is not brought back (the button returns because the
+    // recipe is unrated and unmarked). A failure puts the rating back.
+    R.removeRating = function () {
+      return RecipesAuth.api("rating?user_id=eq." + encodeURIComponent(RecipesAuth.userId()) + "&recipe_id=eq." + encodeURIComponent(recipeId), { method: "DELETE", prefer: "return=minimal" })
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); });
+    };
+    var busy = false;
+    rm.addEventListener("click", function () {
+      if (busy || !st.loaded || st.rating === null || st.rating === undefined) return;
+      busy = true;
+      msg.hidden = true;
+      var oldRating = st.rating;
+      st.rating = null;
+      R.renderControls();
+      R.removeRating()
+        .then(function () { R.refreshAverage(); })
+        .catch(function () { st.rating = oldRating; R.renderControls(); msg.hidden = false; msg.textContent = "Couldn't save. Try again."; })
+        .then(function () { busy = false; });
+    });
+    row.addEventListener("click", function (e) {
+      var star = e.target.closest ? e.target.closest(".star") : null;
+      if (!star || busy || !st.loaded) return;
+      var rect = star.getBoundingClientRect();
+      var value = Number(star.getAttribute("data-n")) - (e.clientX - rect.left < rect.width / 2 ? 0.5 : 0);
+      if (st.rating === value) return; // S-74.3: the current rating again does nothing
+      busy = true;
+      msg.hidden = true;
+      var oldRating = st.rating, oldWant = st.wantToTry;
+      st.rating = value;
+      st.wantToTry = false;
+      R.renderControls();
+      R.saveRating(value)
+        .then(function () { R.refreshAverage(); })
+        .catch(function () { st.rating = oldRating; st.wantToTry = oldWant; R.renderControls(); msg.hidden = false; msg.textContent = "Couldn't save. Try again."; })
+        .then(function () { busy = false; });
+    });
+    render();
+    box.appendChild(row);
+    box.appendChild(rm);
+    box.appendChild(msg);
   }
 
   function show(r) {
@@ -122,9 +349,11 @@
       (r.course ? '<span class="eyebrow">' + esc(r.course.name) + "</span>" : "") +
       "<h1>" + esc(r.name) + "</h1>" +
       (r.description ? '<p class="lead">' + esc(r.description) + "</p>" : "") +
+      '<p class="rating" id="avg" hidden></p>' +
       '<div class="facts">' + times.map(function (t) { return '<div class="fact"><span class="label">' + t[0] + '</span><span class="v">' + esc(t[1]) + "</span></div>"; }).join("\n") +
       '<div class="fact"><label class="label" for="sv">' + esc(r.servings_label || "Servings") + '</label><div class="serv-row"><select id="sv" autocomplete="off">' + optHtml + "</select>" + makes + "</div></div></div>" +
       (tags.length ? '<div class="rtags"><span class="label">Tags</span>' + tags.map(function (t) { return '<a class="tag" href="/?q=' + encodeURIComponent(t) + '">' + esc(t) + "</a>"; }).join("") + "</div>" : "") +
+      (window.RecipesAuth && RecipesAuth.signedIn() ? '<div class="actions" id="actions"></div>' : "") +
       src + "</div>" +
       (r.photo_path ? '<div class="photo"><img src="' + esc(photoUrl(r.photo_path)) + '" alt="' + esc(r.name) + '"></div>' : "") +
       '</section><section class="body"><div class="ings"><h2>Ingredients</h2><ul class="ing" id="ing">' + ingHtml + "</ul></div>" +
@@ -140,6 +369,11 @@
       Array.prototype.forEach.call(ingEl.querySelectorAll("input"), function (c, i) { c.checked = !!ticked[i]; });
       document.getElementById("steps").innerHTML = stepListHtml(next);
     });
+    favoriteButton(r.id);
+    wantToTryButton(r.id);
+    starRow(r.id);
+    ratingId = r.id;
+    window.RecipesRecipe.refreshAverage();
     var img = root.querySelector(".photo img");
     if (img) img.addEventListener("error", function () { img.parentNode.remove(); });
   }

@@ -174,7 +174,7 @@ test("S-57.4 opening the address directly (typed, reloaded) shows the same recip
 test("S-57.5 one Recipe page serves every recipe: no page per recipe is published", async ({ page }) => {
   const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
   const files = walk(dist).map((f) => path.relative(dist, f));
-  expect(files.filter((f) => f.endsWith(".html")).sort()).toEqual(["create-account.html", "index.html", "recipe.html", "sign-in.html"]);
+  expect(files.filter((f) => f.endsWith(".html")).sort()).toEqual(["create-account.html", "forgot-password.html", "index.html", "recipe.html", "reset-password.html", "sign-in.html"]);
   for (const f of files) expect(f).not.toMatch(/french-toast|apple-crumble-pie/);
   // two different recipes come from the same file
   await open(page, "french-toast");
