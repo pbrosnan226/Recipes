@@ -77,7 +77,7 @@ test("S-25.1/.2/.6 Favorite saves the Member's own row and shows Favorited", asy
   const seen = await stub(page, {});
   await signedIn(page);
   await page.goto(base + "/recipe?name=x");
-  const btn = page.locator("#actions button:not(#want)");
+  const btn = page.locator("#actions button:not(#want):not(#remove-rating)");
   await expect(btn).toContainText("Favorite");
   await expect(btn).not.toContainText("Favorited");
   await btn.tap();
@@ -90,23 +90,23 @@ test("S-25.3 shows Favorited when the favorite already exists", async ({ page })
   await stub(page, { favRows: [{ recipe_id: "r1" }] });
   await signedIn(page);
   await page.goto(base + "/recipe?name=x");
-  await expect(page.locator("#actions button:not(#want)")).toContainText("Favorited");
+  await expect(page.locator("#actions button:not(#want):not(#remove-rating)")).toContainText("Favorited");
 });
 
 test("S-25.5 a failed save returns to Favorite with the message", async ({ page }) => {
   await stub(page, { postStatus: 500 });
   await signedIn(page);
   await page.goto(base + "/recipe?name=x");
-  await page.locator("#actions button:not(#want)").tap();
+  await page.locator("#actions button:not(#want):not(#remove-rating)").tap();
   await expect(page.getByText("Couldn't save. Try again.")).toBeVisible();
-  await expect(page.locator("#actions button:not(#want)")).not.toContainText("Favorited");
+  await expect(page.locator("#actions button:not(#want):not(#remove-rating)")).not.toContainText("Favorited");
 });
 
 test("a missing favorites table acts as no favorites; saving then fails", async ({ page }) => {
   await stub(page, { getStatus: 404, postStatus: 404 });
   await signedIn(page);
   await page.goto(base + "/recipe?name=x");
-  const btn = page.locator("#actions button:not(#want)");
+  const btn = page.locator("#actions button:not(#want):not(#remove-rating)");
   await expect(btn).toContainText("Favorite");
   await btn.tap();
   await expect(page.getByText("Couldn't save. Try again.")).toBeVisible();

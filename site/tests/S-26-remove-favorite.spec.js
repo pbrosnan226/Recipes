@@ -71,7 +71,7 @@ test("S-26.1/.2/.3/.6 Favorited deletes only the favorite row and shows Favorite
   const seen = await stub(page, { favRows: [{ recipe_id: "r1" }] });
   await signedIn(page);
   await page.goto(base + "/recipe?name=x");
-  const btn = page.locator("#actions button:not(#want)");
+  const btn = page.locator("#actions button:not(#want):not(#remove-rating)");
   await expect(btn).toContainText("Favorited");
   await btn.tap();
   await expect(btn).not.toContainText("Favorited");
@@ -86,7 +86,7 @@ test("S-26.5 a failed removal keeps Favorited and shows the message", async ({ p
   await stub(page, { favRows: [{ recipe_id: "r1" }], delStatus: 500 });
   await signedIn(page);
   await page.goto(base + "/recipe?name=x");
-  await page.locator("#actions button:not(#want)").tap();
+  await page.locator("#actions button:not(#want):not(#remove-rating)").tap();
   await expect(page.getByText("Couldn't save. Try again.")).toBeVisible();
-  await expect(page.locator("#actions button:not(#want)")).toContainText("Favorited");
+  await expect(page.locator("#actions button:not(#want):not(#remove-rating)")).toContainText("Favorited");
 });
