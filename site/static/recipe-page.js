@@ -64,7 +64,12 @@
   // "No ratings yet"; refreshAverage() re-reads the view for this recipe (later rating stories call it after a change).
   // If the read fails the line stays hidden and the page is otherwise unaffected.
   var ratingId = null;
+  // S-71: what this Member has done with this recipe, kept here so S-72 to S-75 can reuse it. wantToTry and rating are
+  // null until read (rating is the stars once S-73 reads it). Whoever changes them calls renderControls() to redraw.
   window.RecipesRecipe = {
+    state: { recipeId: null, loaded: false, wantToTry: false, rating: null },
+    renderers: [],
+    renderControls: function () { window.RecipesRecipe.renderers.forEach(function (f) { f(); }); },
     setAverage: function (average, count) {
       var el = document.getElementById("avg");
       if (!el) return;
@@ -136,6 +141,64 @@
         box.appendChild(btn);
         box.appendChild(msg);
       });
+  }
+
+  // S-71: the Want to try button, for a signed-in Member only. It shows when the Member has neither rated nor marked the
+  // recipe ("Want to try"), and reads "On your list" when marked (S-72.1). It is hidden for a rated recipe (S-71.6).
+  // Selecting "Want to try" adds the Member's row; a failure puts the button back and says so. Removing (S-72) is not here yet.
+  function wantToTryButton(recipeId) {
+    var box = document.getElementById("actions");
+    if (!box || !recipeId) return;
+    var R = window.RecipesRecipe, st = R.state;
+    st.recipeId = recipeId;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pill";
+    btn.id = "want";
+    btn.style.order = "1";
+    var msg = document.createElement("p");
+    msg.className = "note";
+    msg.id = "want-msg";
+    msg.style.order = "2";
+    msg.setAttribute("role", "alert");
+    msg.hidden = true;
+    function render() {
+      var rated = st.rating !== null && st.rating !== undefined;
+      btn.hidden = !st.loaded || rated;
+      btn.setAttribute("aria-pressed", st.wantToTry ? "true" : "false");
+      btn.textContent = st.wantToTry ? "On your list" : "Want to try";
+      btn.classList.toggle("on-sage", st.wantToTry);
+    }
+    R.renderers.push(render);
+    var busy = false;
+    btn.addEventListener("click", function () {
+      if (busy || st.wantToTry) return; // "On your list" selected again is S-72
+      busy = true;
+      msg.hidden = true;
+      msg.textContent = "";
+      st.wantToTry = true;
+      render();
+      RecipesAuth.api("want_to_try", { method: "POST", prefer: "return=minimal", body: { user_id: RecipesAuth.userId(), recipe_id: recipeId } })
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); })
+        .catch(function () { st.wantToTry = false; msg.textContent = "Couldn't save. Try again."; msg.hidden = false; })
+        .then(function () { busy = false; render(); });
+    });
+    render();
+    box.appendChild(btn);
+    box.appendChild(msg);
+    // Read the Member's own rows (RLS limits them to the Member). If either read fails the button stays hidden.
+    function read(path) {
+      return RecipesAuth.api(path).then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); });
+    }
+    Promise.all([
+      read("want_to_try?select=recipe_id&recipe_id=eq." + encodeURIComponent(recipeId)),
+      read("rating?select=stars&recipe_id=eq." + encodeURIComponent(recipeId))
+    ]).then(function (a) {
+      st.wantToTry = Array.isArray(a[0]) && a[0].length > 0;
+      st.rating = Array.isArray(a[1]) && a[1].length ? Number(a[1][0].stars) : null;
+      st.loaded = true;
+      render();
+    }, function () { /* unreadable: no button */ });
   }
 
   function show(r) {
@@ -211,6 +274,7 @@
       document.getElementById("steps").innerHTML = stepListHtml(next);
     });
     favoriteButton(r.id);
+    wantToTryButton(r.id);
     ratingId = r.id;
     window.RecipesRecipe.refreshAverage();
     var img = root.querySelector(".photo img");
