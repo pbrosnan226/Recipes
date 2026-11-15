@@ -1,5 +1,5 @@
 // S-57: the Recipe page loads one recipe from Supabase. The shell is built into a temp copy (site/dist is never touched)
-// and served on a random port. Live data (26 recipes) is compared with what the page shows; page.route stubs the rest.
+// and served on a random port. Live data (however many recipes are in the database) is compared with what the page shows; page.route stubs the rest.
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const os = require("os");
@@ -22,9 +22,11 @@ const live = async (slug) => {
   }
   return cache[slug];
 };
+let total; // recipes in the database
 const byPos = (a, b) => a.position - b.position;
 
 test.beforeAll(async () => {
+  total = (await (await fetch(`${URL_}/rest/v1/recipe?select=slug`, { headers: H })).json()).length;
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "s57-"));
   const code = path.join(tmp, "site");
   fs.mkdirSync(code);
@@ -71,7 +73,7 @@ const snapshot = (page) =>
 
 test("S-57.1 selecting a card opens /recipe?name=<slug>", async ({ page }) => {
   await page.goto(base);
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(total);
   const card = page.locator("#grid .card", { has: page.getByRole("link", { name: "French Toast", exact: true }) });
   await card.locator("a.name").tap();
   await expect(page).toHaveURL(`${base}recipe?name=french-toast`);
@@ -156,7 +158,7 @@ for (const slug of SLUGS) {
 
 test("S-57.4 opening the address directly (typed, reloaded) shows the same recipe as selecting its card", async ({ page }) => {
   await page.goto(base);
-  await expect(page.locator("#grid .card")).toHaveCount(26);
+  await expect(page.locator("#grid .card")).toHaveCount(total);
   await page.locator("#grid .card", { has: page.getByRole("link", { name: "Honey Garlic Chicken", exact: true }) }).locator("a.name").tap();
   await expect(page).toHaveURL(`${base}recipe?name=honey-garlic-chicken`);
   await expect(page.locator("#recipe h1")).toBeVisible();
