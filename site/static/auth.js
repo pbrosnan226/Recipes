@@ -94,6 +94,46 @@
     }, function () { return { ok: false, kind: "noconnection" }; });
   }
 
+  // Signs out at once, no confirm. The page stays at the same address in its signed-out view; the Favorites view
+  // (/?favorites=1) falls back to the normal Home page. The session is cleared on this device first; telling Supabase
+  // to end it (this device only) is best effort and never holds anything up.
+  function signOut() {
+    var s = read();
+    clear();
+    if (s && s.access_token && base) {
+      try {
+        fetch(base + "/auth/v1/logout?scope=local", {
+          method: "POST",
+          keepalive: true,
+          headers: { apikey: cfg.supabaseKey, Authorization: "Bearer " + s.access_token }
+        }).catch(function () {});
+      } catch (e) {}
+    }
+    var loc = window.location;
+    if (loc.pathname === "/" && new URLSearchParams(loc.search).has("favorites")) loc.replace("/");
+    else loc.reload();
+  }
+
+  // Keeps a device signed in: when the saved access token has expired (or is about to), trades the refresh token for a
+  // new one. A lost connection keeps the session; only Supabase refusing the refresh token ends it.
+  function refresh() {
+    var s = read();
+    if (!s || !s.refresh_token || !base) return Promise.resolve();
+    if (s.expires_at && s.expires_at * 1000 - Date.now() > 60000) return Promise.resolve();
+    return fetch(base + "/auth/v1/token?grant_type=refresh_token", {
+      method: "POST",
+      headers: { apikey: cfg.supabaseKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: s.refresh_token })
+    }).then(function (r) {
+      if (r.ok) {
+        return r.json().then(function (b) {
+          if (b.access_token) save({ access_token: b.access_token, refresh_token: b.refresh_token, expires_at: b.expires_at, user: b.user || s.user });
+        });
+      }
+      if (r.status === 400 || r.status === 401 || r.status === 403) { clear(); header(); }
+    }).catch(function () {});
+  }
+
   function header() {
     var nav = document.querySelector("nav.main");
     if (!nav) return;
@@ -110,8 +150,7 @@
       out.textContent = "Sign out";
       out.addEventListener("click", function (e) {
         e.preventDefault();
-        clear();
-        window.location.reload();
+        signOut();
       });
       add(out);
     } else {
@@ -123,6 +162,7 @@
     }
   }
 
-  window.RecipesAuth = { signUp: signUp, signIn: signIn, resetPassword: resetPassword, setPassword: setPassword, signedIn: function () { return !!read(); }, header: header };
+  window.RecipesAuth = { signUp: signUp, signIn: signIn, resetPassword: resetPassword, setPassword: setPassword, signedIn: function () { return !!read(); }, header: header, signOut: signOut, refresh: refresh };
   header();
+  refresh();
 })();
