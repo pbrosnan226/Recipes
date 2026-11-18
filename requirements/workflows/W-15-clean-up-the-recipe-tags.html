@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W-15 Clean up the recipe tags (one time)</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #222; }
+  .meta { color: #555; margin: 4px 0; }
+  .mermaid { overflow-x: auto; margin: 24px 0; }
+  .legend { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<p><a href="index.html">All workflows</a></p>
+<h1>W-15 Clean up the recipe tags (one time)</h1>
+<p class="meta"><b>Actors:</b> Owner, Extractor</p>
+<p class="meta"><b>Starts when:</b> The Owner asks Claude to clean up the tags of the existing recipes.</p>
+<p class="meta"><b>Ends when:</b> The confirmed table is applied, or nothing was changed and the Owner has been told.</p>
+
+<pre class="mermaid">
+flowchart LR
+  subgraph e["Extractor"]
+    s1["Step 1: Propose keep, rename or drop for every tag, and add missing course tags"]
+    s3["Step 3: Apply the confirmed table in one all-or-nothing change"]
+    ok{"Applied?"}
+    s4["Step 4: Report what changed"]
+    s5["Step 5: Change nothing and tell the Owner"]
+  end
+  subgraph o["Owner"]
+    start(["Start"]) --> s0["Owner asks for a tag cleanup"]
+    s2{"Step 2: Confirm the table?"}
+    done(["End"])
+  end
+  s0 --> s1 --> s2
+  s2 -- "Ask for changes" --> s1
+  s2 -- "Confirm" --> s3 --> ok
+  s2 -- "Cancel" --> s5
+  ok -- "Yes" --> s4 --> done
+  ok -- "No, it failed" --> s5
+  s5 --> done
+</pre>
+
+<p class="legend">Rounded: start and end. Box: a step. Diamond: a decision. Each band is one actor.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "neutral", flowchart: { curve: "step" } });</script>
+</body>
+</html>

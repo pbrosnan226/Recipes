@@ -61,6 +61,9 @@ The Owner: "okay lets work on the login section", then "copy the login stuff fro
 - **Data:** accounts are Supabase's own (AUTH_USER in the ERD). A new FAVORITE table is added to the ERD with the `erd` skill; WANT_TO_TRY and RATING are already drawn.
 - **Supabase settings:** the build still fails when the project address or public key is missing (answer 60 was about the old plan; the fail rule from answer 79 wins).
 
+## Change 2026-11-14: tag rules and a one-time tag cleanup
+The saved tags are inconsistent (`side`, `Side Dish`, `Sides`; dish names such as `apple pie`; mixed casing). The Owner's rule (answers 105 to 108): tags are for course, protein, cuisine, healthy and holiday; other tags are fine when they make sense, but none may be redundant. The rules are in Data and rules. W-04 and its diagram stay as approved (step 4 already saves tags in order). New one-time workflow W-15 cleans up the existing tags. No ERD or mockup change.
+
 ## Out of scope
 - Adding, editing or deleting recipes on the site, and editing or deleting recipes through Claude or a workflow here (the Owner uses the Supabase dashboard).
 - Deleting the notes, `images/` or the old build code (kept; only a guide to removing them is written).
@@ -239,6 +242,18 @@ Diagrams: [workflows/index.html](workflows/index.html)
 - **Ends when:** Every readable note is in the database, the comparison shows no differences, and the guide is written.
 - **Errors and edge cases:** Running the import again replaces only the names the Owner confirms, and creates no duplicates. A photo that is missing in `images/` leaves that recipe without a photo and is reported. The notes and images are not changed or deleted.
 
+### W-15 Clean up the recipe tags (one time, new 2026-11-14)
+- **Actors:** Owner, Extractor
+- **Starts when:** The Owner asks Claude to clean up the tags of the existing recipes.
+- **Steps:**
+  1. Extractor reads every tag and the recipes that use it, and proposes for each tag to keep it, rename it or drop it under the tag rules (Data and rules), and to add the recipe's course as a tag where it is missing. It shows the whole old-to-new table.
+  2. Owner confirms the table, asks for changes, or cancels. If changes, go back to step 1. If cancelled, go to step 5.
+  3. Extractor applies the confirmed table in one all-or-nothing change: renames, merges and drops tags, adds the missing course tags, and numbers each recipe's tags again with no gaps (the recipe's course tag first, the others in their current order).
+  4. Extractor reports what changed: tags renamed, merged, dropped and added, and how many recipes changed.
+  5. Nothing is changed and Extractor tells the Owner.
+- **Ends when:** The confirmed table is applied, or nothing was changed and the Owner has been told.
+- **Errors and edge cases:** If the change fails part way, nothing is changed and the Owner is told. Only the missing course tag is added to existing recipes; no protein, cuisine, healthy or holiday tag is added to them (answer 108). No recipe is deleted and no recipe field other than its tags changes.
+
 ### W-12 Mark a recipe "want to try" (new 2026-11-13; needs a signed-in Member, sign-in planned 2026-11-14)
 - **Actors:** Member
 - **Starts when:** A signed-in Member opens a recipe page.
@@ -313,6 +328,7 @@ See [erd.md](erd.md).
 - Only the Owner (through Claude, using the Supabase connector and a service key kept in an environment variable) writes recipes and photos. The public key can read only. Claude never reads or prints the service key. The Owner edits or deletes recipes in the Supabase dashboard.
 - Validation that the build did for notes (required source, created date and amount; a valid course; well-formed ingredients; every `{key}` in a step an ingredient) now happens when Claude saves a recipe, and the recipe is not saved if it fails. The database also enforces required fields and unique keys from the ERD.
 - Photos live in a public-read Supabase Storage bucket, one file per recipe, stored exactly as downloaded; the recipe's photo path points to the file. A recipe with no file shows no photo.
+- Tags (new 2026-11-14): a recipe's tags come from these kinds, in this order when they apply: course (the lowercase course word, the same as its course), protein (when the source states it or it is plainly the main one), cuisine (from the source), healthy (only when the source itself calls the recipe healthy, light, low-calorie or similar), holiday (only when the source names the holiday). Other tags are allowed after those when they help find the recipe (for example a diet or a method). A tag is redundant, and not saved, when it repeats another tag of the recipe (a synonym, or the same word singular and plural), is the course word a second time, is the dish's own name or two or more consecutive words of it (`apple pie` on Apple Pie; a single word such as `chicken` on Chicken Parmesan is fine), or is `recipe` or `recipes`. Tags are lowercase and singular, with hyphens for a multiword tag. Before saving, the Extractor lists the existing tags and reuses one that already means the same. A kind with nothing to say adds no tag. The checks before saving fail, and nothing is saved, when a tag is not lowercase, is `recipe` or `recipes`, is the recipe's name or two or more consecutive words of it (ignoring case, a hyphen counting as a space), repeats another tag exactly, or breaks the course rule (a recipe with a course has its lowercase course word as its first tag, once; a recipe with no course has no course tag) (answers 107, 109, 110); the other judgments (useful, synonym) are the Extractor's.
 - Search matches recipe name, site, tag and ingredient names, case-insensitive.
 - The old note-reading build (`site/build.js`, `lib/read.js`, `lib/scale.js`, `lib/render.js`) stays in the repo and moves to its own command; its tests are left out of the normal test run (answer 79). Netlify runs a new, simpler build. The recipe-extract skill and CLAUDE.md note-only parts (template, servings dropdown, `images/` photo) are replaced by the database save and Storage upload (answer 78). The CLAUDE.md opening paragraph and the Branches sentence about "documenting a recipe note" are reworded too, to say recipes live in the Supabase `recipes` schema with photos in Storage (answer 92).
 - While recipes load nothing extra shows. When the database has no recipes Home shows "Nothing matches that. Try another word." An address with no `name` shows "That recipe isn't here." The header stays in every state.
@@ -448,3 +464,11 @@ See [erd.md](erd.md).
 | 102 | Mockups for Sign in, Create account, Forgot password, Reset password | "skip mock ups" |
 | 103 | Workout's three extra reset messages | Added all three: "Couldn't send reset link. Try again.", "Use a new password.", "Couldn't set password. Try again." |
 | 104 | Favorites view when a chip or search leaves nothing; favorites fail to load | "Nothing matches that. Try another word."; leave the load failure out |
+| 105 | What should a tag be? | "tags should be for course, protein, cuisine, healthy, holiday"; "tagging apple pie 'apple pie' is pointless"; "tags can be other things if they make sense, but shouldnt be redundant" |
+| 106 | Record the tag rules in W-04? | Plan rules and stories only (Recommended); W-04 and its diagram stay as approved |
+| 107 | A tag breaks a rule code can decide | The checker fails; nothing is saved (Recommended) |
+| 108 | Cleanup of existing tags | New one-time workflow W-15 (Recommended); only the missing course tag is added to existing recipes, nothing else guessed |
+| 109 | Is the course a tag, and what does 'repeats the course' fail? | Course tag once, first (Recommended): a recipe with a course has its lowercase course word as its first tag; a second copy or a misplaced one fails; a recipe with no course has no course tag |
+| 110 | What counts as the recipe's name or part of it? | Whole name or 2+ consecutive words (Recommended), ignoring case, a hyphen counting as a space; `apple-pie` fails on Apple Pie, `chicken` passes on Chicken Parmesan |
+| 111 | W-15 details | Yes, all three (Recommended): recipes with no course get no course tag; two tags merging into one (side and Side Dish to side) keep one link at the position of the first one the recipe had; the new names must pass the same code checks as new recipes (otherwise nothing is changed and the Owner is told which tag) |
+| 112 | What the list of existing tags shows | Names only (Recommended) |
