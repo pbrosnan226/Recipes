@@ -58,6 +58,9 @@ Step 9 (the Owner opens the site) is the Owner's, outside every story; S-54.5 an
 | 5, 7 | [S-52 Keep the recipe without a photo and tell the Owner](S-52-keep-the-recipe-without-a-photo-and-tell-the-owner.md) (new 2026-11-13) | None |
 | Course | [S-34 Give new recipes a course](S-34-give-new-recipes-a-course.md) (changed 2026-11-13) | None |
 | Rules the Extractor follows | [S-53 Update the extraction wording for the database](S-53-update-the-extraction-wording-for-the-database.md) (new 2026-11-13; supersedes [S-16](S-16-update-the-extraction-wording-for-stored-photos.md)) | None |
+| Tag rules | [S-81 Follow the tag rules when adding a recipe](S-81-follow-the-tag-rules-when-adding-a-recipe.md) (new 2026-11-14) | None |
+| 3, 8 (tags) | [S-82 Check a recipe's tags before saving](S-82-check-a-recipes-tags-before-saving.md) (new 2026-11-14; extends S-48) | None |
+| Before 4 | [S-83 List the existing tags](S-83-list-the-existing-tags.md) (new 2026-11-14) | None |
 | Superseded 2026-11-13 | [S-14 Save a recipe's photo when adding a recipe](S-14-save-a-recipes-photo.md): by S-48 to S-52 | None |
 | Superseded 2026-11-13 | [S-15 Save the recipe without a photo when the download fails](S-15-tell-the-owner-when-a-photo-cant-be-downloaded.md): by S-52 | None |
 
@@ -67,6 +70,12 @@ Step 9 (the Owner opens the site) is the Owner's, outside every story; S-54.5 an
 | 1, 2 | [S-17 List the existing photo links and get the Owner's confirmation](S-17-list-the-existing-photo-links-and-confirm.md) | None |
 | 3 to 6 | [S-18 Download the existing photos and replace the links](S-18-download-the-existing-photos-and-replace-the-links.md) | None |
 | 6, 7 | [S-19 Report the converted photos and the failures](S-19-report-the-converted-photos-and-failures.md) | None |
+
+## [W-15 Clean up the recipe tags](../workflows/W-15-clean-up-the-recipe-tags.html) (one time, new 2026-11-14)
+| Step | Story | Screens |
+|---|---|---|
+| 1, 2, 5 | [S-84 Propose the tag cleanup and get the Owner's confirmation](S-84-propose-the-tag-cleanup-and-get-the-owners-confirmation.md) (new 2026-11-14) | None |
+| 3, 4, 5 | [S-85 Apply the confirmed tag cleanup and report](S-85-apply-the-confirmed-tag-cleanup-and-report.md) (new 2026-11-14) | None |
 
 ## Sign-in, accounts and favorites (back in scope 2026-11-14)
 The sign-in, Create account, Forgot password and Reset password pages have no mockups: the Owner chose to skip them (answer 102). Workout's screens and wording are the reference. S-22 and S-23 (email-link sign-in) were never written and stay unused. The Supabase settings rule for the build is S-64.
